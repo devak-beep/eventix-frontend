@@ -1,70 +1,175 @@
-# Getting Started with Create React App
+# Event Booking Frontend
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+This is the frontend for your Event Booking System. It's built with React and connects to your backend API.
 
-## Available Scripts
+## 📁 Project Structure
 
-In the project directory, you can run:
+```
+src/
+├── api.js                      # All API calls to backend
+├── App.js                      # Main app with navigation
+├── App.css                     # All styling
+└── components/
+    ├── EventList.js           # Shows list of events
+    ├── EventDetails.js        # Book an event (lock → confirm → pay)
+    ├── MyBookings.js          # View and cancel bookings
+    └── CreateEvent.js         # Create new events and users
+```
 
-### `npm start`
+## 🚀 How to Run
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+### Step 1: Start Your Backend
+First, make sure your backend is running:
+```bash
+cd /home/hello/Documents/event-booking-backend
+npm start
+```
+Your backend should be running on `http://localhost:3000`
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
+### Step 2: Start the Frontend
+Open a new terminal and run:
+```bash
+cd /home/hello/Documents/event-booking-frontend
+npm start
+```
+The frontend will open automatically at `http://localhost:3001` (or 3002 if 3001 is busy)
 
-### `npm test`
+## 📖 How to Use the App
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+### 1. Create an Event
+- Click "Create Event" button in the top navigation
+- Fill in the event details:
+  - Event name (e.g., "Rock Concert 2024")
+  - Description
+  - Date and time
+  - Total seats
+- Click "Create Event"
+- **Copy the Event ID** that appears (you'll need it!)
 
-### `npm run build`
+### 2. Add Event to List
+- Go back to "All Events"
+- Paste the Event ID in the input box
+- Click "Add Event"
+- The event will appear as a card
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+### 3. Book an Event
+- Click on any event card
+- You'll see the event details
+- Follow these 3 steps:
+  1. **Lock Seats**: Choose number of seats and click "Lock Seats"
+  2. **Confirm Booking**: Click "Confirm Booking" 
+  3. **Pay**: Click "Pay Now (Success)" to complete booking
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+### 4. View Your Bookings
+- Click "My Bookings" in the top navigation
+- You'll see all bookings with their status
+- You can cancel confirmed bookings (50% refund)
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+## 🎨 Features
 
-### `npm run eject`
+### Event List Page
+- Add events by ID
+- See available seats
+- Click to view details
 
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
+### Event Details Page
+- Complete booking flow (Lock → Confirm → Pay)
+- Test different payment scenarios:
+  - ✅ Success
+  - ❌ Failure
+  - ⏱️ Timeout
 
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+### My Bookings Page
+- View all bookings
+- See booking status (CONFIRMED, PAYMENT_PENDING, etc.)
+- Cancel bookings
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
+### Create Event Page
+- Create new events
+- Create new users (optional)
+- Copy event IDs easily
 
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
+## 🔧 Configuration
 
-## Learn More
+If your backend runs on a different port, edit `src/api.js`:
+```javascript
+const API_BASE_URL = 'http://localhost:YOUR_PORT/api';
+```
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+## 📝 Understanding the Code
 
-To learn React, check out the [React documentation](https://reactjs.org/).
+### api.js
+This file has all functions to talk to your backend:
+- `createEvent()` - Creates a new event
+- `lockSeats()` - Locks seats temporarily
+- `confirmBooking()` - Confirms the booking
+- `processPayment()` - Processes payment
+- And more...
 
-### Code Splitting
+### App.js
+The main component that:
+- Shows navigation bar
+- Switches between different pages
+- Manages which page to show
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
+### Components
+Each component is a separate page:
+- **EventList**: Shows all events in a grid
+- **EventDetails**: Handles the booking process
+- **MyBookings**: Shows user's bookings
+- **CreateEvent**: Form to create events
 
-### Analyzing the Bundle Size
+### App.css
+All the styling to make the app look nice:
+- Colors, spacing, layouts
+- Responsive design for mobile
+- Button styles and animations
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
+## 🎯 Booking Flow
 
-### Making a Progressive Web App
+```
+1. User sees event list
+   ↓
+2. User clicks on event
+   ↓
+3. User locks seats (reserves temporarily)
+   ↓
+4. User confirms booking
+   ↓
+5. User makes payment
+   ↓
+6. Booking complete! ✅
+```
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
+## 🐛 Troubleshooting
 
-### Advanced Configuration
+### "Failed to fetch event"
+- Make sure your backend is running
+- Check if the Event ID is correct
+- Check browser console for errors
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
+### "Network Error"
+- Backend might not be running
+- Check if backend is on `http://localhost:3000`
+- Check CORS settings in backend
 
-### Deployment
+### Events not showing
+- You need to manually add events by ID
+- Create an event first, then add it to the list
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
+## 💡 Tips
 
-### `npm run build` fails to minify
+1. **Create a user first** if you want to track bookings by user
+2. **Copy Event IDs** after creating events
+3. **Refresh bookings** to see latest status
+4. **Test payment scenarios** to see how the system handles failures
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+## 🎓 Learning Notes
+
+- **State**: Used to store data (like events, bookings)
+- **useEffect**: Runs code when component loads
+- **async/await**: Waits for API responses
+- **Props**: Pass data between components
+- **Event handlers**: Functions that run when you click buttons
+
+Enjoy building with your Event Booking System! 🎉

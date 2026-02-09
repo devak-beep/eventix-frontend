@@ -201,6 +201,7 @@ function EventList() {
               <div className="event-info">
                 <p>{new Date(event.eventDate).toLocaleDateString('en-GB')}</p>
                 <p>{event.availableSeats} / {event.totalSeats} seats available</p>
+                <p className="event-price">₹{event.amount || 0} per ticket</p>
               </div>
             </div>
           </div>

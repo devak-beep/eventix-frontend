@@ -92,7 +92,13 @@ function LockSeatsPage({ userId }) {
       
       // Navigate to confirm booking page with lockId
       navigate(`/booking/confirm/${response.lockId}`, {
-        state: { eventId, seats, expiresAt: response.expiresAt }
+        state: { 
+          eventId, 
+          seats, 
+          expiresAt: response.expiresAt,
+          eventName: event.name,
+          amount: event.amount || 0
+        }
       });
     } catch (err) {
       setError(err.response?.data?.message || err.message || 'Failed to lock seats');
@@ -136,6 +142,7 @@ function LockSeatsPage({ userId }) {
           <div className="event-meta">
             <p>Date: {new Date(event.eventDate).toLocaleString('en-GB')}</p>
             <p>Available Seats: {event.availableSeats} / {event.totalSeats}</p>
+            <p>Price: ₹{event.amount || 0} per ticket</p>
           </div>
         </div>
 
@@ -155,6 +162,7 @@ function LockSeatsPage({ userId }) {
               onChange={(e) => setSeats(parseInt(e.target.value) || 1)}
             />
           </label>
+          <p className="total-amount">Total Amount: ₹{(event.amount || 0) * seats}</p>
           <button 
             onClick={handleLockSeats} 
             disabled={loading || seats < 1 || seats > event.availableSeats}

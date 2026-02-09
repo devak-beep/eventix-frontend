@@ -73,6 +73,13 @@ body {
   box-shadow: 0 5px 15px rgba(0, 212, 255, 0.3);
 }
 
+.nav-links button:last-child:hover {
+  background: rgba(239, 68, 68, 0.2);
+  border-color: rgba(239, 68, 68, 0.5);
+  color: #ef4444;
+  box-shadow: 0 5px 15px rgba(239, 68, 68, 0.3);
+}
+
 .user-info {
   color: #b8bcc8;
   font-weight: 500;
@@ -187,7 +194,16 @@ input::placeholder, textarea::placeholder {
   background: linear-gradient(135deg, #0a0e27 0%, #16213e 50%, #0f3460 100%);
 }
 
+.auth-container {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 40px 20px;
+}
+
 .auth-box {
+  position: relative;
   background: rgba(22, 33, 62, 0.8);
   backdrop-filter: blur(20px);
   padding: 50px;
@@ -196,6 +212,104 @@ input::placeholder, textarea::placeholder {
   width: 100%;
   max-width: 450px;
   border: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.auth-box::before {
+  content: '';
+  position: absolute;
+  width: 100px;
+  height: 2px;
+  background: linear-gradient(90deg, transparent, #00d4ff, #0099ff, transparent);
+  filter: drop-shadow(0 0 6px #00d4ff);
+  animation: tracePerimeter 4s linear infinite;
+  pointer-events: none;
+}
+
+.auth-box::after {
+  content: '';
+  position: absolute;
+  width: 100px;
+  height: 2px;
+  background: linear-gradient(90deg, transparent, #00d4ff, #0099ff, transparent);
+  filter: drop-shadow(0 0 6px #00d4ff);
+  animation: tracePerimeter 4s linear infinite;
+  animation-delay: -2s;
+  pointer-events: none;
+}
+
+@keyframes tracePerimeter {
+  0% {
+    top: -2px;
+    left: 0;
+    width: 100px;
+    height: 2px;
+    transform: rotate(0deg);
+  }
+  23% {
+    top: -2px;
+    left: calc(100% - 100px);
+    width: 100px;
+    height: 2px;
+    transform: rotate(0deg);
+  }
+  25% {
+    top: 0;
+    left: calc(100% - 2px);
+    width: 2px;
+    height: 100px;
+    transform: rotate(0deg);
+  }
+  48% {
+    top: calc(100% - 100px);
+    left: calc(100% - 2px);
+    width: 2px;
+    height: 100px;
+    transform: rotate(0deg);
+  }
+  50% {
+    top: calc(100% - 2px);
+    left: calc(100% - 100px);
+    width: 100px;
+    height: 2px;
+    transform: rotate(0deg);
+  }
+  73% {
+    top: calc(100% - 2px);
+    left: 0;
+    width: 100px;
+    height: 2px;
+    transform: rotate(0deg);
+  }
+  75% {
+    top: calc(100% - 100px);
+    left: -2px;
+    width: 2px;
+    height: 100px;
+    transform: rotate(0deg);
+  }
+  98% {
+    top: 0;
+    left: -2px;
+    width: 2px;
+    height: 100px;
+    transform: rotate(0deg);
+  }
+  100% {
+    top: -2px;
+    left: 0;
+    width: 100px;
+    height: 2px;
+    transform: rotate(0deg);
+  }
+}
+
+@keyframes rotateBorder {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
 }
 
 .auth-logo {
@@ -223,6 +337,33 @@ input::placeholder, textarea::placeholder {
   margin-bottom: 30px;
   font-size: 28px;
   font-weight: 700;
+  text-align: center;
+}
+
+.auth-box .submit-btn {
+  width: 100%;
+  padding: 14px;
+  background: linear-gradient(135deg, #00d4ff 0%, #0099ff 100%);
+  color: white;
+  border: none;
+  border-radius: 10px;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  margin-top: 10px;
+  box-shadow: 0 4px 15px rgba(0, 212, 255, 0.3);
+}
+
+.auth-box .submit-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(0, 212, 255, 0.5);
+}
+
+.auth-box .submit-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  transform: none;
 }
 
 .form-group {
@@ -231,10 +372,39 @@ input::placeholder, textarea::placeholder {
 
 .form-group label {
   display: block;
-  margin-bottom: 8px;
-  color: #b8bcc8;
-  font-weight: 500;
-  font-size: 14px;
+  margin-bottom: 10px;
+  color: #e4e6eb;
+  font-weight: 600;
+  font-size: 15px;
+}
+
+.form-group input {
+  width: 100%;
+  padding: 14px 16px;
+  background: rgba(15, 23, 42, 0.6);
+  border: 2px solid rgba(255, 255, 255, 0.1);
+  border-radius: 10px;
+  color: #e4e6eb;
+  font-size: 15px;
+  transition: all 0.3s ease;
+}
+
+.form-group input:focus {
+  outline: none;
+  border-color: #00d4ff;
+  background: rgba(15, 23, 42, 0.8);
+  box-shadow: 0 0 0 3px rgba(0, 212, 255, 0.1);
+}
+
+.form-group input::placeholder {
+  color: #6b7280;
+}
+
+.form-group small {
+  display: block;
+  margin-top: 6px;
+  color: #9ca3af;
+  font-size: 13px;
 }
 
 .error {
@@ -276,6 +446,37 @@ input::placeholder, textarea::placeholder {
 .auth-switch button:hover {
   color: #0099ff;
   transform: none;
+}
+
+.success-popup {
+  text-align: center;
+  padding: 20px;
+}
+
+.success-popup .success-icon {
+  font-size: 64px;
+  margin-bottom: 20px;
+  animation: bounce 0.6s ease;
+}
+
+.success-popup h2 {
+  color: #10b981;
+  margin-bottom: 16px;
+}
+
+.success-popup p {
+  color: #b8bcc8;
+  margin-bottom: 12px;
+  font-size: 15px;
+}
+
+.success-popup .submit-btn {
+  margin-top: 20px;
+}
+
+@keyframes bounce {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-20px); }
 }
 
 /* EVENT LIST */
@@ -699,6 +900,24 @@ input::placeholder, textarea::placeholder {
   margin-top: 20px;
 }
 
+.total-amount {
+  margin-top: 16px;
+  padding: 16px;
+  background: rgba(16, 185, 129, 0.1);
+  border: 2px solid rgba(16, 185, 129, 0.3);
+  border-radius: 10px;
+  color: #10b981;
+  font-size: 18px;
+  font-weight: 700;
+  text-align: center;
+}
+
+.event-price {
+  color: #10b981;
+  font-weight: 600;
+  font-size: 15px;
+}
+
 .timer {
   background: rgba(239, 68, 68, 0.1);
   color: #fca5a5;
@@ -751,6 +970,184 @@ input::placeholder, textarea::placeholder {
   font-size: 36px;
   font-weight: 700;
   text-align: center;
+}
+
+.tab-toggle {
+  display: flex;
+  gap: 10px;
+  justify-content: center;
+  margin-bottom: 30px;
+}
+
+.tab-btn {
+  padding: 12px 30px;
+  background: rgba(22, 33, 62, 0.6);
+  color: #b8bcc8;
+  border: 2px solid rgba(255, 255, 255, 0.1);
+  border-radius: 10px;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.tab-btn:hover {
+  background: rgba(22, 33, 62, 0.8);
+  border-color: rgba(0, 212, 255, 0.3);
+}
+
+.tab-btn.active {
+  background: linear-gradient(135deg, #00d4ff 0%, #0099ff 100%);
+  color: white;
+  border-color: transparent;
+  box-shadow: 0 4px 15px rgba(0, 212, 255, 0.3);
+}
+
+.creation-charge-info {
+  color: #10b981 !important;
+  font-weight: 600 !important;
+}
+
+.total-collection {
+  background: rgba(16, 185, 129, 0.1);
+  border: 2px solid rgba(16, 185, 129, 0.3);
+  border-radius: 8px;
+  padding: 12px;
+  margin: 10px 0;
+}
+
+.total-collection strong {
+  color: #10b981;
+  font-size: 16px;
+}
+
+.event-description {
+  display: block;
+  margin-top: 15px;
+  margin-bottom: 20px !important;
+  padding: 15px;
+  background: rgba(15, 23, 42, 0.4);
+  border-radius: 8px;
+  border-left: 3px solid #00d4ff;
+}
+
+.event-description strong {
+  display: block;
+  color: #e4e6eb;
+  margin-bottom: 12px;
+  font-size: 15px;
+}
+
+.description-text {
+  color: #b8bcc8;
+  line-height: 1.8;
+  white-space: pre-wrap;
+  word-wrap: break-word;
+}
+
+.payment-modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.8);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 9999;
+  animation: fadeIn 0.3s ease;
+}
+
+.payment-modal-content {
+  background: rgba(22, 33, 62, 0.95);
+  backdrop-filter: blur(20px);
+  padding: 40px;
+  border-radius: 20px;
+  border: 2px solid rgba(0, 212, 255, 0.3);
+  max-width: 500px;
+  width: 90%;
+  text-align: center;
+  animation: slideUp 0.3s ease;
+}
+
+.payment-modal-content h3 {
+  color: #e4e6eb;
+  font-size: 28px;
+  margin-bottom: 20px;
+}
+
+.payment-modal-content p {
+  color: #b8bcc8;
+  margin-bottom: 15px;
+  font-size: 16px;
+}
+
+.payment-amount {
+  font-size: 48px;
+  font-weight: 700;
+  color: #10b981;
+  margin: 20px 0;
+}
+
+.payment-info {
+  font-size: 14px;
+  color: #9ca3af;
+  margin-bottom: 30px;
+}
+
+.payment-modal .payment-buttons {
+  display: flex;
+  gap: 15px;
+  justify-content: center;
+}
+
+.payment-modal .success-btn,
+.payment-modal .cancel-btn {
+  padding: 14px 30px;
+  border-radius: 10px;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  border: none;
+}
+
+.payment-modal .success-btn {
+  background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+  color: white;
+  box-shadow: 0 4px 15px rgba(16, 185, 129, 0.3);
+}
+
+.payment-modal .success-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(16, 185, 129, 0.5);
+}
+
+.payment-modal .cancel-btn {
+  background: rgba(239, 68, 68, 0.1);
+  color: #ef4444;
+  border: 2px solid rgba(239, 68, 68, 0.3);
+}
+
+.payment-modal .cancel-btn:hover {
+  background: rgba(239, 68, 68, 0.2);
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes slideUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 .refresh-btn {
@@ -858,7 +1255,7 @@ input::placeholder, textarea::placeholder {
 .create-event {
   max-width: 700px;
   margin: 40px auto;
-  padding: 0 20px;
+  padding: 0 20px 40px 20px;
 }
 
 .create-event .back-btn {
@@ -882,6 +1279,32 @@ input::placeholder, textarea::placeholder {
   border: 1px solid rgba(255, 255, 255, 0.05);
 }
 
+.event-form .submit-btn {
+  width: 100%;
+  padding: 14px;
+  background: linear-gradient(135deg, #00d4ff 0%, #0099ff 100%);
+  color: white;
+  border: none;
+  border-radius: 10px;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  margin-top: 10px;
+  box-shadow: 0 4px 15px rgba(0, 212, 255, 0.3);
+}
+
+.event-form .submit-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(0, 212, 255, 0.5);
+}
+
+.event-form .submit-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  transform: none;
+}
+
 .char-counter {
   text-align: right;
   font-size: 13px;
@@ -891,6 +1314,89 @@ input::placeholder, textarea::placeholder {
 
 .char-counter.error {
   color: #fca5a5;
+}
+
+/* Created Event Info */
+.created-event-info {
+  margin-top: 30px;
+  margin-bottom: 80px;
+  padding: 24px;
+  background: rgba(16, 185, 129, 0.1);
+  border: 2px solid rgba(16, 185, 129, 0.3);
+  border-radius: 12px;
+  animation: slideIn 0.3s ease;
+}
+
+.created-event-info h3 {
+  color: #10b981;
+  font-size: 24px;
+  font-weight: 700;
+  margin-bottom: 12px;
+  text-align: center;
+}
+
+.created-event-info p {
+  color: #10b981;
+  font-size: 15px;
+  font-weight: 600;
+  margin-bottom: 16px;
+  text-align: center;
+}
+
+.copy-section {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  background: rgba(22, 33, 62, 0.8);
+  padding: 16px;
+  border-radius: 10px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.copy-section code {
+  flex: 1;
+  background: rgba(0, 0, 0, 0.3);
+  padding: 12px 16px;
+  border-radius: 8px;
+  color: #60a5fa;
+  font-family: 'Courier New', monospace;
+  font-size: 14px;
+  word-break: break-all;
+  border: 1px solid rgba(96, 165, 250, 0.2);
+}
+
+.copy-section button {
+  padding: 12px 20px;
+  background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+  color: white;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: 600;
+  transition: all 0.3s ease;
+  white-space: nowrap;
+  box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
+}
+
+.copy-section button:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(59, 130, 246, 0.4);
+}
+
+.copy-section button:active {
+  transform: translateY(0);
+}
+
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 /* PAYMENT */
@@ -973,6 +1479,49 @@ input::placeholder, textarea::placeholder {
 .timeout-btn:hover {
   transform: translateY(-2px);
   box-shadow: 0 6px 25px rgba(245, 158, 11, 0.5);
+}
+
+.payment-summary {
+  background: rgba(22, 33, 62, 0.6);
+  padding: 24px;
+  border-radius: 12px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  margin-bottom: 24px;
+}
+
+.payment-summary h4 {
+  color: #e4e6eb;
+  margin-bottom: 16px;
+  font-size: 18px;
+  font-weight: 600;
+}
+
+.payment-summary p {
+  color: #b8bcc8;
+  margin-bottom: 12px;
+  font-size: 15px;
+}
+
+.payment-summary code {
+  background: rgba(0, 0, 0, 0.3);
+  padding: 4px 8px;
+  border-radius: 4px;
+  color: #60a5fa;
+  font-family: 'Courier New', monospace;
+  font-size: 13px;
+}
+
+.payment-summary .total-amount {
+  margin-top: 16px;
+  margin-bottom: 0;
+  padding: 16px;
+  background: rgba(16, 185, 129, 0.1);
+  border: 2px solid rgba(16, 185, 129, 0.3);
+  border-radius: 10px;
+  color: #10b981;
+  font-size: 18px;
+  font-weight: 700;
+  text-align: center;
 }
 
 .payment-btn {

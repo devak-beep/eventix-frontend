@@ -12,7 +12,7 @@ function PaymentPage() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
 
-  const { eventId, seats } = location.state || {};
+  const { eventId, seats, eventName, amount } = location.state || {};
 
   const handlePayment = async (status) => {
     setError('');
@@ -24,7 +24,7 @@ function PaymentPage() {
       
       // Navigate to result page
       navigate(`/booking/result/${bookingId}`, {
-        state: { status, eventId, seats }
+        state: { status, eventId, seats, eventName, amount }
       });
     } catch (err) {
       setError(err.response?.data?.message || err.message || 'Payment failed');
@@ -38,14 +38,25 @@ function PaymentPage() {
       <button onClick={() => navigate('/')} className="back-btn">← Back to Events</button>
 
       <div className="booking-section">
-        <h3>Process Payment</h3>
+        <h3>💳 Process Payment</h3>
 
         {error && <div className="error">{error}</div>}
 
         <div className="booking-step">
-          <p>✅ Booking confirmed! Booking ID: <code>{bookingId}</code></p>
-          <p>Seats: <strong>{seats}</strong></p>
-          <p>Choose payment option:</p>
+          <div className="payment-summary">
+            <h4>Booking Summary</h4>
+            {eventName && <p><strong>Event:</strong> {eventName}</p>}
+            <p><strong>Booking ID:</strong> <code>{bookingId}</code></p>
+            <p><strong>Seats:</strong> {seats}</p>
+            {amount !== undefined && (
+              <>
+                <p><strong>Price per ticket:</strong> ₹{amount}</p>
+                <p className="total-amount">Total Amount: ₹{amount * seats}</p>
+              </>
+            )}
+          </div>
+          
+          <p style={{marginTop: '24px', marginBottom: '16px', color: '#b8bcc8'}}>Choose payment option:</p>
           
           <div className="payment-buttons">
             <button 
@@ -53,21 +64,21 @@ function PaymentPage() {
               disabled={loading}
               className="success-btn"
             >
-              {loading ? 'Processing...' : 'Pay Now'}
+              {loading ? 'Processing...' : '💳 Pay Now'}
             </button>
             <button 
               onClick={() => handlePayment('FAILURE')} 
               disabled={loading}
               className="failure-btn"
             >
-              {loading ? 'Processing...' : 'Simulate Failure'}
+              {loading ? 'Processing...' : '❌ Simulate Failure'}
             </button>
             <button 
               onClick={() => handlePayment('TIMEOUT')} 
               disabled={loading}
               className="timeout-btn"
             >
-              {loading ? 'Processing...' : 'Simulate Timeout'}
+              {loading ? 'Processing...' : '⏱️ Simulate Timeout'}
             </button>
           </div>
         </div>

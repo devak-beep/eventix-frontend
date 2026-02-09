@@ -1,20 +1,31 @@
 // This component shows all bookings made by users
 import React, { useState, useEffect } from 'react';
 import { getAllBookings, cancelBooking } from '../api';
+import axios from 'axios';
 
 function MyBookings({ userId }) {
   // State to store list of bookings
   const [bookings, setBookings] = useState([]);
   
+  // State for my events
+  const [myEvents, setMyEvents] = useState([]);
+  
   // State for loading and errors
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
+  
+  // Toggle between bookings and events
+  const [activeTab, setActiveTab] = useState('bookings'); // 'bookings' or 'events'
 
   // Fetch bookings when component loads
   useEffect(() => {
-    fetchBookings();
-  }, []);
+    if (activeTab === 'bookings') {
+      fetchBookings();
+    } else {
+      fetchMyEvents();
+    }
+  }, [activeTab]);
 
   // Function to get all bookings from backend
   const fetchBookings = async () => {
@@ -50,6 +61,24 @@ function MyBookings({ userId }) {
     } catch (err) {
       setError('Failed to load bookings');
       console.error('Error fetching bookings:', err);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // Function to fetch user's created events
+  const fetchMyEvents = async () => {
+    setLoading(true);
+    setError('');
+    
+    try {
+      console.log('Fetching events for userId:', userId);
+      const response = await axios.get(`http://localhost:3000/api/events/my-events?userId=${userId}&t=${Date.now()}`);
+      console.log('My events response:', response.data);
+      setMyEvents(response.data.data || []);
+    } catch (err) {
+      setError('Failed to load your events');
+      console.error('Error fetching events:', err);
     } finally {
       setLoading(false);
     }
@@ -97,11 +126,31 @@ function MyBookings({ userId }) {
 
   return (
     <div className="my-bookings">
-      <h2>My Bookings</h2>
+      <h2>My Dashboard</h2>
+
+      {/* Toggle between bookings and events */}
+      <div className="tab-toggle">
+        <button 
+          className={`tab-btn ${activeTab === 'bookings' ? 'active' : ''}`}
+          onClick={() => setActiveTab('bookings')}
+        >
+          My Bookings
+        </button>
+        <button 
+          className={`tab-btn ${activeTab === 'events' ? 'active' : ''}`}
+          onClick={() => setActiveTab('events')}
+        >
+          My Events
+        </button>
+      </div>
 
       {/* Refresh button */}
-      <button onClick={fetchBookings} disabled={loading} className="refresh-btn">
-        {loading ? 'Loading...' : 'Refresh Bookings'}
+      <button 
+        onClick={() => activeTab === 'bookings' ? fetchBookings() : fetchMyEvents()} 
+        disabled={loading} 
+        className="refresh-btn"
+      >
+        {loading ? 'Loading...' : activeTab === 'bookings' ? 'Refresh Bookings' : 'Refresh Events'}
       </button>
 
       {/* Show error or success messages */}
@@ -109,16 +158,19 @@ function MyBookings({ userId }) {
       {success && <div className="success">{success}</div>}
 
       {/* Show loading message */}
-      {loading && <p>Loading bookings...</p>}
+      {loading && <p>Loading...</p>}
 
-      {/* Show message if no bookings */}
-      {!loading && bookings.length === 0 && (
-        <p className="info">No bookings found. Book an event to see it here!</p>
-      )}
+      {/* BOOKINGS TAB */}
+      {activeTab === 'bookings' && (
+        <>
+          {/* Show message if no bookings */}
+          {!loading && bookings.length === 0 && (
+            <p className="info">No bookings found. Book an event to see it here!</p>
+          )}
 
-      {/* Display all bookings */}
-      <div className="bookings-list">
-        {bookings.map((booking) => (
+          {/* Display all bookings */}
+          <div className="bookings-list">
+            {bookings.map((booking) => (
           <div key={booking._id} className="booking-card">
             <div className="booking-header">
               <h3>Booking #{booking._id.slice(-6)}</h3>
@@ -134,6 +186,9 @@ function MyBookings({ userId }) {
               <p><strong>Event:</strong> {booking.event?.name || booking.event || 'N/A'}</p>
               <p><strong>User:</strong> {booking.user?.name || booking.user || 'N/A'}</p>
               <p><strong>Seats:</strong> {Array.isArray(booking.seats) ? booking.seats.length : booking.seats}</p>
+              {booking.amount && (
+                <p><strong>Amount Paid:</strong> ₹{booking.amount}</p>
+              )}
               <p><strong>Created:</strong> {new Date(booking.createdAt).toLocaleString('en-GB')}</p>
               
               {/* Show payment expiry if pending */}
@@ -155,6 +210,54 @@ function MyBookings({ userId }) {
           </div>
         ))}
       </div>
+        </>
+      )}
+
+      {/* EVENTS TAB */}
+      {activeTab === 'events' && (
+        <>
+          {/* Show message if no events */}
+          {!loading && myEvents.length === 0 && (
+            <p className="info">No events created yet. Create an event to see it here!</p>
+          )}
+
+          {/* Display all created events */}
+          <div className="bookings-list">
+            {myEvents.map((event) => (
+              <div key={event._id} className="booking-card event-card">
+                <div className="booking-header">
+                  <h3>{event.name}</h3>
+                  <span 
+                    className="status-badge"
+                    style={{ backgroundColor: event.type === 'public' ? '#10b981' : '#f59e0b' }}
+                  >
+                    {event.type === 'public' ? '🌍 Public' : '🔒 Private'}
+                  </span>
+                </div>
+
+                <div className="booking-details">
+                  <div className="event-description">
+                    <strong>Description:</strong>
+                    <div className="description-text">{event.description}</div>
+                  </div>
+                  <p><strong>Event Date:</strong> {new Date(event.eventDate).toLocaleString('en-GB')}</p>
+                  <p><strong>Event ID:</strong> <code>{event._id}</code></p>
+                  <p><strong>Created:</strong> {new Date(event.createdAt).toLocaleString('en-GB')}</p>
+                  <p><strong>Category:</strong> {event.category}</p>
+                  <p><strong>Platform Fee Paid:</strong> ₹{event.creationCharge || 0}</p>
+                  <p><strong>Total Seats:</strong> {event.totalSeats}</p>
+                  <p><strong>Available Seats:</strong> {event.availableSeats}</p>
+                  <p><strong>Booked Seats:</strong> {event.totalSeats - event.availableSeats}</p>
+                  <p><strong>Ticket Price:</strong> ₹{event.amount || 0}</p>
+                  <p className="total-collection">
+                    <strong>Total Collection:</strong> ₹{(event.totalSeats - event.availableSeats) * (event.amount || 0)}
+                  </p>
+                </div>
+              </div>
+            ))}
+          </div>
+        </>
+      )}
     </div>
   );
 }

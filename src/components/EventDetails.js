@@ -203,6 +203,7 @@ function EventDetails({ userId }) {
         <div className="event-meta">
           <p>📅 Date: {new Date(event.eventDate).toLocaleString()}</p>
           <p>🪑 Available Seats: {event.availableSeats} / {event.totalSeats}</p>
+          <p>💰 Price: ₹{event.amount || 0} per ticket</p>
         </div>
       </div>
 
@@ -227,6 +228,7 @@ function EventDetails({ userId }) {
                 onChange={(e) => setSeats(parseInt(e.target.value) || 1)}
               />
             </label>
+            <p className="total-amount">Total Amount: ₹{(event.amount || 0) * seats}</p>
             <button 
               onClick={handleLockSeats} 
               disabled={loading || seats < 1 || seats > event.availableSeats}

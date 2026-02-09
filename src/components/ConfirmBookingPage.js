@@ -12,7 +12,7 @@ function ConfirmBookingPage() {
   const [error, setError] = useState('');
   const [timeRemaining, setTimeRemaining] = useState(0);
 
-  const { eventId, seats, expiresAt } = location.state || {};
+  const { eventId, seats, expiresAt, eventName, amount } = location.state || {};
 
   // Cancel lock when leaving the page
   useEffect(() => {
@@ -83,7 +83,7 @@ function ConfirmBookingPage() {
       
       // Navigate to payment page
       navigate(`/booking/payment/${response.booking._id}`, {
-        state: { eventId, seats }
+        state: { eventId, seats, eventName, amount }
       });
     } catch (err) {
       setError(err.response?.data?.message || err.message || 'Failed to confirm booking');
@@ -115,7 +115,9 @@ function ConfirmBookingPage() {
 
         <div className="booking-step">
           <p>✅ Seats locked! Lock ID: <code>{lockId}</code></p>
-          <p>Seats: <strong>{seats}</strong></p>
+          {eventName && <p><strong>Event:</strong> {eventName}</p>}
+          <p><strong>Seats:</strong> {seats}</p>
+          {amount !== undefined && <p><strong>Total Amount:</strong> ₹{amount * seats}</p>}
           
           {timeRemaining > 0 && (
             <div className="timer-container">

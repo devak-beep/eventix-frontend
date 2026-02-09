@@ -23,7 +23,7 @@ function Navbar({ user, onLogout }) {
         <span className="user-info">{user.name}</span>
         <button onClick={() => navigate('/')}>All Events</button>
         <button onClick={() => navigate('/create')}>Create Event</button>
-        <button onClick={() => navigate('/bookings')}>My Bookings</button>
+        <button onClick={() => navigate('/bookings')}>My Dashboard</button>
         <button onClick={onLogout} className="logout-btn">Logout</button>
       </div>
     </nav>
@@ -94,7 +94,7 @@ function App() {
             <Route path="/booking/payment/:bookingId" element={<PaymentPage />} />
             <Route path="/booking/result/:bookingId" element={<BookingResultPage />} />
             <Route path="/bookings" element={<MyBookings userId={user._id} />} />
-            <Route path="/create" element={<CreateEvent />} />
+            <Route path="/create" element={<CreateEvent userId={user._id} />} />
             <Route path="*" element={<Navigate to="/" replace />} />
           </Routes>
         </div>

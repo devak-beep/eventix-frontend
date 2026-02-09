@@ -101,9 +101,11 @@ function Register({ onRegisterSuccess }) {
           </div>
         ) : (
           <>
-            <div className="auth-logo">Eventix</div>
+            <div className="auth-logo">
+              <h1>Eventix</h1>
+              <p>Your Event Booking Platform</p>
+            </div>
             <h2>Create Account</h2>
-            <p>Register to book events on Eventix</p>
 
             {error && <div className="error">{error}</div>}
 

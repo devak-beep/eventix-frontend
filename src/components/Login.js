@@ -1,6 +1,8 @@
 // This component handles user login
 import React, { useState } from 'react';
 import { loginUser } from '../api';
+import { EventixLogo } from './EventixLogo';
+import { FullScreenLogoSequence } from './FullScreenLogoSequence';
 
 function Login({ onLoginSuccess, onSwitchToRegister }) {
   // Form data
@@ -10,6 +12,8 @@ function Login({ onLoginSuccess, onSwitchToRegister }) {
   // UI states
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
+  const [showAnimation, setShowAnimation] = useState(false);
+  const [user, setUser] = useState(null);
 
   // Handle login
   const handleLogin = async (e) => {
@@ -26,11 +30,11 @@ function Login({ onLoginSuccess, onSwitchToRegister }) {
       });
       
       // Save user info in localStorage (browser storage)
-      const user = response.data;
-      localStorage.setItem('user', JSON.stringify(user));
+      const userData = response.data;
+      localStorage.setItem('user', JSON.stringify(userData));
       
-      // Tell parent component login was successful
-      onLoginSuccess(user);
+      setUser(userData);
+      setShowAnimation(true);
     } catch (err) {
       setError('Invalid email or password');
     } finally {
@@ -39,11 +43,14 @@ function Login({ onLoginSuccess, onSwitchToRegister }) {
   };
 
   return (
-    <div className="auth-container">
-      <div className="auth-box">
+    <>
+      {showAnimation && <FullScreenLogoSequence onComplete={() => onLoginSuccess(user)} />}
+      <div className="auth-container">
+        <div className="auth-box">
         <div className="auth-logo">
+          <EventixLogo width={80} height={80} />
           <h1>Eventix</h1>
-          <p>Your Event Booking Platform</p>
+          <p>Enterprise Event Management Platform</p>
         </div>
         <h2>Welcome Back!</h2>
 
@@ -85,6 +92,7 @@ function Login({ onLoginSuccess, onSwitchToRegister }) {
         </p>
       </div>
     </div>
+    </>
   );
 }
 

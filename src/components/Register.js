@@ -1,17 +1,43 @@
 // This component handles user registration
 import React, { useState } from 'react';
 import { createUser } from '../api';
+import { EventixLogo } from './EventixLogo';
+import { FullScreenLogoSequence } from './FullScreenLogoSequence';
 
 function Register({ onRegisterSuccess }) {
   // Form data
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [confirmPassword, setConfirmPassword] = useState('');
   
   // UI states
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const [showSuccess, setShowSuccess] = useState(false);
+  const [passwordMatch, setPasswordMatch] = useState(true);
+  const [showAnimation, setShowAnimation] = useState(false);
+
+  // Check password match
+  const handleConfirmPasswordChange = (e) => {
+    const value = e.target.value;
+    setConfirmPassword(value);
+    if (value.length >= password.length && value !== password) {
+      setPasswordMatch(false);
+    } else if (value === password) {
+      setPasswordMatch(true);
+    } else {
+      setPasswordMatch(true);
+    }
+  };
+
+  const handlePasswordChange = (e) => {
+    const value = e.target.value;
+    setPassword(value);
+    if (confirmPassword && confirmPassword.length >= value.length) {
+      setPasswordMatch(confirmPassword === value);
+    }
+  };
 
   // Validate form data
   const validateForm = () => {
@@ -44,6 +70,12 @@ function Register({ onRegisterSuccess }) {
     // Check for at least one special character
     if (!/[!@#$%^&*(),.?":{}|<>]/.test(password)) {
       setError('Password must contain at least one special character (!@#$%^&* etc.)');
+      return false;
+    }
+
+    // Check password match
+    if (password !== confirmPassword) {
+      setError('Passwords do not match');
       return false;
     }
 
@@ -82,12 +114,14 @@ function Register({ onRegisterSuccess }) {
 
   // Handle going to login after success
   const goToLogin = () => {
-    onRegisterSuccess(null); // Switch to login page
+    setShowAnimation(true);
   };
 
   return (
-    <div className="auth-container">
-      <div className="auth-box">
+    <>
+      {showAnimation && <FullScreenLogoSequence onComplete={() => onRegisterSuccess(null)} />}
+      <div className="auth-container">
+        <div className="auth-box">
         {/* Show success message after registration */}
         {showSuccess ? (
           <div className="success-popup">
@@ -102,8 +136,9 @@ function Register({ onRegisterSuccess }) {
         ) : (
           <>
             <div className="auth-logo">
+              <EventixLogo width={80} height={80} />
               <h1>Eventix</h1>
-              <p>Your Event Booking Platform</p>
+              <p>Enterprise Event Management Platform</p>
             </div>
             <h2>Create Account</h2>
 
@@ -139,11 +174,28 @@ function Register({ onRegisterSuccess }) {
                 <input
                   type="password"
                   value={password}
-                  onChange={(e) => setPassword(e.target.value)}
+                  onChange={handlePasswordChange}
                   required
                   placeholder="Enter password"
                 />
                 <small>Min 6 characters, 1 number, 1 special character (!@#$%^&*)</small>
+              </div>
+
+              <div className="form-group">
+                <label>Confirm Password:</label>
+                <input
+                  type="password"
+                  value={confirmPassword}
+                  onChange={handleConfirmPasswordChange}
+                  required
+                  placeholder="Re-enter password"
+                  style={{ borderColor: !passwordMatch ? '#ef4444' : '' }}
+                />
+                {!passwordMatch && confirmPassword && (
+                  <small style={{ color: '#ef4444', fontWeight: 600 }}>
+                    ⚠️ Passwords do not match
+                  </small>
+                )}
               </div>
 
               <button type="submit" disabled={loading} className="submit-btn">
@@ -161,6 +213,7 @@ function Register({ onRegisterSuccess }) {
         )}
       </div>
     </div>
+    </>
   );
 }
 

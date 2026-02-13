@@ -7,10 +7,10 @@ import Register from './components/Register';
 import EventList from './components/EventList';
 import LockSeatsPage from './components/LockSeatsPage';
 import ConfirmBookingPage from './components/ConfirmBookingPage';
-import PaymentPage from './components/PaymentPage';
 import BookingResultPage from './components/BookingResultPage';
 import MyBookings from './components/MyBookings';
 import CreateEvent from './components/CreateEvent';
+import { EventixLogoSimple } from './components/EventixLogo';
 
 // Navigation bar component
 function Navbar({ user, onLogout }) {
@@ -18,7 +18,10 @@ function Navbar({ user, onLogout }) {
 
   return (
     <nav className="navbar">
-      <h1 onClick={() => navigate('/')} style={{ cursor: 'pointer' }}>Eventix</h1>
+      <div onClick={() => navigate('/')} style={{ cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '10px' }}>
+        <EventixLogoSimple width={40} height={40} />
+        <h1>Eventix</h1>
+      </div>
       <div className="nav-links">
         <span className="user-info">{user.name}</span>
         <button onClick={() => navigate('/')}>All Events</button>
@@ -91,7 +94,6 @@ function App() {
             <Route path="/" element={<EventList />} />
             <Route path="/event/:eventId" element={<LockSeatsPage userId={user._id} />} />
             <Route path="/booking/confirm/:lockId" element={<ConfirmBookingPage />} />
-            <Route path="/booking/payment/:bookingId" element={<PaymentPage />} />
             <Route path="/booking/result/:bookingId" element={<BookingResultPage />} />
             <Route path="/bookings" element={<MyBookings userId={user._id} />} />
             <Route path="/create" element={<CreateEvent userId={user._id} />} />

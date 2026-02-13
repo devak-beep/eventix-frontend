@@ -1,0 +1,47 @@
+<svg width="220" height="220" viewBox="0 0 220 220" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="eventixGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#00d4ff" />
+      <stop offset="50%" stop-color="#00b8ff" />
+      <stop offset="100%" stop-color="#0099ff" />
+    </linearGradient>
+    
+    <radialGradient id="circle1" cx="30%" cy="30%">
+      <stop offset="0%" stop-color="#33ddff" />
+      <stop offset="100%" stop-color="#00d4ff" />
+    </radialGradient>
+    
+    <radialGradient id="circle2" cx="30%" cy="30%">
+      <stop offset="0%" stop-color="#00b8ff" />
+      <stop offset="100%" stop-color="#00d4ff" />
+    </radialGradient>
+    
+    <radialGradient id="circle3" cx="30%" cy="30%">
+      <stop offset="0%" stop-color="#0099ff" />
+      <stop offset="100%" stop-color="#00b8ff" />
+    </radialGradient>
+  </defs>
+
+  <g transform="translate(60, 50)">
+    <!-- Top horizontal bar of E - 3 circles -->
+    <circle cx="15" cy="15" r="15" fill="url(#circle1)" opacity="0.9" />
+    <circle cx="40" cy="15" r="15" fill="url(#circle2)" opacity="0.85" />
+    <circle cx="65" cy="15" r="15" fill="url(#circle3)" opacity="0.9" />
+    
+    <!-- Vertical spine of E - 5 circles -->
+    <circle cx="15" cy="15" r="15" fill="url(#circle1)" opacity="0.9" />
+    <circle cx="15" cy="40" r="15" fill="url(#circle1)" opacity="0.85" />
+    <circle cx="15" cy="60" r="15" fill="url(#circle2)" opacity="0.9" />
+    <circle cx="15" cy="85" r="15" fill="url(#circle2)" opacity="0.85" />
+    <circle cx="15" cy="105" r="15" fill="url(#circle1)" opacity="0.9" />
+    
+    <!-- Middle horizontal bar of E - 2 circles -->
+    <circle cx="40" cy="60" r="15" fill="url(#circle2)" opacity="0.85" />
+    <circle cx="60" cy="60" r="15" fill="url(#circle3)" opacity="0.8" />
+    
+    <!-- Bottom horizontal bar of E - 3 circles -->
+    <circle cx="15" cy="105" r="15" fill="url(#circle1)" opacity="0.9" />
+    <circle cx="40" cy="105" r="15" fill="url(#circle2)" opacity="0.85" />
+    <circle cx="65" cy="105" r="15" fill="url(#circle3)" opacity="0.9" />
+  </g>
+</svg>

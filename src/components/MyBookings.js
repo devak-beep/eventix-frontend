@@ -171,41 +171,57 @@ function MyBookings({ userId }) {
           {/* Display all bookings */}
           <div className="bookings-list">
             {bookings.map((booking) => (
-          <div key={booking._id} className="booking-card">
-            <div className="booking-header">
-              <h3>Booking #{booking._id.slice(-6)}</h3>
-              <span 
-                className="status-badge"
-                style={{ backgroundColor: getStatusColor(booking.status) }}
-              >
-                {booking.status}
-              </span>
-            </div>
+          <div key={booking._id} className="booking-card" style={{ display: 'flex', gap: '20px', alignItems: 'center' }}>
+            <div style={{ flex: 1 }}>
+              <div className="booking-header">
+                <h3>Booking #{booking._id.slice(-6)}</h3>
+                <span 
+                  className="status-badge"
+                  style={{ backgroundColor: getStatusColor(booking.status) }}
+                >
+                  {booking.status}
+                </span>
+              </div>
 
-            <div className="booking-details">
-              <p><strong>Event:</strong> {booking.event?.name || booking.event || 'N/A'}</p>
-              <p><strong>User:</strong> {booking.user?.name || booking.user || 'N/A'}</p>
-              <p><strong>Seats:</strong> {Array.isArray(booking.seats) ? booking.seats.length : booking.seats}</p>
-              {booking.amount && (
-                <p><strong>Amount Paid:</strong> ₹{booking.amount}</p>
-              )}
-              <p><strong>Created:</strong> {new Date(booking.createdAt).toLocaleString('en-GB')}</p>
-              
-              {/* Show payment expiry if pending */}
-              {booking.paymentExpiresAt && (
-                <p><strong>Payment Expires:</strong> {new Date(booking.paymentExpiresAt).toLocaleString('en-GB')}</p>
+              <div className="booking-details">
+                <p><strong>Event:</strong> {booking.event?.name || booking.event || 'N/A'}</p>
+                <p><strong>User:</strong> {booking.user?.name || booking.user || 'N/A'}</p>
+                <p><strong>Seats:</strong> {Array.isArray(booking.seats) ? booking.seats.length : booking.seats}</p>
+                {booking.amount && (
+                  <p><strong>Amount Paid:</strong> ₹{booking.amount}</p>
+                )}
+                <p><strong>Created:</strong> {new Date(booking.createdAt).toLocaleString('en-GB')}</p>
+                
+                {/* Show payment expiry if pending */}
+                {booking.paymentExpiresAt && (
+                  <p><strong>Payment Expires:</strong> {new Date(booking.paymentExpiresAt).toLocaleString('en-GB')}</p>
+                )}
+              </div>
+
+              {/* Show cancel button only for confirmed bookings */}
+              {booking.status === 'CONFIRMED' && (
+                <button 
+                  onClick={() => handleCancelBooking(booking._id)}
+                  disabled={loading}
+                  className="cancel-btn"
+                >
+                  Cancel Booking (50% refund)
+                </button>
               )}
             </div>
-
-            {/* Show cancel button only for confirmed bookings */}
-            {booking.status === 'CONFIRMED' && (
-              <button 
-                onClick={() => handleCancelBooking(booking._id)}
-                disabled={loading}
-                className="cancel-btn"
-              >
-                Cancel Booking (50% refund)
-              </button>
+            
+            {booking.event?.image && (
+              <div 
+                style={{ 
+                  width: '200px',
+                  height: '280px',
+                  backgroundImage: `url(${booking.event.image})`,
+                  backgroundSize: 'cover',
+                  backgroundPosition: 'center',
+                  borderRadius: '8px',
+                  flexShrink: 0
+                }}
+              />
             )}
           </div>
         ))}
@@ -225,6 +241,19 @@ function MyBookings({ userId }) {
           <div className="bookings-list">
             {myEvents.map((event) => (
               <div key={event._id} className="booking-card event-card">
+                {event.image && (
+                  <div 
+                    className="event-image"
+                    style={{ 
+                      backgroundImage: `url(${event.image})`,
+                      height: '200px',
+                      backgroundSize: 'cover',
+                      backgroundPosition: 'center',
+                      borderRadius: '8px 8px 0 0',
+                      marginBottom: '15px'
+                    }}
+                  />
+                )}
                 <div className="booking-header">
                   <h3>{event.name}</h3>
                   <span 
@@ -243,7 +272,7 @@ function MyBookings({ userId }) {
                   <p><strong>Event Date:</strong> {new Date(event.eventDate).toLocaleString('en-GB')}</p>
                   <p><strong>Event ID:</strong> <code>{event._id}</code></p>
                   <p><strong>Created:</strong> {new Date(event.createdAt).toLocaleString('en-GB')}</p>
-                  <p><strong>Category:</strong> {event.category}</p>
+                  <p><strong>Category:</strong> {Array.isArray(event.category) ? event.category.join(', ') : event.category}</p>
                   <p><strong>Platform Fee Paid:</strong> ₹{event.creationCharge || 0}</p>
                   <p><strong>Total Seats:</strong> {event.totalSeats}</p>
                   <p><strong>Available Seats:</strong> {event.availableSeats}</p>

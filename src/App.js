@@ -18,6 +18,12 @@ import { EventixLogoSimple } from './components/EventixLogo';
 function Navbar({ user, onLogout }) {
   const navigate = useNavigate();
 
+  const handleLogout = () => {
+    if (window.confirm('Are you sure you want to logout?')) {
+      onLogout();
+    }
+  };
+
   return (
     <nav className="navbar">
       <div onClick={() => navigate('/')} style={{ cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '10px' }}>
@@ -31,7 +37,7 @@ function Navbar({ user, onLogout }) {
           <button onClick={() => navigate('/create')}>Create Event</button>
         )}
         <button onClick={() => navigate('/bookings')}>My Dashboard</button>
-        <button onClick={onLogout} className="logout-btn">Logout</button>
+        <button onClick={handleLogout} className="logout-btn">Logout</button>
       </div>
     </nav>
   );

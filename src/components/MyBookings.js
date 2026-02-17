@@ -25,6 +25,7 @@ function MyBookings({ userId }) {
     } else {
       fetchMyEvents();
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [activeTab]);
 
   // Function to get all bookings from backend

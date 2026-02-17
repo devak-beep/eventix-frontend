@@ -26,7 +26,6 @@ function CreateEvent({ userId }) {
   // State for UI
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
-  const [success, setSuccess] = useState('');
   const [createdEventId, setCreatedEventId] = useState('');
   const [creationCharge, setCreationCharge] = useState(500);
   const [showPaymentConfirm, setShowPaymentConfirm] = useState(false);

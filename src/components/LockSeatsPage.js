@@ -1,13 +1,12 @@
 // Lock Seats Page - Step 1 of booking
 import React, { useState, useEffect } from 'react';
-import { useParams, useNavigate, useLocation } from 'react-router-dom';
+import { useParams, useNavigate } from 'react-router-dom';
 import { getEventById, lockSeats, cancelLock } from '../api';
 import { v4 as uuidv4 } from 'uuid';
 
 function LockSeatsPage({ userId }) {
   const { eventId } = useParams();
   const navigate = useNavigate();
-  const location = useLocation();
 
   const [event, setEvent] = useState(null);
   const [seats, setSeats] = useState(1);
@@ -18,6 +17,7 @@ function LockSeatsPage({ userId }) {
 
   useEffect(() => {
     fetchEventDetails();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [eventId]);
 
   // Warn user if they try to leave after locking seats

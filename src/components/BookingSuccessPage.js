@@ -20,16 +20,30 @@ function BookingSuccessPage() {
             <p><strong>Amount Paid:</strong> ₹{amount}</p>
           </div>
 
-          <button onClick={() => navigate('/my-bookings')} style={{ marginTop: '20px' }}>
-            View My Bookings
-          </button>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '15px', marginTop: '30px' }}>
+            <button 
+              onClick={() => navigate('/bookings')} 
+              style={{ 
+                padding: '12px 24px',
+                fontSize: '16px',
+                fontWeight: '500'
+              }}
+            >
+              📋 View My Bookings
+            </button>
 
-          <button 
-            onClick={() => navigate('/')} 
-            style={{ marginTop: '10px', background: '#666' }}
-          >
-            Back to Events
-          </button>
+            <button 
+              onClick={() => navigate('/')} 
+              style={{ 
+                padding: '12px 24px',
+                fontSize: '16px',
+                background: '#666',
+                fontWeight: '500'
+              }}
+            >
+              🏠 Back to Events
+            </button>
+          </div>
         </div>
       </div>
     </div>

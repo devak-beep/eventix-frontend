@@ -3,6 +3,8 @@ import React, { useState, useEffect } from 'react';
 import { getAllBookings, cancelBooking, getUserById } from '../api';
 import axios from 'axios';
 
+const API_BASE_URL = process.env.REACT_APP_API_URL || 'http://localhost:3000/api';
+
 function MyBookings({ userId }) {
   // State to store list of bookings
   const [bookings, setBookings] = useState([]);
@@ -90,7 +92,7 @@ function MyBookings({ userId }) {
     
     try {
       console.log('Fetching events for userId:', userId);
-      const response = await axios.get(`http://localhost:3000/api/events/my-events?userId=${userId}&t=${Date.now()}`);
+      const response = await axios.get(`${API_BASE_URL}/events/my-events?userId=${userId}&t=${Date.now()}`);
       console.log('My events response:', response.data);
       setMyEvents(response.data.data || []);
     } catch (err) {

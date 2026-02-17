@@ -8,6 +8,8 @@ import EventList from './components/EventList';
 import LockSeatsPage from './components/LockSeatsPage';
 import ConfirmBookingPage from './components/ConfirmBookingPage';
 import BookingResultPage from './components/BookingResultPage';
+import PaymentPage from './components/PaymentPage';
+import BookingSuccessPage from './components/BookingSuccessPage';
 import MyBookings from './components/MyBookings';
 import CreateEvent from './components/CreateEvent';
 import { EventixLogoSimple } from './components/EventixLogo';
@@ -96,6 +98,8 @@ function App() {
             <Route path="/" element={<EventList />} />
             <Route path="/event/:eventId" element={<LockSeatsPage userId={user._id} />} />
             <Route path="/booking/confirm/:lockId" element={<ConfirmBookingPage />} />
+            <Route path="/booking/payment/:bookingId" element={<PaymentPage />} />
+            <Route path="/booking/success" element={<BookingSuccessPage />} />
             <Route path="/booking/result/:bookingId" element={<BookingResultPage />} />
             <Route path="/bookings" element={<MyBookings userId={user._id} />} />
             <Route 

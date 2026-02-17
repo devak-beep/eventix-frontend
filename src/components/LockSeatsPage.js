@@ -137,12 +137,27 @@ function LockSeatsPage({ userId }) {
 
       <div className="event-details-content">
         <div className="event-header">
+          {event.image && (
+            <img 
+              src={event.image} 
+              alt={event.name}
+              style={{ 
+                width: '100%',
+                height: 'auto',
+                maxHeight: '500px',
+                objectFit: 'contain',
+                marginBottom: '20px',
+                backgroundColor: 'rgba(22, 33, 62, 0.8)',
+                padding: '20px'
+              }}
+            />
+          )}
           <h2>{event.name}</h2>
           <p className="description">{event.description}</p>
           <div className="event-meta">
-            <p>Date: {new Date(event.eventDate).toLocaleString('en-GB')}</p>
-            <p>Available Seats: {event.availableSeats} / {event.totalSeats}</p>
-            <p>Price: ₹{event.amount || 0} per ticket</p>
+            <p><strong>Date:</strong> {new Date(event.eventDate).toLocaleString('en-GB')}</p>
+            <p><strong>Available Seats:</strong> {event.availableSeats} / {event.totalSeats}</p>
+            <p><strong>Price:</strong> ₹{event.amount || 0} per ticket</p>
           </div>
         </div>
 

@@ -29,6 +29,21 @@ function EventList() {
       label: 'Food & Drink',
       image: 'https://images.unsplash.com/photo-1555939594-58d7cb561ad1?w=800&h=400&fit=crop'
     },
+    'festivals-cultural': { 
+      icon: '🎊', 
+      label: 'Festivals',
+      image: 'https://images.unsplash.com/photo-1533174072545-7a4b6ad7a6c3?w=800&h=400&fit=crop'
+    },
+    'dance-party': { 
+      icon: '💃', 
+      label: 'Dance & Party',
+      image: 'https://images.unsplash.com/photo-1514525253161-7a46d19cd819?w=800&h=400&fit=crop'
+    },
+    'concerts-music': { 
+      icon: '🎵', 
+      label: 'Concerts',
+      image: 'https://images.unsplash.com/photo-1470229722913-7c0e2dbbafd3?w=800&h=400&fit=crop'
+    },
     'sports-live': { 
       icon: '⚽', 
       label: 'Sports & Live',
@@ -48,11 +63,6 @@ function EventList() {
       icon: '🎬', 
       label: 'Movies',
       image: 'https://images.unsplash.com/photo-1489599849927-2ee91cede3ba?w=800&h=400&fit=crop'
-    },
-    'concerts-music': { 
-      icon: '🎵', 
-      label: 'Concerts',
-      image: 'https://images.unsplash.com/photo-1470229722913-7c0e2dbbafd3?w=800&h=400&fit=crop'
     },
   };
 
@@ -146,8 +156,15 @@ function EventList() {
       </div>
 
       {/* Category filter tabs */}
-      <div className="category-tabs">
-        {Object.entries(categories).map(([key, { icon, label }]) => (
+      <div className="category-container">
+        <button 
+          className="scroll-arrow left"
+          onClick={() => document.querySelector('.category-tabs').scrollBy({ left: -300, behavior: 'smooth' })}
+        >
+          ‹
+        </button>
+        <div className="category-tabs">
+          {Object.entries(categories).map(([key, { icon, label }]) => (
           <button
             key={key}
             className={`category-tab ${selectedCategory === key ? 'active' : ''}`}
@@ -157,6 +174,13 @@ function EventList() {
             <span className="category-label">{label}</span>
           </button>
         ))}
+        </div>
+        <button 
+          className="scroll-arrow right"
+          onClick={() => document.querySelector('.category-tabs').scrollBy({ left: 300, behavior: 'smooth' })}
+        >
+          ›
+        </button>
       </div>
 
       {/* Show error message if any */}
@@ -166,25 +190,25 @@ function EventList() {
       {loading && <p className="info">Loading events...</p>}
 
       {/* Show message if no events */}
-      {!loading && events.filter(e => selectedCategory === 'all' || e.category === selectedCategory).length === 0 && (
+      {!loading && events.filter(e => selectedCategory === 'all' || (Array.isArray(e.category) ? e.category.includes(selectedCategory) : e.category === selectedCategory)).length === 0 && (
         <p className="info">No events available in this category.</p>
       )}
 
       {/* Display all events as cards */}
       <div className="events-grid">
         {events
-          .filter(event => selectedCategory === 'all' || event.category === selectedCategory)
+          .filter(event => selectedCategory === 'all' || (Array.isArray(event.category) ? event.category.includes(selectedCategory) : event.category === selectedCategory))
           .map((event) => (
           <div 
             key={event._id} 
             className="event-card"
             onClick={() => navigate(`/event/${event._id}`)}
           >
-            {/* Category image */}
-            {categories[event.category]?.image && (
+            {/* Event image - use uploaded image if available, otherwise category image */}
+            {(event.image || categories[Array.isArray(event.category) ? event.category[0] : event.category]?.image) && (
               <div 
                 className="event-image"
-                style={{ backgroundImage: `url(${categories[event.category].image})` }}
+                style={{ backgroundImage: `url(${event.image || categories[Array.isArray(event.category) ? event.category[0] : event.category].image})` }}
               >
                 {event.type === 'private' && (
                   <span className="event-badge private">🔒 Private</span>
@@ -194,15 +218,13 @@ function EventList() {
             
             <div className="event-content">
               <div className="event-category-badge">
-                {categories[event.category]?.icon} {categories[event.category]?.label}
+                {Array.isArray(event.category) 
+                  ? event.category.map(cat => categories[cat]?.icon).join(' ')
+                  : categories[event.category]?.icon} {Array.isArray(event.category) 
+                  ? event.category.map(cat => categories[cat]?.label).join(', ')
+                  : categories[event.category]?.label}
               </div>
               <h3>{event.name}</h3>
-              <p className="description">{event.description}</p>
-              <div className="event-info">
-                <p>{new Date(event.eventDate).toLocaleDateString('en-GB')}</p>
-                <p>{event.availableSeats} / {event.totalSeats} seats available</p>
-                <p className="event-price">₹{event.amount || 0} per ticket</p>
-              </div>
             </div>
           </div>
         ))}

@@ -10,6 +10,7 @@ function Register({ onRegisterSuccess }) {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
+  const [role, setRole] = useState('user'); // Add role state
   
   // UI states
   const [loading, setLoading] = useState(false);
@@ -100,7 +101,8 @@ function Register({ onRegisterSuccess }) {
       await createUser({ 
         name: name.trim(), 
         email: email.toLowerCase().trim(), 
-        password 
+        password,
+        role // Include role in registration
       });
       
       // Show success message
@@ -196,6 +198,19 @@ function Register({ onRegisterSuccess }) {
                     ⚠️ Passwords do not match
                   </small>
                 )}
+              </div>
+
+              <div className="form-group">
+                <label>Account Type:</label>
+                <select 
+                  value={role} 
+                  onChange={(e) => setRole(e.target.value)}
+                  required
+                >
+                  <option value="user">User (Book Events)</option>
+                  <option value="admin">Admin (Create & Manage Events)</option>
+                </select>
+                <small>Choose User to book events or Admin to create events</small>
               </div>
 
               <button type="submit" disabled={loading} className="submit-btn">

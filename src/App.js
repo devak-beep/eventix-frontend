@@ -23,9 +23,11 @@ function Navbar({ user, onLogout }) {
         <h1>Eventix</h1>
       </div>
       <div className="nav-links">
-        <span className="user-info">{user.name}</span>
+        <span className="user-info">{user.name} {user.role === 'admin' && '(Admin)'}</span>
         <button onClick={() => navigate('/')}>All Events</button>
-        <button onClick={() => navigate('/create')}>Create Event</button>
+        {user.role === 'admin' && (
+          <button onClick={() => navigate('/create')}>Create Event</button>
+        )}
         <button onClick={() => navigate('/bookings')}>My Dashboard</button>
         <button onClick={onLogout} className="logout-btn">Logout</button>
       </div>
@@ -96,7 +98,14 @@ function App() {
             <Route path="/booking/confirm/:lockId" element={<ConfirmBookingPage />} />
             <Route path="/booking/result/:bookingId" element={<BookingResultPage />} />
             <Route path="/bookings" element={<MyBookings userId={user._id} />} />
-            <Route path="/create" element={<CreateEvent userId={user._id} />} />
+            <Route 
+              path="/create" 
+              element={
+                user.role === 'admin' 
+                  ? <CreateEvent userId={user._id} /> 
+                  : <Navigate to="/" replace />
+              } 
+            />
             <Route path="*" element={<Navigate to="/" replace />} />
           </Routes>
         </div>

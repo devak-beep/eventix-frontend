@@ -1,5 +1,5 @@
 // This component allows creating new events
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { createEvent } from '../api';
 import { v4 as uuidv4 } from 'uuid';
@@ -9,6 +9,18 @@ function CreateEvent({ userId }) {
   
   // Debug: Log userId
   console.log('CreateEvent userId:', userId);
+
+  // Load Razorpay script
+  useEffect(() => {
+    const script = document.createElement('script');
+    script.src = 'https://checkout.razorpay.com/v1/checkout.js';
+    script.async = true;
+    document.body.appendChild(script);
+
+    return () => {
+      document.body.removeChild(script);
+    };
+  }, []);
   
   // State for event form
   const [eventData, setEventData] = useState({

@@ -1,11 +1,14 @@
 // This component shows all bookings made by users
 import React, { useState, useEffect } from 'react';
-import { getAllBookings, cancelBooking } from '../api';
+import { getAllBookings, cancelBooking, getUserById } from '../api';
 import axios from 'axios';
 
 function MyBookings({ userId }) {
   // State to store list of bookings
   const [bookings, setBookings] = useState([]);
+  
+  // State for user role
+  const [userRole, setUserRole] = useState('user');
   
   // State for my events
   const [myEvents, setMyEvents] = useState([]);
@@ -17,6 +20,19 @@ function MyBookings({ userId }) {
   
   // Toggle between bookings and events
   const [activeTab, setActiveTab] = useState('bookings'); // 'bookings' or 'events'
+
+  // Fetch user role on mount
+  useEffect(() => {
+    const fetchUserRole = async () => {
+      try {
+        const response = await getUserById(userId);
+        setUserRole(response.data.role || 'user');
+      } catch (err) {
+        console.error('Error fetching user role:', err);
+      }
+    };
+    fetchUserRole();
+  }, [userId]);
 
   // Fetch bookings when component loads
   useEffect(() => {
@@ -137,12 +153,14 @@ function MyBookings({ userId }) {
         >
           My Bookings
         </button>
-        <button 
-          className={`tab-btn ${activeTab === 'events' ? 'active' : ''}`}
-          onClick={() => setActiveTab('events')}
-        >
-          My Events
-        </button>
+        {userRole === 'admin' && (
+          <button 
+            className={`tab-btn ${activeTab === 'events' ? 'active' : ''}`}
+            onClick={() => setActiveTab('events')}
+          >
+            My Events
+          </button>
+        )}
       </div>
 
       {/* Refresh button */}

@@ -37,7 +37,13 @@ function CreateEvent({ userId }) {
     if (seats <= 100) return 1000;
     if (seats <= 200) return 1500;
     if (seats <= 500) return 2500;
-    return 5000;
+    if (seats <= 1000) return 5000;
+    if (seats <= 2000) return 8000;
+    if (seats <= 5000) return 12000;
+    if (seats <= 10000) return 20000;
+    if (seats <= 20000) return 35000;
+    if (seats <= 50000) return 60000;
+    return 100000; // For >50000 seats
   };
 
   // Handle input changes for event form
@@ -156,42 +162,111 @@ function CreateEvent({ userId }) {
       const idempotencyKey = uuidv4();
       
       console.log('Creating event with userId:', userId);
-      console.log('Event data:', { ...eventData, userId, idempotencyKey });
       
-      // Get user data from localStorage to send role
+      // Get user data from localStorage
       const user = JSON.parse(localStorage.getItem('user'));
       
-      // Call API to create event with userId, role, and idempotency key
-      const response = await createEvent({ 
+      // First create the event (without payment)
+      const eventResponse = await createEvent({ 
         ...eventData, 
         userId,
         userRole: user?.role || 'user',
-        idempotencyKey 
+        idempotencyKey,
+        paymentStatus: 'PENDING'
       });
       
-      console.log('Event created:', response);
+      const eventId = eventResponse.data._id;
+      console.log('Event created:', eventId);
       
-      setCreatedEventId(response.data._id);
-      setCreationCharge(response.creationCharge || 0);
-      setPaymentSuccess(true);
-      setShowPaymentConfirm(false);
-      
-      // Reset form
-      setEventData({
-        name: '',
-        description: '',
-        eventDate: '',
-        totalSeats: 10,
-        type: 'public',
-        category: [],
-        amount: 0,
-        currency: 'INR',
-        image: null,
+      // Now initiate Razorpay payment for event creation
+      const API_BASE_URL = process.env.REACT_APP_API_URL || 'http://localhost:3000/api';
+      const orderResponse = await fetch(`${API_BASE_URL}/razorpay/create-event-order`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          eventId,
+          amount: creationCharge
+        })
       });
-      setCreationCharge(calculateCreationCharge(10));
+      
+      const orderData = await orderResponse.json();
+      
+      if (!orderData.success) {
+        throw new Error(orderData.message || 'Failed to create payment order');
+      }
+
+      // Load Razorpay checkout
+      const options = {
+        key: orderData.keyId,
+        amount: orderData.amount,
+        currency: orderData.currency,
+        name: 'Eventix',
+        description: `Event Creation Fee - ${eventData.name}`,
+        order_id: orderData.orderId,
+        handler: async function (response) {
+          try {
+            // Verify payment
+            const verifyResponse = await fetch(`${API_BASE_URL}/razorpay/verify-event-payment`, {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({
+                razorpay_order_id: response.razorpay_order_id,
+                razorpay_payment_id: response.razorpay_payment_id,
+                razorpay_signature: response.razorpay_signature,
+                eventId: eventId
+              })
+            });
+
+            const verifyData = await verifyResponse.json();
+
+            if (verifyData.success) {
+              setCreatedEventId(eventId);
+              setPaymentSuccess(true);
+              setShowPaymentConfirm(false);
+              
+              // Reset form
+              setEventData({
+                name: '',
+                description: '',
+                eventDate: '',
+                totalSeats: 10,
+                type: 'public',
+                category: [],
+                amount: 0,
+                currency: 'INR',
+                image: null,
+              });
+              setCreationCharge(calculateCreationCharge(10));
+            } else {
+              setError('Payment verification failed');
+            }
+          } catch (err) {
+            setError('Payment verification failed');
+            console.error(err);
+          } finally {
+            setLoading(false);
+          }
+        },
+        prefill: {
+          name: user?.name || '',
+          email: user?.email || ''
+        },
+        theme: {
+          color: '#0070f3'
+        },
+        modal: {
+          ondismiss: function() {
+            setError('Payment cancelled. Event created but not published.');
+            setLoading(false);
+            setShowPaymentConfirm(false);
+          }
+        }
+      };
+
+      const razorpay = new window.Razorpay(options);
+      razorpay.open();
     } catch (err) {
-      setError(err.response?.data?.message || 'Failed to create event');
-    } finally {
+      setError(err.response?.data?.message || err.message || 'Failed to create event');
       setLoading(false);
     }
   };

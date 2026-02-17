@@ -112,7 +112,6 @@ function CreateEvent({ userId }) {
     e.preventDefault(); // Prevent page reload
     
     setError('');
-    setSuccess('');
 
     // Validate category selection
     if (!eventData.category || eventData.category.length === 0) {

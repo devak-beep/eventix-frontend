@@ -22,7 +22,7 @@ import { EventixLogoSimple } from "./components/EventixLogo";
 import { getUserById } from "./api";
 
 // Navigation bar component
-function Navbar({ user, onLogout }) {
+function Navbar({ user, onLogout, isDarkMode, onToggleTheme }) {
   const navigate = useNavigate();
 
   const handleLogout = () => {
@@ -57,6 +57,13 @@ function Navbar({ user, onLogout }) {
           <button onClick={() => navigate("/create")}>Create Event</button>
         )}
         <button onClick={() => navigate("/bookings")}>My Dashboard</button>
+        <button
+          onClick={onToggleTheme}
+          className="theme-toggle-btn"
+          title={isDarkMode ? "Switch to light mode" : "Switch to dark mode"}
+        >
+          {isDarkMode ? "☀️ Light" : "🌙 Dark"}
+        </button>
         <button onClick={handleLogout} className="logout-btn">
           Logout
         </button>
@@ -71,6 +78,35 @@ function App() {
 
   // State to track which auth page to show (login or register)
   const [showRegister, setShowRegister] = useState(false);
+
+  // State for theme (light or dark)
+  const [isDarkMode, setIsDarkMode] = useState(() => {
+    // Check localStorage first
+    const savedTheme = localStorage.getItem("theme");
+    if (savedTheme) {
+      return savedTheme === "dark";
+    }
+    // Default to system preference
+    return window.matchMedia("(prefers-color-scheme: dark)").matches;
+  });
+
+  // Apply theme on mount and when isDarkMode changes
+  useEffect(() => {
+    const htmlElement = document.documentElement;
+    if (isDarkMode) {
+      htmlElement.classList.add("dark");
+      htmlElement.style.colorScheme = "dark";
+    } else {
+      htmlElement.classList.remove("dark");
+      htmlElement.style.colorScheme = "light";
+    }
+    // Save preference
+    localStorage.setItem("theme", isDarkMode ? "dark" : "light");
+  }, [isDarkMode]);
+
+  const handleToggleTheme = () => {
+    setIsDarkMode(!isDarkMode);
+  };
 
   // Check if user is already logged in (on page load)
   useEffect(() => {
@@ -141,7 +177,12 @@ function App() {
   return (
     <Router>
       <div className="App">
-        <Navbar user={user} onLogout={handleLogout} />
+        <Navbar
+          user={user}
+          onLogout={handleLogout}
+          isDarkMode={isDarkMode}
+          onToggleTheme={handleToggleTheme}
+        />
 
         <div className="container">
           <Routes>

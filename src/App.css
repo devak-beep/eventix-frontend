@@ -146,6 +146,25 @@ body {
   box-shadow: 0 5px 15px rgba(239, 68, 68, 0.3);
 }
 
+.theme-toggle-btn {
+  background: rgba(100, 116, 139, 0.1);
+  color: var(--text-primary);
+  border: 1px solid var(--border-color);
+  padding: 8px 14px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 13px;
+  font-weight: 600;
+  transition: all 0.3s ease;
+  margin: 0 8px;
+}
+
+.theme-toggle-btn:hover {
+  background: rgba(100, 116, 139, 0.2);
+  transform: translateY(-2px);
+  box-shadow: 0 5px 15px rgba(100, 116, 139, 0.2);
+}
+
 .user-info {
   color: var(--text-secondary);
   font-weight: 500;

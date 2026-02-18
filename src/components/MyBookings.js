@@ -31,7 +31,17 @@ function MyBookings({ userId }) {
     const fetchUserRole = async () => {
       try {
         const response = await getUserById(userId);
-        setUserRole(response.data.role || "user");
+        const freshRole = response.data.role || "user";
+        setUserRole(freshRole);
+
+        // IMPORTANT: Also update localStorage with fresh role
+        // This ensures if user was promoted, we get the new role immediately
+        const savedUser = JSON.parse(localStorage.getItem("user") || "{}");
+        if (savedUser.role !== freshRole) {
+          savedUser.role = freshRole;
+          localStorage.setItem("user", JSON.stringify(savedUser));
+          console.log(`Updated user role in localStorage: ${freshRole}`);
+        }
       } catch (err) {
         console.error("Error fetching user role:", err);
       }

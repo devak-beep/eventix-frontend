@@ -1,43 +1,63 @@
 // This is the main App component - the starting point of our frontend
-import React, { useState, useEffect } from 'react';
-import { BrowserRouter as Router, Routes, Route, Navigate, useNavigate } from 'react-router-dom';
-import './App.css';
-import Login from './components/Login';
-import Register from './components/Register';
-import EventList from './components/EventList';
-import LockSeatsPage from './components/LockSeatsPage';
-import ConfirmBookingPage from './components/ConfirmBookingPage';
-import BookingResultPage from './components/BookingResultPage';
-import PaymentPage from './components/PaymentPage';
-import BookingSuccessPage from './components/BookingSuccessPage';
-import MyBookings from './components/MyBookings';
-import CreateEvent from './components/CreateEvent';
-import { EventixLogoSimple } from './components/EventixLogo';
+import React, { useState, useEffect } from "react";
+import {
+  BrowserRouter as Router,
+  Routes,
+  Route,
+  Navigate,
+  useNavigate,
+} from "react-router-dom";
+import "./App.css";
+import Login from "./components/Login";
+import Register from "./components/Register";
+import EventList from "./components/EventList";
+import LockSeatsPage from "./components/LockSeatsPage";
+import ConfirmBookingPage from "./components/ConfirmBookingPage";
+import BookingResultPage from "./components/BookingResultPage";
+import PaymentPage from "./components/PaymentPage";
+import BookingSuccessPage from "./components/BookingSuccessPage";
+import MyBookings from "./components/MyBookings";
+import CreateEvent from "./components/CreateEvent";
+import { EventixLogoSimple } from "./components/EventixLogo";
 
 // Navigation bar component
 function Navbar({ user, onLogout }) {
   const navigate = useNavigate();
 
   const handleLogout = () => {
-    if (window.confirm('Are you sure you want to logout?')) {
+    if (window.confirm("Are you sure you want to logout?")) {
       onLogout();
     }
   };
 
   return (
     <nav className="navbar">
-      <div onClick={() => navigate('/')} style={{ cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '10px' }}>
+      <div
+        onClick={() => navigate("/")}
+        style={{
+          cursor: "pointer",
+          display: "flex",
+          alignItems: "center",
+          gap: "10px",
+        }}
+      >
         <EventixLogoSimple width={40} height={40} />
         <h1>Eventix</h1>
       </div>
       <div className="nav-links">
-        <span className="user-info">{user.name} {user.role === 'admin' && '(Admin)'}</span>
-        <button onClick={() => navigate('/')}>All Events</button>
-        {user.role === 'admin' && (
-          <button onClick={() => navigate('/create')}>Create Event</button>
+        <span className="user-info">
+          {user.name}
+          {user.role === "admin" && " (Admin)"}
+          {user.role === "superAdmin" && " (SuperAdmin)"}
+        </span>
+        <button onClick={() => navigate("/")}>All Events</button>
+        {user.role === "admin" && (
+          <button onClick={() => navigate("/create")}>Create Event</button>
         )}
-        <button onClick={() => navigate('/bookings')}>My Dashboard</button>
-        <button onClick={handleLogout} className="logout-btn">Logout</button>
+        <button onClick={() => navigate("/bookings")}>My Dashboard</button>
+        <button onClick={handleLogout} className="logout-btn">
+          Logout
+        </button>
       </div>
     </nav>
   );
@@ -46,13 +66,13 @@ function Navbar({ user, onLogout }) {
 function App() {
   // State to track logged-in user
   const [user, setUser] = useState(null);
-  
+
   // State to track which auth page to show (login or register)
   const [showRegister, setShowRegister] = useState(false);
 
   // Check if user is already logged in (on page load)
   useEffect(() => {
-    const savedUser = localStorage.getItem('user');
+    const savedUser = localStorage.getItem("user");
     if (savedUser) {
       setUser(JSON.parse(savedUser));
     }
@@ -75,18 +95,16 @@ function App() {
 
   // Handle logout
   const handleLogout = () => {
-    localStorage.removeItem('user');
+    localStorage.removeItem("user");
     setUser(null);
   };
 
   // If user is not logged in, show login/register page
   if (!user) {
     return showRegister ? (
-      <Register 
-        onRegisterSuccess={handleRegisterSuccess}
-      />
+      <Register onRegisterSuccess={handleRegisterSuccess} />
     ) : (
-      <Login 
+      <Login
         onLoginSuccess={handleLoginSuccess}
         onSwitchToRegister={() => setShowRegister(true)}
       />
@@ -98,23 +116,40 @@ function App() {
     <Router>
       <div className="App">
         <Navbar user={user} onLogout={handleLogout} />
-        
+
         <div className="container">
           <Routes>
             <Route path="/" element={<EventList />} />
-            <Route path="/event/:eventId" element={<LockSeatsPage userId={user._id} />} />
-            <Route path="/booking/confirm/:lockId" element={<ConfirmBookingPage />} />
-            <Route path="/booking/payment/:bookingId" element={<PaymentPage />} />
+            <Route
+              path="/event/:eventId"
+              element={<LockSeatsPage userId={user._id} />}
+            />
+            <Route
+              path="/booking/confirm/:lockId"
+              element={<ConfirmBookingPage />}
+            />
+            <Route
+              path="/booking/payment/:bookingId"
+              element={<PaymentPage />}
+            />
             <Route path="/booking/success" element={<BookingSuccessPage />} />
-            <Route path="/booking/result/:bookingId" element={<BookingResultPage />} />
-            <Route path="/bookings" element={<MyBookings userId={user._id} />} />
-            <Route 
-              path="/create" 
+            <Route
+              path="/booking/result/:bookingId"
+              element={<BookingResultPage />}
+            />
+            <Route
+              path="/bookings"
+              element={<MyBookings userId={user._id} />}
+            />
+            <Route
+              path="/create"
               element={
-                user.role === 'admin' 
-                  ? <CreateEvent userId={user._id} /> 
-                  : <Navigate to="/" replace />
-              } 
+                user.role === "admin" ? (
+                  <CreateEvent userId={user._id} />
+                ) : (
+                  <Navigate to="/" replace />
+                )
+              }
             />
             <Route path="*" element={<Navigate to="/" replace />} />
           </Routes>

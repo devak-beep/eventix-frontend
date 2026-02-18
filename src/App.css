@@ -170,7 +170,7 @@ body {
   align-items: center;
 }
 
-.nav-links button {
+.nav-links > button {
   background: rgba(0, 212, 255, 0.1);
   color: #00d4ff;
   border: 1px solid rgba(0, 212, 255, 0.3);
@@ -180,24 +180,12 @@ body {
   font-weight: 500;
   border-radius: 8px;
   transition: all 0.3s ease;
-  margin-left: 15px !important;
 }
 
-.nav-links button:first-child {
-  margin-left: 0 !important;
-}
-
-.nav-links button:hover {
+.nav-links > button:hover {
   background: rgba(0, 212, 255, 0.2);
   transform: translateY(-2px);
   box-shadow: 0 5px 15px rgba(0, 212, 255, 0.3);
-}
-
-.nav-links button:last-child:hover {
-  background: rgba(239, 68, 68, 0.2);
-  border-color: rgba(239, 68, 68, 0.5);
-  color: #ef4444;
-  box-shadow: 0 5px 15px rgba(239, 68, 68, 0.3);
 }
 
 .theme-toggle-btn {

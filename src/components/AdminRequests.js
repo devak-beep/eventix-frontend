@@ -1,6 +1,7 @@
 // This component shows pending admin requests for superAdmin to approve/reject
 import React, { useState, useEffect } from "react";
 import axios from "axios";
+import { MyBookingsSkeleton } from "./SkeletonLoader";
 
 const API_BASE_URL =
   process.env.REACT_APP_API_URL || "http://localhost:3000/api";
@@ -133,17 +134,7 @@ function AdminRequests() {
   };
 
   if (loading) {
-    return (
-      <div className="admin-requests-container">
-        <div className="admin-requests-header">
-          <h2>Pending Admin Requests</h2>
-          <div className="request-count">Loading...</div>
-        </div>
-        <div className="loading-state">
-          <p>Loading admin requests...</p>
-        </div>
-      </div>
-    );
+    return <MyBookingsSkeleton />;
   }
 
   return (

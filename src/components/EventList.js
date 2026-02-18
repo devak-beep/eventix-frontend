@@ -241,7 +241,8 @@ function EventList() {
 
               // Get user role to show visibility tag only to admin
               const user = JSON.parse(localStorage.getItem("user"));
-              const isAdmin = user?.role === "admin";
+              const isAdmin =
+                user?.role === "admin" || user?.role === "superAdmin";
 
               return (
                 <div

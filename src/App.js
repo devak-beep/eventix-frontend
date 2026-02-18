@@ -53,7 +53,7 @@ function Navbar({ user, onLogout }) {
           {!user.role && " (No role)"}
         </span>
         <button onClick={() => navigate("/")}>All Events</button>
-        {user.role === "admin" && (
+        {(user.role === "admin" || user.role === "superAdmin") && (
           <button onClick={() => navigate("/create")}>Create Event</button>
         )}
         <button onClick={() => navigate("/bookings")}>My Dashboard</button>
@@ -170,7 +170,7 @@ function App() {
             <Route
               path="/create"
               element={
-                user.role === "admin" ? (
+                user.role === "admin" || user.role === "superAdmin" ? (
                   <CreateEvent userId={user._id} />
                 ) : (
                   <Navigate to="/" replace />

@@ -182,7 +182,7 @@ function MyBookings({ userId }) {
         >
           My Bookings
         </button>
-        {userRole === "admin" && (
+        {(userRole === "admin" || userRole === "superAdmin") && (
           <button
             className={`tab-btn ${activeTab === "events" ? "active" : ""}`}
             onClick={() => setActiveTab("events")}

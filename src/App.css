@@ -21,8 +21,8 @@
   --shadow-lg: 0 8px 32px rgba(0, 0, 0, 0.12);
   
   /* Accent Colors (work in both themes) */
-  --accent-primary: #3b82f6;
-  --accent-primary-hover: #2563eb;
+  --accent-primary: #61dafb;
+  --accent-primary-hover: #4fc3e8;
   --accent-secondary: #8b5cf6;
   --accent-success: #10b981;
   --accent-warning: #f59e0b;
@@ -31,7 +31,7 @@
   /* Gradient Backgrounds */
   --gradient-main: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 50%, #cbd5e1 100%);
   --gradient-card: linear-gradient(135deg, rgba(255, 255, 255, 0.95) 0%, rgba(248, 250, 252, 0.95) 100%);
-  --gradient-accent: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+  --gradient-accent: linear-gradient(135deg, #61dafb 0%, #4fc3e8 100%);
 }
 
 /* Dark Theme */
@@ -180,12 +180,12 @@ button {
   border-radius: 10px;
   cursor: pointer;
   transition: all 0.3s ease;
-  box-shadow: 0 4px 15px rgba(59, 130, 246, 0.3);
+  box-shadow: 0 4px 15px rgba(97, 218, 251, 0.3);
 }
 
 button:hover {
   transform: translateY(-2px);
-  box-shadow: 0 6px 25px rgba(59, 130, 246, 0.4);
+  box-shadow: 0 6px 25px rgba(97, 218, 251, 0.4);
   background: linear-gradient(135deg, var(--accent-primary-hover) 0%, var(--accent-primary) 100%);
 }
 
@@ -224,7 +224,7 @@ input, select, textarea {
 select {
   cursor: pointer;
   appearance: none;
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%233b82f6' d='M6 9L1 4h10z'/%3E%3C/svg%3E");
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%2361dafb' d='M6 9L1 4h10z'/%3E%3C/svg%3E");
   background-repeat: no-repeat;
   background-position: right 18px center;
   padding-right: 45px;
@@ -240,7 +240,7 @@ input:focus, select:focus, textarea:focus {
   outline: none;
   border-color: var(--accent-primary);
   background: var(--bg-card-hover);
-  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+  box-shadow: 0 0 0 3px rgba(97, 218, 251, 0.1);
 }
 
 input::placeholder, textarea::placeholder {
@@ -989,7 +989,7 @@ input::placeholder, textarea::placeholder {
   font-size: 12px;
   font-weight: 600;
   margin-bottom: 16px;
-  box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
+  box-shadow: 0 4px 12px rgba(97, 218, 251, 0.3);
   align-self: flex-start;
 }
 
@@ -1234,12 +1234,12 @@ input::placeholder, textarea::placeholder {
   border-radius: 12px;
   cursor: pointer;
   transition: all 0.3s ease;
-  box-shadow: 0 4px 16px rgba(59, 130, 246, 0.3);
+  box-shadow: 0 4px 16px rgba(97, 218, 251, 0.3);
 }
 
 .status-message-section .primary-btn:hover {
   transform: translateY(-2px);
-  box-shadow: 0 6px 24px rgba(59, 130, 246, 0.4);
+  box-shadow: 0 6px 24px rgba(97, 218, 251, 0.4);
   background: linear-gradient(135deg, var(--accent-primary-hover) 0%, var(--accent-primary) 100%);
 }
 

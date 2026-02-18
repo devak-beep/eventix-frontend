@@ -276,6 +276,16 @@ function CreateEvent({ userId }) {
       };
 
       const razorpay = new window.Razorpay(options);
+
+      // Handle explicit payment failure (card declined, etc.)
+      razorpay.on("payment.failed", function (response) {
+        setError(
+          `Payment failed: ${response.error.description || "Transaction declined"}. No event was created.`,
+        );
+        setLoading(false);
+        setShowPaymentConfirm(false);
+      });
+
       razorpay.open();
     } catch (err) {
       setError(
@@ -304,6 +314,10 @@ function CreateEvent({ userId }) {
             <div className="payment-amount">₹{creationCharge}</div>
             <p className="payment-info">
               This fee covers hosting and managing your event on our platform.
+            </p>
+            <p className="payment-warning">
+              ⚠️ Your event will only be created after successful payment
+              verification.
             </p>
             <div className="payment-buttons">
               <button

@@ -19,6 +19,7 @@ import BookingSuccessPage from "./components/BookingSuccessPage";
 import MyBookings from "./components/MyBookings";
 import CreateEvent from "./components/CreateEvent";
 import { EventixLogoSimple } from "./components/EventixLogo";
+import { getUserById } from "./api";
 
 // Navigation bar component
 function Navbar({ user, onLogout }) {
@@ -78,6 +79,28 @@ function App() {
       const parsedUser = JSON.parse(savedUser);
       console.log("User loaded from localStorage:", parsedUser);
       setUser(parsedUser);
+
+      // Refresh user data from API to get latest role (in case user was promoted)
+      getUserById(parsedUser._id)
+        .then((response) => {
+          const freshUser = response.data;
+          console.log("Fresh user data from API:", freshUser);
+
+          // Update state with fresh data
+          setUser(freshUser);
+
+          // Update localStorage if role changed
+          if (freshUser.role !== parsedUser.role) {
+            console.log(
+              `User role updated: ${parsedUser.role} → ${freshUser.role}`,
+            );
+            localStorage.setItem("user", JSON.stringify(freshUser));
+          }
+        })
+        .catch((err) => {
+          console.error("Error refreshing user data:", err);
+          // Keep the cached user if API fails
+        });
     }
   }, []);
 

@@ -844,26 +844,25 @@ input::placeholder, textarea::placeholder {
 
 .list-header {
   display: flex;
-  flex-direction: column;
-  gap: 20px;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 30px;
   margin-bottom: 30px;
 }
 
 .list-header h2 {
-  margin-bottom: -10px;
+  margin: 0;
+  white-space: nowrap;
+  flex-shrink: 0;
 }
 
-.list-header > div:last-child {
+.search-controls {
   display: flex;
   flex-direction: column;
-  gap: 15px;
-}
-
-.search-mode-selector {
-  display: flex;
   gap: 12px;
-  flex-wrap: wrap;
-  justify-content: flex-end;
+  align-items: flex-end;
+  flex: 1;
 }
 
 .mode-btn {
@@ -880,6 +879,13 @@ input::placeholder, textarea::placeholder {
   font-size: 14px;
   transition: all 0.3s ease;
   white-space: nowrap;
+}
+
+.search-mode-selector {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+  justify-content: flex-end;
 }
 
 .mode-btn:hover {
@@ -928,18 +934,19 @@ input::placeholder, textarea::placeholder {
 
 .search-input-group {
   display: flex;
-  flex-direction: column;
+  flex-direction: row;
   gap: 10px;
   width: 100%;
-  align-items: flex-end;
+  max-width: 550px;
+  align-items: center;
 }
 
 .public-search {
-  max-width: 500px;
+  max-width: 550px;
 }
 
 .private-search {
-  max-width: 500px;
+  max-width: 550px;
 }
 
 .public-search-input,
@@ -1474,6 +1481,17 @@ input::placeholder, textarea::placeholder {
   line-height: 1.3;
 }
 
+.event-organizer {
+  color: #00d4ff;
+  font-size: 13px;
+  font-weight: 600;
+  margin: 8px 0 12px 0;
+  padding: 6px 10px;
+  background: rgba(0, 212, 255, 0.1);
+  border-radius: 4px;
+  display: inline-block;
+}
+
 .event-card .description {
   color: var(--text-secondary);
   margin-bottom: 20px;
@@ -1773,16 +1791,26 @@ input::placeholder, textarea::placeholder {
 
 .event-meta {
   display: flex;
-  gap: 30px;
-  flex-wrap: wrap;
+  flex-direction: column;
+  gap: 12px;
   margin-top: 20px;
+  padding: 20px;
+  background: rgba(0, 212, 255, 0.05);
+  border-left: 3px solid #00d4ff;
+  border-radius: 8px;
 }
 
 .event-meta p {
   color: var(--text-secondary);
   font-size: 15px;
   font-weight: 500;
-  margin: 8px 0;
+  margin: 0;
+}
+
+.event-meta p:last-child {
+  color: #00d4ff;
+  font-weight: 600;
+  margin-top: 5px;
 }
 
 .booking-form {

@@ -178,7 +178,7 @@ function EventList() {
       <div className="list-header">
         <h2>Available Events</h2>
 
-        <div>
+        <div className="search-controls">
           {/* Dual-mode search interface */}
           <div className="search-mode-selector">
             <button
@@ -186,14 +186,14 @@ function EventList() {
               onClick={() => setSearchMode("public")}
             >
               <span className="mode-icon">🔍</span>
-              <span className="mode-text">Search Public Events</span>
+              <span className="mode-text">Public</span>
             </button>
             <button
               className={`mode-btn ${searchMode === "private" ? "active" : ""}`}
               onClick={() => setSearchMode("private")}
             >
               <span className="mode-icon">🔐</span>
-              <span className="mode-text">Find Private Event</span>
+              <span className="mode-text">Private</span>
             </button>
           </div>
 
@@ -202,14 +202,11 @@ function EventList() {
             <div className="search-input-group public-search">
               <input
                 type="text"
-                placeholder="Search by event name or organizer..."
+                placeholder="Search by name or organizer..."
                 value={publicEventSearch}
                 onChange={(e) => setPublicEventSearch(e.target.value)}
                 className="public-search-input"
               />
-              <span className="search-hint">
-                💡 Search by name, organizer name, or email
-              </span>
             </div>
           )}
 
@@ -218,7 +215,7 @@ function EventList() {
             <div className="search-input-group private-search">
               <input
                 type="text"
-                placeholder="Paste the private event ID..."
+                placeholder="Paste event ID..."
                 value={eventIdInput}
                 onChange={(e) => setEventIdInput(e.target.value)}
                 onKeyPress={(e) => e.key === "Enter" && addEventById()}
@@ -229,12 +226,8 @@ function EventList() {
                 disabled={loading}
                 className="search-btn"
               >
-                {loading ? "Loading..." : "Add Event"}
+                {loading ? "Loading..." : "Add"}
               </button>
-              <span className="search-hint">
-                💡 You can share private event IDs with friends to let them
-                access them
-              </span>
             </div>
           )}
         </div>
@@ -354,6 +347,11 @@ function EventList() {
                       : categories[event.category]?.label}
                   </div>
                   <h3>{event.name}</h3>
+                  {event.createdBy && (
+                    <p className="event-organizer">
+                      👤 by {event.createdBy.name}
+                    </p>
+                  )}
                 </div>
               </div>
             );

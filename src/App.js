@@ -24,11 +24,28 @@ import { getUserById } from "./api";
 // Navigation bar component
 function Navbar({ user, onLogout, isDarkMode, onToggleTheme }) {
   const navigate = useNavigate();
+  const [menuOpen, setMenuOpen] = useState(false);
 
   const handleLogout = () => {
     if (window.confirm("Are you sure you want to logout?")) {
       onLogout();
+      setMenuOpen(false);
     }
+  };
+
+  // Get user initials for avatar
+  const getUserInitials = (name) => {
+    return name
+      .split(" ")
+      .map((n) => n[0])
+      .join("")
+      .toUpperCase()
+      .slice(0, 2);
+  };
+
+  const handleNavClick = (path) => {
+    navigate(path);
+    setMenuOpen(false);
   };
 
   return (
@@ -46,27 +63,60 @@ function Navbar({ user, onLogout, isDarkMode, onToggleTheme }) {
         <h1>Eventix</h1>
       </div>
       <div className="nav-links">
-        <span className="user-info">
-          {user.name}
-          {user.role === "admin" && " (Admin)"}
-          {user.role === "superAdmin" && " (SuperAdmin)"}
-          {!user.role && " (No role)"}
-        </span>
-        <button onClick={() => navigate("/")}>All Events</button>
-        {(user.role === "admin" || user.role === "superAdmin") && (
-          <button onClick={() => navigate("/create")}>Create Event</button>
-        )}
-        <button onClick={() => navigate("/bookings")}>My Dashboard</button>
         <button
           onClick={onToggleTheme}
           className="theme-toggle-btn"
           title={isDarkMode ? "Switch to light mode" : "Switch to dark mode"}
         >
-          {isDarkMode ? "☀️ Light" : "🌙 Dark"}
+          {isDarkMode ? "☀️" : "🌙"}
         </button>
-        <button onClick={handleLogout} className="logout-btn">
-          Logout
-        </button>
+        <div className="user-menu-wrapper">
+          <button
+            className="user-avatar-btn"
+            onClick={() => setMenuOpen(!menuOpen)}
+            title={`${user.name} ${user.role === "admin" ? "(Admin)" : user.role === "superAdmin" ? "(SuperAdmin)" : ""}`}
+          >
+            <span className="avatar">{getUserInitials(user.name)}</span>
+            <span className="dropdown-arrow">▼</span>
+          </button>
+          {menuOpen && (
+            <div className="dropdown-menu">
+              <div className="dropdown-header">
+                <div className="dropdown-user-name">{user.name}</div>
+                <div className="dropdown-user-role">
+                  {user.role === "admin" && "Admin"}
+                  {user.role === "superAdmin" && "SuperAdmin"}
+                  {!user.role && "User"}
+                </div>
+              </div>
+              <hr className="dropdown-divider" />
+              <button
+                className="dropdown-item"
+                onClick={() => handleNavClick("/")}
+              >
+                📋 All Events
+              </button>
+              {(user.role === "admin" || user.role === "superAdmin") && (
+                <button
+                  className="dropdown-item"
+                  onClick={() => handleNavClick("/create")}
+                >
+                  ➕ Create Event
+                </button>
+              )}
+              <button
+                className="dropdown-item"
+                onClick={() => handleNavClick("/bookings")}
+              >
+                📊 My Dashboard
+              </button>
+              <hr className="dropdown-divider" />
+              <button className="dropdown-item logout" onClick={handleLogout}>
+                🚪 Logout
+              </button>
+            </div>
+          )}
+        </div>
       </div>
     </nav>
   );

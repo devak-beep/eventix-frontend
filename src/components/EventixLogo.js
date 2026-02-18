@@ -94,13 +94,19 @@ export function EventixLogoSimple({ width = 120, height = 120, className = "" })
       viewBox="0 0 120 120"
       fill="none"
       xmlns="http://www.w3.org/2000/svg"
-      className={className}
-      style={{ filter: 'drop-shadow(0 0 8px rgba(0, 212, 255, 0.3))' }}
+      className={`${className} adaptive-logo`}
     >
       <defs>
-        <linearGradient id="simpleGrad" x1="0%" y1="0%" x2="100%" y2="100%">
-          <stop offset="0%" stopColor="#00d4ff" />
-          <stop offset="100%" stopColor="#0099ff" />
+        {/* Light mode gradient - Cyan */}
+        <linearGradient id="simpleGradLight" x1="0%" y1="0%" x2="100%" y2="100%">
+          <stop offset="0%" stopColor="#61dafb" />
+          <stop offset="100%" stopColor="#4fc3e8" />
+        </linearGradient>
+        
+        {/* Dark mode gradient - Blue */}
+        <linearGradient id="simpleGradDark" x1="0%" y1="0%" x2="100%" y2="100%">
+          <stop offset="0%" stopColor="#3b82f6" />
+          <stop offset="100%" stopColor="#2563eb" />
         </linearGradient>
       </defs>
       
@@ -110,9 +116,8 @@ export function EventixLogoSimple({ width = 120, height = 120, className = "" })
           cx={circle.cx}
           cy={circle.cy}
           r={circle.r}
-          fill="url(#simpleGrad)"
+          className="logo-circle-adaptive"
           opacity={circle.opacity}
-          className="logo-circle"
           style={{
             animation: `liquidPulse 2s ease-in-out infinite`,
             animationDelay: `${circle.delay}s`

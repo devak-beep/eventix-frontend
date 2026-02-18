@@ -670,6 +670,29 @@ input::placeholder, textarea::placeholder {
   }
 }
 
+/* Adaptive logo styles */
+.adaptive-logo {
+  filter: drop-shadow(0 0 8px rgba(97, 218, 251, 0.3));
+  transition: filter 0.3s ease;
+}
+
+@media (prefers-color-scheme: dark) {
+  .adaptive-logo {
+    filter: drop-shadow(0 0 8px rgba(59, 130, 246, 0.3));
+  }
+}
+
+.logo-circle-adaptive {
+  fill: url(#simpleGradLight);
+  transition: fill 0.3s ease;
+}
+
+@media (prefers-color-scheme: dark) {
+  .logo-circle-adaptive {
+    fill: url(#simpleGradDark);
+  }
+}
+
 .search-section {
   background: var(--bg-card);
   backdrop-filter: blur(20px);

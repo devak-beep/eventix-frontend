@@ -640,13 +640,20 @@ input::placeholder, textarea::placeholder {
   margin: 0;
   font-size: 36px;
   font-weight: 700;
-  background: linear-gradient(135deg, #00d4ff 0%, #0099ff 50%, #00d4ff 100%);
+  background: linear-gradient(135deg, #61dafb 0%, #4fc3e8 50%, #61dafb 100%);
   background-size: 200% auto;
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
   animation: shimmer 3s linear infinite;
-  text-shadow: 0 0 30px rgba(0, 212, 255, 0.3);
+  text-shadow: 0 0 30px rgba(97, 218, 251, 0.3);
+}
+
+@media (prefers-color-scheme: dark) {
+  .event-list h2 {
+    background: linear-gradient(135deg, #3b82f6 0%, #2563eb 50%, #3b82f6 100%);
+    text-shadow: 0 0 30px rgba(59, 130, 246, 0.3);
+  }
 }
 
 @keyframes shimmer {

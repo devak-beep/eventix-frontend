@@ -115,12 +115,16 @@ export function BookingResultSkeleton() {
 export function MyBookingsSkeleton() {
   return (
     <div className="my-bookings">
-      <div className="skeleton skeleton-heading"></div>
       <div
-        className="skeleton skeleton-text"
+        className="skeleton skeleton-heading"
         style={{ marginBottom: "20px" }}
       ></div>
-      <div style={{ display: "flex", gap: "10px", marginBottom: "20px" }}>
+
+      {/* Tab buttons skeleton */}
+      <div
+        className="tab-toggle"
+        style={{ display: "flex", gap: "10px", marginBottom: "20px" }}
+      >
         <div
           className="skeleton skeleton-button"
           style={{ flex: 1, height: "40px" }}
@@ -130,15 +134,55 @@ export function MyBookingsSkeleton() {
           style={{ flex: 1, height: "40px" }}
         ></div>
       </div>
+
+      {/* Refresh button skeleton */}
+      <div
+        className="skeleton skeleton-button"
+        style={{ width: "150px", height: "40px", marginBottom: "20px" }}
+      ></div>
+
+      {/* Booking cards skeleton */}
       <div className="bookings-list">
         {[...Array(3)].map((_, i) => (
           <div key={i} className="skeleton-booking-card">
-            <div className="skeleton skeleton-text"></div>
-            <div className="skeleton skeleton-text"></div>
-            <div className="skeleton skeleton-text"></div>
+            {/* Booking header */}
+            <div
+              style={{
+                display: "flex",
+                justifyContent: "space-between",
+                alignItems: "center",
+                marginBottom: "15px",
+              }}
+            >
+              <div
+                className="skeleton skeleton-text"
+                style={{ width: "150px", height: "20px" }}
+              ></div>
+              <div className="skeleton skeleton-badge"></div>
+            </div>
+
+            {/* Booking details - multiple lines */}
+            <div
+              className="skeleton skeleton-text"
+              style={{ marginBottom: "10px" }}
+            ></div>
+            <div
+              className="skeleton skeleton-text"
+              style={{ marginBottom: "10px" }}
+            ></div>
+            <div
+              className="skeleton skeleton-text"
+              style={{ marginBottom: "10px" }}
+            ></div>
+            <div
+              className="skeleton skeleton-text"
+              style={{ width: "70%", marginBottom: "15px" }}
+            ></div>
+
+            {/* Cancel button skeleton */}
             <div
               className="skeleton skeleton-button"
-              style={{ marginTop: "10px" }}
+              style={{ marginTop: "10px", height: "40px" }}
             ></div>
           </div>
         ))}

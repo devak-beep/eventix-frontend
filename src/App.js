@@ -49,6 +49,7 @@ function Navbar({ user, onLogout }) {
           {user.name}
           {user.role === "admin" && " (Admin)"}
           {user.role === "superAdmin" && " (SuperAdmin)"}
+          {!user.role && " (No role)"}
         </span>
         <button onClick={() => navigate("/")}>All Events</button>
         {user.role === "admin" && (
@@ -74,7 +75,9 @@ function App() {
   useEffect(() => {
     const savedUser = localStorage.getItem("user");
     if (savedUser) {
-      setUser(JSON.parse(savedUser));
+      const parsedUser = JSON.parse(savedUser);
+      console.log("User loaded from localStorage:", parsedUser);
+      setUser(parsedUser);
     }
   }, []);
 

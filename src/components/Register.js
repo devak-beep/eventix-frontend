@@ -96,6 +96,11 @@ function Register({ onRegisterSuccess }) {
       return;
     }
 
+    // IDEMPOTENCY: Prevent double submission while request is in progress
+    if (loading) {
+      return;
+    }
+
     setLoading(true);
 
     try {
@@ -110,7 +115,15 @@ function Register({ onRegisterSuccess }) {
       // Show success message
       setShowSuccess(true);
     } catch (err) {
-      setError(err.response?.data?.message || "Registration failed");
+      const errorMessage = err.response?.data?.message || "Registration failed";
+      const isAlreadyRequested = err.response?.data?.isAlreadyRequested;
+
+      if (isAlreadyRequested) {
+        // User already has a pending request - show warning
+        setError(`⚠️ ${errorMessage}`);
+      } else {
+        setError(errorMessage);
+      }
     } finally {
       setLoading(false);
     }

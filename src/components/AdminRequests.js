@@ -22,11 +22,14 @@ function AdminRequests() {
     setLoading(true);
     setError("");
     try {
-      const token = localStorage.getItem("token");
+      const user = JSON.parse(localStorage.getItem("user") || "{}");
       const response = await axios.get(
         `${API_BASE_URL}/users/admin-requests/pending`,
         {
-          headers: { Authorization: `Bearer ${token}` },
+          headers: {
+            "x-user-role": user.role,
+            "x-user-id": user._id,
+          },
         },
       );
       setRequests(response.data.data || []);
@@ -48,12 +51,15 @@ function AdminRequests() {
     if (!selectedRequest) return;
 
     try {
-      const token = localStorage.getItem("token");
+      const user = JSON.parse(localStorage.getItem("user") || "{}");
       await axios.post(
         `${API_BASE_URL}/users/admin-requests/${selectedRequest._id}/approve`,
         {},
         {
-          headers: { Authorization: `Bearer ${token}` },
+          headers: {
+            "x-user-role": user.role,
+            "x-user-id": user._id,
+          },
         },
       );
 
@@ -79,12 +85,15 @@ function AdminRequests() {
     if (!selectedRequest) return;
 
     try {
-      const token = localStorage.getItem("token");
+      const user = JSON.parse(localStorage.getItem("user") || "{}");
       await axios.post(
         `${API_BASE_URL}/users/admin-requests/${selectedRequest._id}/reject`,
         { rejectionReason: rejectionReason || "No reason provided" },
         {
-          headers: { Authorization: `Bearer ${token}` },
+          headers: {
+            "x-user-role": user.role,
+            "x-user-id": user._id,
+          },
         },
       );
 

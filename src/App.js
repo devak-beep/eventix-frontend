@@ -1,5 +1,5 @@
 // This is the main App component - the starting point of our frontend
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import {
   BrowserRouter as Router,
   Routes,
@@ -25,6 +25,18 @@ import { getUserById } from "./api";
 function Navbar({ user, onLogout, isDarkMode, onToggleTheme }) {
   const navigate = useNavigate();
   const [menuOpen, setMenuOpen] = useState(false);
+  const menuRef = useRef(null);
+
+  // Close menu when clicking outside
+  useEffect(() => {
+    const handleClickOutside = (e) => {
+      if (menuRef.current && !menuRef.current.contains(e.target)) {
+        setMenuOpen(false);
+      }
+    };
+    if (menuOpen) document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, [menuOpen]);
 
   const handleLogout = () => {
     if (window.confirm("Are you sure you want to logout?")) {
@@ -33,14 +45,18 @@ function Navbar({ user, onLogout, isDarkMode, onToggleTheme }) {
     }
   };
 
-  // Get user initials for avatar
-  const getUserInitials = (name) => {
-    return name
+  const getUserInitials = (name) =>
+    name
       .split(" ")
       .map((n) => n[0])
       .join("")
       .toUpperCase()
       .slice(0, 2);
+
+  const getRoleLabel = (role) => {
+    if (role === "admin") return "Admin";
+    if (role === "superAdmin") return "Super Admin";
+    return "Member";
   };
 
   const handleNavClick = (path) => {
@@ -70,23 +86,28 @@ function Navbar({ user, onLogout, isDarkMode, onToggleTheme }) {
         >
           {isDarkMode ? "☀️" : "🌙"}
         </button>
-        <div className="user-menu-wrapper">
+        <div className="user-menu-wrapper" ref={menuRef}>
           <button
-            className="user-avatar-btn"
+            className={`user-avatar-btn ${menuOpen ? "active" : ""}`}
             onClick={() => setMenuOpen(!menuOpen)}
-            title={`${user.name} ${user.role === "admin" ? "(Admin)" : user.role === "superAdmin" ? "(SuperAdmin)" : ""}`}
           >
             <span className="avatar">{getUserInitials(user.name)}</span>
-            <span className="dropdown-arrow">▼</span>
+            <span className={`dropdown-arrow ${menuOpen ? "open" : ""}`}>
+              ▼
+            </span>
           </button>
           {menuOpen && (
             <div className="dropdown-menu">
               <div className="dropdown-header">
-                <div className="dropdown-user-name">{user.name}</div>
-                <div className="dropdown-user-role">
-                  {user.role === "admin" && "Admin"}
-                  {user.role === "superAdmin" && "SuperAdmin"}
-                  {!user.role && "User"}
+                <div className="dropdown-user-avatar-lg">
+                  {getUserInitials(user.name)}
+                </div>
+                <div className="dropdown-header-info">
+                  <div className="dropdown-user-name">{user.name}</div>
+                  <div className="dropdown-user-email">{user.email || ""}</div>
+                  <span className="dropdown-user-role">
+                    {getRoleLabel(user.role)}
+                  </span>
                 </div>
               </div>
               <div className="dropdown-items-wrapper">
@@ -94,25 +115,30 @@ function Navbar({ user, onLogout, isDarkMode, onToggleTheme }) {
                   className="dropdown-item"
                   onClick={() => handleNavClick("/")}
                 >
-                  📋 All Events
+                  <span className="di-icon">📋</span>
+                  <span>All Events</span>
                 </button>
                 {(user.role === "admin" || user.role === "superAdmin") && (
                   <button
                     className="dropdown-item"
                     onClick={() => handleNavClick("/create")}
                   >
-                    ➕ Create Event
+                    <span className="di-icon">➕</span>
+                    <span>Create Event</span>
                   </button>
                 )}
                 <button
                   className="dropdown-item"
                   onClick={() => handleNavClick("/bookings")}
                 >
-                  📊 My Dashboard
+                  <span className="di-icon">📊</span>
+                  <span>My Dashboard</span>
                 </button>
-                <hr className="dropdown-divider" />
+              </div>
+              <div className="dropdown-footer">
                 <button className="dropdown-item logout" onClick={handleLogout}>
-                  🚪 Logout
+                  <span className="di-icon">🚪</span>
+                  <span>Logout</span>
                 </button>
               </div>
             </div>

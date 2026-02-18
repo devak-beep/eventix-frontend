@@ -91,7 +91,8 @@ function Navbar({ user, onLogout, isDarkMode, onToggleTheme }) {
             className={`user-avatar-btn ${menuOpen ? "active" : ""}`}
             onClick={() => setMenuOpen(!menuOpen)}
           >
-            <span className="avatar">{getUserInitials(user.name)}</span>
+            <span className="avatar-circle">{getUserInitials(user.name)}</span>
+            <span className="avatar-name">{user.name.split(" ")[0]}</span>
             <span className={`dropdown-arrow ${menuOpen ? "open" : ""}`}>
               ▼
             </span>

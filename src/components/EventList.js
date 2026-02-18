@@ -8,6 +8,7 @@ function EventList() {
   const navigate = useNavigate();
   // State to store list of events
   const [events, setEvents] = useState([]);
+  const [filteredEvents, setFilteredEvents] = useState([]);
 
   // State to show loading message
   const [loading, setLoading] = useState(false);
@@ -17,7 +18,12 @@ function EventList() {
 
   // For searching private events by ID
   const [eventIdInput, setEventIdInput] = useState("");
-  const [showSearch, setShowSearch] = useState(false);
+
+  // For searching public events by name or organizer
+  const [publicEventSearch, setPublicEventSearch] = useState("");
+
+  // Search mode toggle: "public" or "private"
+  const [searchMode, setSearchMode] = useState("public");
 
   // Category filter
   const [selectedCategory, setSelectedCategory] = useState("all");
@@ -80,6 +86,35 @@ function EventList() {
     fetchPublicEvents();
   }, []);
 
+  // Filter events based on search and category
+  useEffect(() => {
+    let filtered = events;
+
+    // Filter by category
+    if (selectedCategory !== "all") {
+      filtered = filtered.filter((event) =>
+        event.category?.includes(selectedCategory),
+      );
+    }
+
+    // Filter by public event search (name or organizer)
+    if (publicEventSearch.trim()) {
+      const searchTerm = publicEventSearch.toLowerCase();
+      filtered = filtered.filter((event) => {
+        const eventName = event.name?.toLowerCase() || "";
+        const organizerName = event.createdBy?.name?.toLowerCase() || "";
+        const organizerEmail = event.createdBy?.email?.toLowerCase() || "";
+        return (
+          eventName.includes(searchTerm) ||
+          organizerName.includes(searchTerm) ||
+          organizerEmail.includes(searchTerm)
+        );
+      });
+    }
+
+    setFilteredEvents(filtered);
+  }, [events, selectedCategory, publicEventSearch]);
+
   // Function to fetch all public events
   const fetchPublicEvents = async () => {
     setLoading(true);
@@ -125,7 +160,7 @@ function EventList() {
         // Add event to the list
         setEvents([...events, eventData]);
         setEventIdInput(""); // Clear input
-        setShowSearch(false); // Hide search
+        setSearchMode("public"); // Switch to public search
         setSelectedCategory("all"); // Show all events
       } else {
         setError("Event already in list");
@@ -142,30 +177,65 @@ function EventList() {
     <div className="event-list">
       <div className="list-header">
         <h2>Available Events</h2>
-        <div className="search-controls">
-          <button
-            onClick={() => setShowSearch(!showSearch)}
-            className="toggle-search-btn"
-          >
-            {showSearch ? "Hide Search" : "Search Private Event"}
-          </button>
 
-          {/* Search for private events by ID */}
-          {showSearch && (
-            <div className="search-input-group">
-              <input
-                type="text"
-                placeholder="Enter Private Event ID"
-                value={eventIdInput}
-                onChange={(e) => setEventIdInput(e.target.value)}
-                onKeyPress={(e) => e.key === "Enter" && addEventById()}
-              />
-              <button onClick={addEventById} disabled={loading}>
-                {loading ? "Loading..." : "Search"}
-              </button>
-            </div>
-          )}
+        {/* Dual-mode search interface */}
+        <div className="search-mode-selector">
+          <button
+            className={`mode-btn ${searchMode === "public" ? "active" : ""}`}
+            onClick={() => setSearchMode("public")}
+          >
+            <span className="mode-icon">🔍</span>
+            <span className="mode-text">Search Public Events</span>
+          </button>
+          <button
+            className={`mode-btn ${searchMode === "private" ? "active" : ""}`}
+            onClick={() => setSearchMode("private")}
+          >
+            <span className="mode-icon">🔐</span>
+            <span className="mode-text">Find Private Event</span>
+          </button>
         </div>
+
+        {/* Public event search */}
+        {searchMode === "public" && (
+          <div className="search-input-group public-search">
+            <input
+              type="text"
+              placeholder="Search by event name or organizer..."
+              value={publicEventSearch}
+              onChange={(e) => setPublicEventSearch(e.target.value)}
+              className="public-search-input"
+            />
+            <span className="search-hint">
+              💡 Search by name, organizer name, or email
+            </span>
+          </div>
+        )}
+
+        {/* Private event search */}
+        {searchMode === "private" && (
+          <div className="search-input-group private-search">
+            <input
+              type="text"
+              placeholder="Paste the private event ID..."
+              value={eventIdInput}
+              onChange={(e) => setEventIdInput(e.target.value)}
+              onKeyPress={(e) => e.key === "Enter" && addEventById()}
+              className="private-search-input"
+            />
+            <button
+              onClick={addEventById}
+              disabled={loading}
+              className="search-btn"
+            >
+              {loading ? "Loading..." : "Add Event"}
+            </button>
+            <span className="search-hint">
+              💡 You can share private event IDs with friends to let them access
+              them
+            </span>
+          </div>
+        )}
       </div>
 
       {/* Category filter tabs */}
@@ -211,96 +281,81 @@ function EventList() {
       {loading && <EventListSkeleton />}
 
       {/* Show message if no events */}
-      {!loading &&
-        events.filter(
-          (e) =>
-            selectedCategory === "all" ||
-            (Array.isArray(e.category)
-              ? e.category.includes(selectedCategory)
-              : e.category === selectedCategory),
-        ).length === 0 && (
-          <p className="info">No events available in this category.</p>
-        )}
+      {!loading && filteredEvents.length === 0 && (
+        <p className="info">
+          {publicEventSearch
+            ? "No events found matching your search."
+            : "No events available in this category."}
+        </p>
+      )}
 
-      {/* Display all events as cards */}
+      {/* Display filtered events as cards */}
       {!loading && (
         <div className="events-grid">
-          {events
-            .filter(
-              (event) =>
-                selectedCategory === "all" ||
-                (Array.isArray(event.category)
-                  ? event.category.includes(selectedCategory)
-                  : event.category === selectedCategory),
-            )
-            .map((event) => {
-              const eventDate = new Date(event.eventDate);
-              const now = new Date();
-              const isExpired = eventDate <= now;
-              const isSoldOut = event.availableSeats === 0;
+          {filteredEvents.map((event) => {
+            const eventDate = new Date(event.eventDate);
+            const now = new Date();
+            const isExpired = eventDate <= now;
+            const isSoldOut = event.availableSeats === 0;
 
-              // Get user role to show visibility tag only to admin
-              const user = JSON.parse(localStorage.getItem("user"));
-              const isAdmin =
-                user?.role === "admin" || user?.role === "superAdmin";
+            // Get user role to show visibility tag only to admin
+            const user = JSON.parse(localStorage.getItem("user"));
+            const isAdmin =
+              user?.role === "admin" || user?.role === "superAdmin";
 
-              return (
-                <div
-                  key={event._id}
-                  className={`event-card ${isExpired ? "expired" : ""} ${isSoldOut && !isExpired ? "sold-out" : ""}`}
-                  onClick={() => navigate(`/event/${event._id}`)}
-                >
-                  {/* Event image - use uploaded image if available, otherwise category image */}
-                  {(event.image ||
-                    categories[
-                      Array.isArray(event.category)
-                        ? event.category[0]
-                        : event.category
-                    ]?.image) && (
-                    <div
-                      className="event-image"
-                      style={{
-                        backgroundImage: `url(${event.image || categories[Array.isArray(event.category) ? event.category[0] : event.category].image})`,
-                      }}
-                    >
-                      {/* Status badges at top-right */}
-                      {isExpired && (
-                        <span className="event-badge expired">⏰ Expired</span>
-                      )}
-                      {!isExpired && isSoldOut && (
-                        <span className="event-badge sold-out">
-                          🎫 Sold Out
-                        </span>
-                      )}
-                      {/* Visibility badge for admin only - at top-right */}
-                      {isAdmin && !isExpired && !isSoldOut && (
-                        <span
-                          className={`event-badge visibility ${event.type}`}
-                        >
-                          {event.type === "public" ? "🌍 Public" : "🔒 Private"}
-                        </span>
-                      )}
-                    </div>
-                  )}
-
-                  <div className="event-content">
-                    <div className="event-category-badge">
-                      {Array.isArray(event.category)
-                        ? event.category
-                            .map((cat) => categories[cat]?.icon)
-                            .join(" ")
-                        : categories[event.category]?.icon}{" "}
-                      {Array.isArray(event.category)
-                        ? event.category
-                            .map((cat) => categories[cat]?.label)
-                            .join(", ")
-                        : categories[event.category]?.label}
-                    </div>
-                    <h3>{event.name}</h3>
+            return (
+              <div
+                key={event._id}
+                className={`event-card ${isExpired ? "expired" : ""} ${isSoldOut && !isExpired ? "sold-out" : ""}`}
+                onClick={() => navigate(`/event/${event._id}`)}
+              >
+                {/* Event image - use uploaded image if available, otherwise category image */}
+                {(event.image ||
+                  categories[
+                    Array.isArray(event.category)
+                      ? event.category[0]
+                      : event.category
+                  ]?.image) && (
+                  <div
+                    className="event-image"
+                    style={{
+                      backgroundImage: `url(${event.image || categories[Array.isArray(event.category) ? event.category[0] : event.category].image})`,
+                    }}
+                  >
+                    {/* Status badges at top-right */}
+                    {isExpired && (
+                      <span className="event-badge expired">⏰ Expired</span>
+                    )}
+                    {!isExpired && isSoldOut && (
+                      <span className="event-badge sold-out">🎫 Sold Out</span>
+                    )}
+                    {/* Visibility badge for admin only - at top-right */}
+                    {isAdmin && !isExpired && !isSoldOut && (
+                      <span className={`event-badge visibility ${event.type}`}>
+                        {event.type === "public" ? "🌍 Public" : "🔒 Private"}
+                      </span>
+                    )}
                   </div>
+                )}
+
+                <div className="event-content">
+                  <div className="event-category-badge">
+                    {Array.isArray(event.category)
+                      ? event.category
+                          .map((cat) => categories[cat]?.icon)
+                          .join(" ")
+                      : categories[event.category]?.icon}{" "}
+                    {Array.isArray(event.category)
+                      ? event.category
+                          .map((cat) => categories[cat]?.label)
+                          .join(", ")
+                      : categories[event.category]?.label}
+                  </div>
+                  <h3>{event.name}</h3>
                 </div>
-              );
-            })}
+              </div>
+            );
+          })}
         </div>
       )}
     </div>

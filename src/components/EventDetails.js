@@ -238,6 +238,14 @@ function EventDetails({ userId }) {
             </div>
           )}
         </div>
+
+        {/* Event Image */}
+        {event.image && (
+          <div className="event-detail-image">
+            <img src={event.image} alt={event.name} />
+          </div>
+        )}
+
         <p className="description">{event.description}</p>
         <div className="event-meta">
           <p>📅 Date: {new Date(event.eventDate).toLocaleString()}</p>

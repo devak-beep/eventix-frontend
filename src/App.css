@@ -283,16 +283,16 @@ input::placeholder, textarea::placeholder {
   align-items: center;
   justify-content: center;
   padding: 20px;
-  background: linear-gradient(135deg, #0a0e27 0%, #16213e 50%, #0f3460 100%);
+  background: var(--gradient-main);
 }
 
 .auth-box {
   position: relative;
-  background: rgba(22, 33, 62, 0.8);
+  background: var(--bg-card);
   backdrop-filter: blur(20px);
   padding: 30px 40px;
   border-radius: 20px;
-  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+  box-shadow: var(--shadow-lg);
   width: 100%;
   max-width: 420px;
   border: 1px solid var(--border-color);
@@ -303,8 +303,8 @@ input::placeholder, textarea::placeholder {
   position: absolute;
   width: 100px;
   height: 2px;
-  background: linear-gradient(90deg, transparent, #00d4ff, #0099ff, transparent);
-  filter: drop-shadow(0 0 6px #00d4ff);
+  background: linear-gradient(90deg, transparent, var(--accent-primary), var(--accent-primary-hover), transparent);
+  filter: drop-shadow(0 0 6px var(--accent-primary));
   animation: tracePerimeter 4s linear infinite;
   pointer-events: none;
 }
@@ -314,8 +314,8 @@ input::placeholder, textarea::placeholder {
   position: absolute;
   width: 100px;
   height: 2px;
-  background: linear-gradient(90deg, transparent, #00d4ff, #0099ff, transparent);
-  filter: drop-shadow(0 0 6px #00d4ff);
+  background: linear-gradient(90deg, transparent, var(--accent-primary), var(--accent-primary-hover), transparent);
+  filter: drop-shadow(0 0 6px var(--accent-primary));
   animation: tracePerimeter 4s linear infinite;
   animation-delay: -2s;
   pointer-events: none;
@@ -404,7 +404,7 @@ input::placeholder, textarea::placeholder {
 .auth-logo h1 {
   font-size: 32px;
   font-weight: 700;
-  background: linear-gradient(135deg, #00d4ff 0%, #0099ff 100%);
+  background: var(--gradient-accent);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
@@ -421,7 +421,7 @@ input::placeholder, textarea::placeholder {
   font-size: 22px;
   font-weight: 700;
   text-align: center;
-  background: linear-gradient(135deg, #00d4ff 0%, #0099ff 50%, #00d4ff 100%);
+  background: linear-gradient(135deg, var(--accent-primary) 0%, var(--accent-primary-hover) 50%, var(--accent-primary) 100%);
   background-size: 200% auto;
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
@@ -432,7 +432,7 @@ input::placeholder, textarea::placeholder {
 .auth-box .submit-btn {
   width: 100%;
   padding: 14px;
-  background: linear-gradient(135deg, #00d4ff 0%, #0099ff 100%);
+  background: var(--gradient-accent);
   color: white;
   border: none;
   border-radius: 10px;
@@ -441,12 +441,24 @@ input::placeholder, textarea::placeholder {
   cursor: pointer;
   transition: all 0.3s ease;
   margin-top: 10px;
-  box-shadow: 0 4px 15px rgba(0, 212, 255, 0.3);
+  box-shadow: 0 4px 15px rgba(97, 218, 251, 0.3);
+}
+
+@media (prefers-color-scheme: dark) {
+  .auth-box .submit-btn {
+    box-shadow: 0 4px 15px rgba(59, 130, 246, 0.3);
+  }
 }
 
 .auth-box .submit-btn:hover {
   transform: translateY(-2px);
-  box-shadow: 0 6px 20px rgba(0, 212, 255, 0.5);
+  box-shadow: 0 6px 20px rgba(97, 218, 251, 0.5);
+}
+
+@media (prefers-color-scheme: dark) {
+  .auth-box .submit-btn:hover {
+    box-shadow: 0 6px 20px rgba(59, 130, 246, 0.5);
+  }
 }
 
 .auth-box .submit-btn:disabled {

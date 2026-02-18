@@ -180,47 +180,42 @@ function EventList() {
       </div>
 
       <div className="search-controls">
-        {/* Dual-mode search interface - buttons on left */}
         <div className="search-mode-selector">
           <button
             className={`mode-btn ${searchMode === "public" ? "active" : ""}`}
             onClick={() => setSearchMode("public")}
           >
             <span className="mode-icon">🔍</span>
-            <span className="mode-text">Search Public</span>
+            <span className="mode-text">Public</span>
           </button>
           <button
             className={`mode-btn ${searchMode === "private" ? "active" : ""}`}
             onClick={() => setSearchMode("private")}
           >
             <span className="mode-icon">🔐</span>
-            <span className="mode-text">Find Private</span>
+            <span className="mode-text">Private</span>
           </button>
         </div>
 
-        {/* Public event search - center/right */}
         {searchMode === "public" && (
-          <div className="search-input-group public-search">
+          <div className="search-input-group">
             <input
               type="text"
               placeholder="Search by event name or organizer..."
               value={publicEventSearch}
               onChange={(e) => setPublicEventSearch(e.target.value)}
-              className="public-search-input"
             />
           </div>
         )}
 
-        {/* Private event search - center/right */}
         {searchMode === "private" && (
-          <div className="search-input-group private-search">
+          <div className="search-input-group">
             <input
               type="text"
               placeholder="Paste event ID..."
               value={eventIdInput}
               onChange={(e) => setEventIdInput(e.target.value)}
               onKeyPress={(e) => e.key === "Enter" && addEventById()}
-              className="private-search-input"
             />
             <button
               onClick={addEventById}

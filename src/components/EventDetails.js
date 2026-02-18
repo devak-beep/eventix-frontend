@@ -245,6 +245,11 @@ function EventDetails({ userId }) {
             🪑 Available Seats: {event.availableSeats} / {event.totalSeats}
           </p>
           <p>💰 Price: ₹{event.amount || 0} per ticket</p>
+          {event.createdBy && (
+            <p>
+              👤 Organized by: {event.createdBy.name} ({event.createdBy.email})
+            </p>
+          )}
         </div>
       </div>
 

@@ -77,8 +77,12 @@ function EventList() {
     setError('');
 
     try {
-      // Call API to get all public events
-      const response = await getAllPublicEvents();
+      // Get user role from localStorage
+      const user = JSON.parse(localStorage.getItem('user'));
+      const userRole = user?.role || 'user';
+      
+      // Call API to get events (admin sees all, users see only public)
+      const response = await getAllPublicEvents(userRole);
       setEvents(response.data || []);
     } catch (err) {
       setError('Failed to load events');
@@ -198,10 +202,20 @@ function EventList() {
       <div className="events-grid">
         {events
           .filter(event => selectedCategory === 'all' || (Array.isArray(event.category) ? event.category.includes(selectedCategory) : event.category === selectedCategory))
-          .map((event) => (
+          .map((event) => {
+            const eventDate = new Date(event.eventDate);
+            const now = new Date();
+            const isExpired = eventDate <= now;
+            const isSoldOut = event.availableSeats === 0;
+            
+            // Get user role to show visibility tag only to admin
+            const user = JSON.parse(localStorage.getItem('user'));
+            const isAdmin = user?.role === 'admin';
+            
+            return (
           <div 
             key={event._id} 
-            className="event-card"
+            className={`event-card ${isExpired ? 'expired' : ''} ${isSoldOut && !isExpired ? 'sold-out' : ''}`}
             onClick={() => navigate(`/event/${event._id}`)}
           >
             {/* Event image - use uploaded image if available, otherwise category image */}
@@ -210,8 +224,20 @@ function EventList() {
                 className="event-image"
                 style={{ backgroundImage: `url(${event.image || categories[Array.isArray(event.category) ? event.category[0] : event.category].image})` }}
               >
-                {event.type === 'private' && (
+                {isExpired && (
+                  <span className="event-badge expired">⏰ Expired</span>
+                )}
+                {!isExpired && isSoldOut && (
+                  <span className="event-badge sold-out">🎫 Sold Out</span>
+                )}
+                {!isExpired && !isSoldOut && event.type === 'private' && (
                   <span className="event-badge private">🔒 Private</span>
+                )}
+                {/* Show visibility tag only to admin */}
+                {isAdmin && !isExpired && !isSoldOut && (
+                  <span className={`event-badge visibility ${event.type}`}>
+                    {event.type === 'public' ? '🌍 Public' : '🔒 Private'}
+                  </span>
                 )}
               </div>
             )}
@@ -227,7 +253,8 @@ function EventList() {
               <h3>{event.name}</h3>
             </div>
           </div>
-        ))}
+            );
+          })}
       </div>
     </div>
   );

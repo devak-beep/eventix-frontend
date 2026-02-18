@@ -191,6 +191,12 @@ function EventDetails({ userId }) {
     return <div className="error">Event not found</div>;
   }
 
+  // Check if event has expired or sold out
+  const eventDate = new Date(event.eventDate);
+  const now = new Date();
+  const isExpired = eventDate <= now;
+  const isSoldOut = event.availableSeats === 0;
+
   return (
     <div className="event-details">
       {/* Back button */}
@@ -199,6 +205,20 @@ function EventDetails({ userId }) {
       {/* Event information */}
       <div className="event-header">
         <h2>{event.name}</h2>
+        <div className="status-badges">
+          {isExpired && (
+            <div className="status-badge expired">
+              <span className="badge-icon">⏰</span>
+              <span className="badge-text">Event Expired</span>
+            </div>
+          )}
+          {!isExpired && isSoldOut && (
+            <div className="status-badge sold-out">
+              <span className="badge-icon">🎫</span>
+              <span className="badge-text">Sold Out</span>
+            </div>
+          )}
+        </div>
         <p className="description">{event.description}</p>
         <div className="event-meta">
           <p>📅 Date: {new Date(event.eventDate).toLocaleString()}</p>
@@ -207,17 +227,42 @@ function EventDetails({ userId }) {
         </div>
       </div>
 
-      {/* Booking section */}
-      <div className="booking-section">
-        <h3>Book Your Seats</h3>
+      {/* Show expired, sold out, or booking section */}
+      {isExpired ? (
+        <div className="status-message-section expired-section">
+          <div className="status-icon">⏰</div>
+          <h3>Event Has Ended</h3>
+          <p>This event took place on {new Date(event.eventDate).toLocaleDateString('en-GB', { 
+            day: 'numeric', 
+            month: 'long', 
+            year: 'numeric',
+            hour: '2-digit',
+            minute: '2-digit'
+          })}. Booking is no longer available.</p>
+          <button onClick={() => navigate('/')} className="primary-btn">
+            ← Browse Upcoming Events
+          </button>
+        </div>
+      ) : isSoldOut ? (
+        <div className="status-message-section sold-out-section">
+          <div className="status-icon">🎫</div>
+          <h3>All Tickets Sold Out!</h3>
+          <p>Unfortunately, all {event.totalSeats} tickets for this event have been booked. Check out other amazing events below.</p>
+          <button onClick={() => navigate('/')} className="primary-btn">
+            ← Explore Other Events
+          </button>
+        </div>
+      ) : (
+        <div className="booking-section">
+          <h3>Book Your Seats</h3>
 
-        {/* Show error or success messages */}
-        {error && <div className="error">{error}</div>}
-        {success && <div className="success">{success}</div>}
+          {/* Show error or success messages */}
+          {error && <div className="error">{error}</div>}
+          {success && <div className="success">{success}</div>}
 
-        {/* Step 1: Select seats and lock */}
-        {!lockId && (
-          <div className="booking-step">
+          {/* Step 1: Select seats and lock */}
+          {!lockId && (
+            <div className="booking-step">
             <label>
               Number of seats:
               <input
@@ -315,7 +360,8 @@ function EventDetails({ userId }) {
             </div>
           </div>
         )}
-      </div>
+        </div>
+      )}
     </div>
   );
 }

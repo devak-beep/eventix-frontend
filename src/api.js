@@ -40,9 +40,11 @@ export const createEvent = async (eventData) => {
   return response.data;
 };
 
-// Get all public events
-export const getAllPublicEvents = async () => {
-  const response = await api.get('/events');
+// Get all public events (or all events for admin)
+export const getAllPublicEvents = async (userRole = 'user') => {
+  const response = await api.get('/events', {
+    params: { userRole }
+  });
   return response.data;
 };
 

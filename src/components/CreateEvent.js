@@ -150,11 +150,10 @@ function CreateEvent({ userId }) {
 
     // Validate event date is not in the past
     const selectedDate = new Date(eventData.eventDate);
-    const today = new Date();
-    today.setHours(0, 0, 0, 0); // Reset time to start of day
+    const now = new Date();
 
-    if (selectedDate < today) {
-      setError('Event date cannot be in the past. Please select a future date.');
+    if (selectedDate <= now) {
+      setError('Event date and time must be in the future.');
       return;
     }
 
@@ -170,34 +169,17 @@ function CreateEvent({ userId }) {
     setError('');
 
     try {
-      // Generate idempotency key for this event creation
       const idempotencyKey = uuidv4();
-      
-      console.log('Creating event with userId:', userId);
-      
-      // Get user data from localStorage
       const user = JSON.parse(localStorage.getItem('user'));
-      
-      // First create the event (without payment)
-      const eventResponse = await createEvent({ 
-        ...eventData, 
-        userId,
-        userRole: user?.role || 'user',
-        idempotencyKey,
-        paymentStatus: 'PENDING'
-      });
-      
-      const eventId = eventResponse.data._id;
-      console.log('Event created:', eventId);
-      
-      // Now initiate Razorpay payment for event creation
       const API_BASE_URL = process.env.REACT_APP_API_URL || 'http://localhost:3000/api';
+
+      // Create Razorpay order first (without creating event)
       const orderResponse = await fetch(`${API_BASE_URL}/razorpay/create-event-order`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          eventId,
-          amount: creationCharge
+          amount: creationCharge,
+          eventData: { ...eventData, userId, idempotencyKey }
         })
       });
       
@@ -217,7 +199,7 @@ function CreateEvent({ userId }) {
         order_id: orderData.orderId,
         handler: async function (response) {
           try {
-            // Verify payment
+            // Create event and verify payment together
             const verifyResponse = await fetch(`${API_BASE_URL}/razorpay/verify-event-payment`, {
               method: 'POST',
               headers: { 'Content-Type': 'application/json' },
@@ -225,14 +207,14 @@ function CreateEvent({ userId }) {
                 razorpay_order_id: response.razorpay_order_id,
                 razorpay_payment_id: response.razorpay_payment_id,
                 razorpay_signature: response.razorpay_signature,
-                eventId: eventId
+                eventData: { ...eventData, userId, userRole: user?.role || 'user', idempotencyKey }
               })
             });
 
             const verifyData = await verifyResponse.json();
 
             if (verifyData.success) {
-              setCreatedEventId(eventId);
+              setCreatedEventId(verifyData.event.id);
               setPaymentSuccess(true);
               setShowPaymentConfirm(false);
               
@@ -268,7 +250,7 @@ function CreateEvent({ userId }) {
         },
         modal: {
           ondismiss: function() {
-            setError('Payment cancelled. Event created but not published.');
+            setError('Payment cancelled. No event was created.');
             setLoading(false);
             setShowPaymentConfirm(false);
           }
@@ -278,7 +260,7 @@ function CreateEvent({ userId }) {
       const razorpay = new window.Razorpay(options);
       razorpay.open();
     } catch (err) {
-      setError(err.response?.data?.message || err.message || 'Failed to create event');
+      setError(err.response?.data?.message || err.message || 'Failed to initiate payment');
       setLoading(false);
     }
   };

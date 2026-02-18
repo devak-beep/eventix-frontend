@@ -820,12 +820,104 @@ input::placeholder, textarea::placeholder {
   font-weight: 600;
   z-index: 10;
   backdrop-filter: blur(10px);
+  transition: all 0.3s ease;
 }
 
 .event-badge.private {
   background: rgba(251, 191, 36, 0.9);
   color: #78350f;
   box-shadow: 0 4px 12px rgba(251, 191, 36, 0.3);
+}
+
+.event-badge.visibility {
+  top: auto;
+  bottom: 15px;
+  right: 15px;
+  font-size: 11px;
+  padding: 6px 12px;
+  backdrop-filter: blur(15px);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.event-badge.visibility.public {
+  background: linear-gradient(135deg, rgba(34, 197, 94, 0.9) 0%, rgba(22, 163, 74, 0.9) 100%);
+  color: #fff;
+  box-shadow: 0 4px 12px rgba(34, 197, 94, 0.3);
+}
+
+.event-badge.visibility.private {
+  background: linear-gradient(135deg, rgba(168, 85, 247, 0.9) 0%, rgba(147, 51, 234, 0.9) 100%);
+  color: #fff;
+  box-shadow: 0 4px 12px rgba(168, 85, 247, 0.3);
+}
+
+.event-badge.expired {
+  background: linear-gradient(135deg, rgba(220, 38, 38, 0.95) 0%, rgba(185, 28, 28, 0.95) 100%);
+  color: #fff;
+  box-shadow: 0 4px 16px rgba(220, 38, 38, 0.4);
+  animation: pulse-expired 2s ease-in-out infinite;
+}
+
+.event-badge.sold-out {
+  background: linear-gradient(135deg, rgba(249, 115, 22, 0.95) 0%, rgba(234, 88, 12, 0.95) 100%);
+  color: #fff;
+  box-shadow: 0 4px 16px rgba(249, 115, 22, 0.4);
+  animation: pulse-sold-out 2s ease-in-out infinite;
+}
+
+@keyframes pulse-expired {
+  0%, 100% {
+    box-shadow: 0 4px 16px rgba(220, 38, 38, 0.4);
+  }
+  50% {
+    box-shadow: 0 4px 24px rgba(220, 38, 38, 0.6);
+  }
+}
+
+@keyframes pulse-sold-out {
+  0%, 100% {
+    box-shadow: 0 4px 16px rgba(249, 115, 22, 0.4);
+  }
+  50% {
+    box-shadow: 0 4px 24px rgba(249, 115, 22, 0.6);
+  }
+}
+
+.event-card.expired {
+  opacity: 0.65;
+  position: relative;
+}
+
+.event-card.expired::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(135deg, rgba(220, 38, 38, 0.1) 0%, rgba(185, 28, 28, 0.05) 100%);
+  border-radius: 16px;
+  pointer-events: none;
+}
+
+.event-card.expired:hover {
+  opacity: 0.8;
+}
+
+.event-card.sold-out {
+  position: relative;
+}
+
+.event-card.sold-out::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(135deg, rgba(249, 115, 22, 0.08) 0%, rgba(234, 88, 12, 0.04) 100%);
+  border-radius: 16px;
+  pointer-events: none;
 }
 
 .event-category-badge {
@@ -908,6 +1000,200 @@ input::placeholder, textarea::placeholder {
   font-size: 36px;
   margin-bottom: 16px;
   font-weight: 700;
+}
+
+/* Status badges container */
+.status-badges {
+  display: flex;
+  gap: 12px;
+  margin-bottom: 20px;
+  flex-wrap: wrap;
+}
+
+.status-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 20px;
+  border-radius: 12px;
+  font-size: 14px;
+  font-weight: 600;
+  backdrop-filter: blur(10px);
+  animation: slideInDown 0.5s ease-out;
+}
+
+@keyframes slideInDown {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.status-badge.expired {
+  background: linear-gradient(135deg, rgba(220, 38, 38, 0.2) 0%, rgba(185, 28, 28, 0.15) 100%);
+  color: #fca5a5;
+  border: 2px solid rgba(220, 38, 38, 0.4);
+  box-shadow: 0 4px 20px rgba(220, 38, 38, 0.2);
+}
+
+.status-badge.sold-out {
+  background: linear-gradient(135deg, rgba(249, 115, 22, 0.2) 0%, rgba(234, 88, 12, 0.15) 100%);
+  color: #fdba74;
+  border: 2px solid rgba(249, 115, 22, 0.4);
+  box-shadow: 0 4px 20px rgba(249, 115, 22, 0.2);
+}
+
+.status-badge .badge-icon {
+  font-size: 18px;
+  animation: bounce 2s ease-in-out infinite;
+}
+
+@keyframes bounce {
+  0%, 100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-3px);
+  }
+}
+
+.status-badge .badge-text {
+  font-weight: 700;
+  letter-spacing: 0.5px;
+}
+
+/* Status message sections */
+.status-message-section {
+  background: rgba(22, 33, 62, 0.6);
+  backdrop-filter: blur(20px);
+  padding: 60px 40px;
+  border-radius: 20px;
+  border: 2px solid rgba(255, 255, 255, 0.05);
+  text-align: center;
+  animation: fadeInUp 0.6s ease-out;
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.status-message-section .status-icon {
+  font-size: 80px;
+  margin-bottom: 24px;
+  animation: scaleIn 0.5s ease-out;
+  filter: drop-shadow(0 4px 12px rgba(0, 0, 0, 0.3));
+}
+
+@keyframes scaleIn {
+  from {
+    transform: scale(0);
+    opacity: 0;
+  }
+  to {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+.status-message-section h3 {
+  color: #e4e6eb;
+  font-size: 32px;
+  font-weight: 700;
+  margin-bottom: 16px;
+  letter-spacing: -0.5px;
+}
+
+.status-message-section p {
+  color: #b8bcc8;
+  font-size: 16px;
+  line-height: 1.8;
+  margin-bottom: 32px;
+  max-width: 600px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.expired-section {
+  border: 2px solid rgba(220, 38, 38, 0.3);
+  background: linear-gradient(135deg, rgba(22, 33, 62, 0.8) 0%, rgba(40, 20, 30, 0.6) 100%);
+}
+
+.expired-section .status-icon {
+  animation: scaleIn 0.5s ease-out, pulse-expired-icon 2s ease-in-out infinite 0.5s;
+}
+
+@keyframes pulse-expired-icon {
+  0%, 100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.05);
+  }
+}
+
+.sold-out-section {
+  border: 2px solid rgba(249, 115, 22, 0.3);
+  background: linear-gradient(135deg, rgba(22, 33, 62, 0.8) 0%, rgba(50, 30, 20, 0.6) 100%);
+}
+
+.sold-out-section .status-icon {
+  animation: scaleIn 0.5s ease-out, rotate-sold-out 3s ease-in-out infinite 0.5s;
+}
+
+@keyframes rotate-sold-out {
+  0%, 100% {
+    transform: rotate(0deg);
+  }
+  25% {
+    transform: rotate(-5deg);
+  }
+  75% {
+    transform: rotate(5deg);
+  }
+}
+
+.status-message-section .primary-btn {
+  margin-top: 8px;
+  padding: 14px 32px;
+  font-size: 16px;
+  font-weight: 600;
+  background: linear-gradient(135deg, #0070f3 0%, #0051cc 100%);
+  color: white;
+  border: none;
+  border-radius: 12px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 16px rgba(0, 112, 243, 0.3);
+}
+
+.status-message-section .primary-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 24px rgba(0, 112, 243, 0.4);
+  background: linear-gradient(135deg, #0080ff 0%, #0061dd 100%);
+}
+
+.status-message-section .primary-btn:active {
+  transform: translateY(0);
+}
+
+/* Remove old styles */
+.expired-badge {
+  display: none;
+}
+
+.expired-section .error {
+  display: none;
 }
 
 .event-header .description {

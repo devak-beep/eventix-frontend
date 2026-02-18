@@ -224,16 +224,14 @@ function EventList() {
                 className="event-image"
                 style={{ backgroundImage: `url(${event.image || categories[Array.isArray(event.category) ? event.category[0] : event.category].image})` }}
               >
+                {/* Status badges at top-right */}
                 {isExpired && (
                   <span className="event-badge expired">⏰ Expired</span>
                 )}
                 {!isExpired && isSoldOut && (
                   <span className="event-badge sold-out">🎫 Sold Out</span>
                 )}
-                {!isExpired && !isSoldOut && event.type === 'private' && (
-                  <span className="event-badge private">🔒 Private</span>
-                )}
-                {/* Show visibility tag only to admin */}
+                {/* Visibility badge for admin only - at top-right */}
                 {isAdmin && !isExpired && !isSoldOut && (
                   <span className={`event-badge visibility ${event.type}`}>
                     {event.type === 'public' ? '🌍 Public' : '🔒 Private'}

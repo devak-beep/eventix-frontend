@@ -830,9 +830,6 @@ input::placeholder, textarea::placeholder {
 }
 
 .event-badge.visibility {
-  top: auto;
-  bottom: 15px;
-  right: 15px;
   font-size: 11px;
   padding: 6px 12px;
   backdrop-filter: blur(15px);
@@ -846,9 +843,9 @@ input::placeholder, textarea::placeholder {
 }
 
 .event-badge.visibility.private {
-  background: linear-gradient(135deg, rgba(168, 85, 247, 0.9) 0%, rgba(147, 51, 234, 0.9) 100%);
-  color: #fff;
-  box-shadow: 0 4px 12px rgba(168, 85, 247, 0.3);
+  background: linear-gradient(135deg, rgba(251, 191, 36, 0.9) 0%, rgba(245, 158, 11, 0.9) 100%);
+  color: #78350f;
+  box-shadow: 0 4px 12px rgba(251, 191, 36, 0.3);
 }
 
 .event-badge.expired {

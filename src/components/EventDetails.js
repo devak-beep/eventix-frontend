@@ -278,7 +278,7 @@ function EventDetails({ userId }) {
               onClick={handleLockSeats} 
               disabled={loading || seats < 1 || seats > event.availableSeats}
             >
-              {loading ? 'Processing...' : '🔒 Lock Seats'}
+              {loading ? 'Processing...' : '🔒 Book Your Seats'}
             </button>
           </div>
         )}

@@ -10,7 +10,7 @@ function PaymentPage() {
   const { bookingId } = useParams();
   const navigate = useNavigate();
   const location = useLocation();
-  const { eventName, seats, amount } = location.state || {};
+  const { eventName, seats, amount, lockId } = location.state || {};
 
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
@@ -88,21 +88,46 @@ function PaymentPage() {
         },
         modal: {
           ondismiss: async function () {
-            // Handle payment cancellation
             try {
               await axios.post(`${API_BASE_URL}/razorpay/payment-failed`, {
                 bookingId,
                 error: "Payment cancelled by user",
               });
+              if (lockId) {
+                await axios.post(`${API_BASE_URL}/locks/${lockId}/cancel`);
+              }
               setError("Payment cancelled. Seats have been released.");
             } catch (err) {
-              console.error("Failed to handle payment cancellation:", err);
+              console.error("Failed to release lock on dismiss:", err);
+              setError("Payment cancelled.");
             }
+            setLoading(false);
           },
         },
       };
 
       const razorpay = new window.Razorpay(options);
+
+      // Handle card declined / explicit payment failure
+      razorpay.on("payment.failed", async function (response) {
+        try {
+          await axios.post(`${API_BASE_URL}/razorpay/payment-failed`, {
+            bookingId,
+            error: response.error.description,
+          });
+          if (lockId) {
+            await axios.post(`${API_BASE_URL}/locks/${lockId}/cancel`);
+          }
+          setError(
+            `Payment failed: ${response.error.description || "Card declined"}. Seats have been released.`,
+          );
+        } catch (err) {
+          console.error("Failed to release lock on payment failure:", err);
+          setError("Payment failed. Seats have been released.");
+        }
+        setLoading(false);
+      });
+
       razorpay.open();
       setLoading(false);
     } catch (err) {
@@ -148,7 +173,22 @@ function PaymentPage() {
           </button>
 
           <button
-            onClick={() => navigate("/")}
+            onClick={async () => {
+              try {
+                // Release the booking
+                await axios.post(`${API_BASE_URL}/razorpay/payment-failed`, {
+                  bookingId,
+                  error: "Cancelled by user",
+                });
+                // Release the seat lock
+                if (lockId) {
+                  await axios.post(`${API_BASE_URL}/locks/${lockId}/cancel`);
+                }
+              } catch (err) {
+                console.error("Cleanup on cancel failed:", err);
+              }
+              navigate("/");
+            }}
             style={{ marginTop: "10px", background: "#666" }}
           >
             Cancel

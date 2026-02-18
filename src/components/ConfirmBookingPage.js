@@ -86,7 +86,7 @@ function ConfirmBookingPage() {
 
       // Navigate to payment page
       navigate(`/booking/payment/${response.booking._id}`, {
-        state: { eventId, seats, eventName, amount },
+        state: { eventId, seats, eventName, amount, lockId },
       });
     } catch (err) {
       setError(

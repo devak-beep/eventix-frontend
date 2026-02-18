@@ -1513,7 +1513,7 @@ input::placeholder, textarea::placeholder {
   padding: 12px 30px;
   background: var(--bg-card);
   color: var(--text-secondary);
-  border: 2px solid rgba(255, 255, 255, 0.1);
+  border: 2px solid var(--border-color);
   border-radius: 10px;
   font-size: 16px;
   font-weight: 600;
@@ -1522,15 +1522,22 @@ input::placeholder, textarea::placeholder {
 }
 
 .tab-btn:hover {
-  background: rgba(22, 33, 62, 0.8);
-  border-color: rgba(0, 212, 255, 0.3);
+  background: var(--bg-card-hover);
+  border-color: var(--accent-primary);
+  color: var(--accent-primary);
 }
 
 .tab-btn.active {
-  background: linear-gradient(135deg, #00d4ff 0%, #0099ff 100%);
+  background: var(--gradient-accent);
   color: white;
   border-color: transparent;
-  box-shadow: 0 4px 15px rgba(0, 212, 255, 0.3);
+  box-shadow: 0 4px 15px rgba(97, 218, 251, 0.3);
+}
+
+@media (prefers-color-scheme: dark) {
+  .tab-btn.active {
+    box-shadow: 0 4px 15px rgba(59, 130, 246, 0.3);
+  }
 }
 
 .creation-charge-info {
@@ -1556,9 +1563,9 @@ input::placeholder, textarea::placeholder {
   margin-top: 15px;
   margin-bottom: 20px !important;
   padding: 15px;
-  background: rgba(15, 23, 42, 0.4);
+  background: var(--bg-card);
   border-radius: 8px;
-  border-left: 3px solid #00d4ff;
+  border-left: 3px solid var(--accent-primary);
 }
 
 .event-description strong {

@@ -780,29 +780,30 @@ input::placeholder, textarea::placeholder {
 }
 
 .category-tabs::-webkit-scrollbar-track {
-  background: rgba(255, 255, 255, 0.05);
+  background: var(--bg-tertiary);
   border-radius: 10px;
 }
 
 .category-tabs::-webkit-scrollbar-thumb {
-  background: linear-gradient(135deg, #00d4ff 0%, #0099ff 100%);
+  background: var(--gradient-accent);
   border-radius: 10px;
+  transition: background 0.3s ease;
 }
 
 .category-tabs::-webkit-scrollbar-thumb:hover {
-  background: linear-gradient(135deg, #00d4ff 0%, #0066cc 100%);
+  background: linear-gradient(135deg, var(--accent-primary-hover) 0%, var(--accent-primary) 100%);
 }
 
 .category-tab {
-  background: rgba(255, 255, 255, 0.05);
+  background: var(--bg-card);
   color: var(--text-secondary);
-  border: 1px solid rgba(255, 255, 255, 0.1);
+  border: 1px solid var(--border-color);
   padding: 14px 28px;
   border-radius: 25px;
   font-size: 16px;
   font-weight: 500;
   transition: all 0.3s ease;
-  box-shadow: none;
+  box-shadow: var(--shadow-sm);
   cursor: pointer;
   display: flex;
   align-items: center;
@@ -819,17 +820,24 @@ input::placeholder, textarea::placeholder {
 }
 
 .category-tab:hover {
-  background: rgba(0, 212, 255, 0.1);
-  color: #00d4ff;
-  border-color: rgba(0, 212, 255, 0.3);
+  background: var(--bg-card-hover);
+  color: var(--accent-primary);
+  border-color: var(--accent-primary);
   transform: translateY(-2px);
+  box-shadow: var(--shadow-md);
 }
 
 .category-tab.active {
-  background: linear-gradient(135deg, #00d4ff 0%, #0099ff 100%);
+  background: var(--gradient-accent);
   color: white;
   border-color: transparent;
-  box-shadow: 0 4px 15px rgba(0, 153, 255, 0.3);
+  box-shadow: 0 4px 15px rgba(97, 218, 251, 0.3);
+}
+
+@media (prefers-color-scheme: dark) {
+  .category-tab.active {
+    box-shadow: 0 4px 15px rgba(59, 130, 246, 0.3);
+  }
 }
 
 .category-btn {

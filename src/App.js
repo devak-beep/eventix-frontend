@@ -95,9 +95,11 @@ function App() {
     const htmlElement = document.documentElement;
     if (isDarkMode) {
       htmlElement.classList.add("dark");
+      htmlElement.classList.remove("light");
       htmlElement.style.colorScheme = "dark";
     } else {
       htmlElement.classList.remove("dark");
+      htmlElement.classList.add("light");
       htmlElement.style.colorScheme = "light";
     }
     // Save preference

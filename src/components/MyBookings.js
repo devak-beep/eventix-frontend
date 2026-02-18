@@ -2,6 +2,7 @@
 import React, { useState, useEffect } from "react";
 import { getAllBookings, cancelBooking, getUserById } from "../api";
 import { MyBookingsSkeleton } from "./SkeletonLoader";
+import AdminRequests from "./AdminRequests";
 import axios from "axios";
 
 const API_BASE_URL =
@@ -177,6 +178,14 @@ function MyBookings({ userId }) {
             onClick={() => setActiveTab("events")}
           >
             My Events
+          </button>
+        )}
+        {userRole === "superAdmin" && (
+          <button
+            className={`tab-btn ${activeTab === "admin-requests" ? "active" : ""}`}
+            onClick={() => setActiveTab("admin-requests")}
+          >
+            Admin Requests
           </button>
         )}
       </div>
@@ -391,6 +400,11 @@ function MyBookings({ userId }) {
             ))}
           </div>
         </>
+      )}
+
+      {/* Admin Requests Tab - Only for superAdmin */}
+      {activeTab === "admin-requests" && userRole === "superAdmin" && (
+        <AdminRequests />
       )}
     </div>
   );

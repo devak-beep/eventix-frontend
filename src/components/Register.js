@@ -1,20 +1,20 @@
 // This component handles user registration
-import React, { useState } from 'react';
-import { createUser } from '../api';
-import { EventixLogo } from './EventixLogo';
-import { FullScreenLogoSequence } from './FullScreenLogoSequence';
+import React, { useState } from "react";
+import { createUser } from "../api";
+import { EventixLogo } from "./EventixLogo";
+import { FullScreenLogoSequence } from "./FullScreenLogoSequence";
 
 function Register({ onRegisterSuccess }) {
   // Form data
-  const [name, setName] = useState('');
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-  const [confirmPassword, setConfirmPassword] = useState('');
-  const [role, setRole] = useState('user'); // Add role state
-  
+  const [name, setName] = useState("");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
+  const [requestAdmin, setRequestAdmin] = useState(false); // New: request admin role
+
   // UI states
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState('');
+  const [error, setError] = useState("");
   const [showSuccess, setShowSuccess] = useState(false);
   const [passwordMatch, setPasswordMatch] = useState(true);
   const [showAnimation, setShowAnimation] = useState(false);
@@ -44,7 +44,7 @@ function Register({ onRegisterSuccess }) {
   const validateForm = () => {
     // Name validation - at least 3 characters
     if (name.trim().length < 3) {
-      setError('Name must be at least 3 characters long');
+      setError("Name must be at least 3 characters long");
       return false;
     }
 
@@ -52,31 +52,33 @@ function Register({ onRegisterSuccess }) {
     const emailLower = email.toLowerCase().trim();
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!emailRegex.test(emailLower)) {
-      setError('Please enter a valid email address');
+      setError("Please enter a valid email address");
       return false;
     }
 
     // Password validation
     if (password.length < 6) {
-      setError('Password must be at least 6 characters long');
+      setError("Password must be at least 6 characters long");
       return false;
     }
 
     // Check for at least one number
     if (!/\d/.test(password)) {
-      setError('Password must contain at least one number');
+      setError("Password must contain at least one number");
       return false;
     }
 
     // Check for at least one special character
     if (!/[!@#$%^&*(),.?":{}|<>]/.test(password)) {
-      setError('Password must contain at least one special character (!@#$%^&* etc.)');
+      setError(
+        "Password must contain at least one special character (!@#$%^&* etc.)",
+      );
       return false;
     }
 
     // Check password match
     if (password !== confirmPassword) {
-      setError('Passwords do not match');
+      setError("Passwords do not match");
       return false;
     }
 
@@ -86,8 +88,8 @@ function Register({ onRegisterSuccess }) {
   // Handle registration
   const handleRegister = async (e) => {
     e.preventDefault();
-    
-    setError('');
+
+    setError("");
 
     // Validate form before submitting
     if (!validateForm()) {
@@ -98,17 +100,17 @@ function Register({ onRegisterSuccess }) {
 
     try {
       // Create user in backend with normalized email
-      await createUser({ 
-        name: name.trim(), 
-        email: email.toLowerCase().trim(), 
+      await createUser({
+        name: name.trim(),
+        email: email.toLowerCase().trim(),
         password,
-        role // Include role in registration
+        requestAdmin, // Send admin request flag
       });
-      
+
       // Show success message
       setShowSuccess(true);
     } catch (err) {
-      setError(err.response?.data?.message || 'Registration failed');
+      setError(err.response?.data?.message || "Registration failed");
     } finally {
       setLoading(false);
     }
@@ -121,113 +123,140 @@ function Register({ onRegisterSuccess }) {
 
   return (
     <>
-      {showAnimation && <FullScreenLogoSequence onComplete={() => onRegisterSuccess(null)} />}
+      {showAnimation && (
+        <FullScreenLogoSequence onComplete={() => onRegisterSuccess(null)} />
+      )}
       <div className="auth-container">
         <div className="auth-box">
-        {/* Show success message after registration */}
-        {showSuccess ? (
-          <div className="success-popup">
-            <div className="success-icon">🎉</div>
-            <h2>Congratulations!</h2>
-            <p>You have registered successfully!</p>
-            <p>Now you can login with your credentials.</p>
-            <button onClick={goToLogin} className="submit-btn">
-              Go to Login
-            </button>
-          </div>
-        ) : (
-          <>
-            <div className="auth-logo">
-              <EventixLogo width={80} height={80} />
-              <h1>Eventix</h1>
-              <p>Enterprise Event Management Platform</p>
+          {/* Show success message after registration */}
+          {showSuccess ? (
+            <div className="success-popup">
+              <div className="success-icon">🎉</div>
+              <h2>
+                {requestAdmin ? "Admin Request Submitted!" : "Congratulations!"}
+              </h2>
+              {requestAdmin ? (
+                <>
+                  <p>Your request to become an admin has been submitted.</p>
+                  <p>
+                    Your account will be created once approved by a super admin.
+                  </p>
+                  <p className="admin-request-info">
+                    ⏳ Waiting for approval...
+                  </p>
+                </>
+              ) : (
+                <>
+                  <p>You have registered successfully!</p>
+                  <p>Now you can login with your credentials.</p>
+                </>
+              )}
+              <button onClick={goToLogin} className="submit-btn">
+                {requestAdmin ? "Back to Login" : "Go to Login"}
+              </button>
             </div>
-            <h2>Create Account</h2>
-
-            {error && <div className="error">{error}</div>}
-
-            <form onSubmit={handleRegister}>
-              <div className="form-group">
-                <label>Name:</label>
-                <input
-                  type="text"
-                  value={name}
-                  onChange={(e) => setName(e.target.value)}
-                  required
-                  placeholder="John Doe"
-                />
-                <small>At least 3 characters</small>
+          ) : (
+            <>
+              <div className="auth-logo">
+                <EventixLogo width={80} height={80} />
+                <h1>Eventix</h1>
+                <p>Enterprise Event Management Platform</p>
               </div>
+              <h2>Create Account</h2>
 
-              <div className="form-group">
-                <label>Email:</label>
-                <input
-                  type="email"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  required
-                  placeholder="john@example.com"
-                />
-                <small>Must be a valid email address</small>
-              </div>
+              {error && <div className="error">{error}</div>}
 
-              <div className="form-group">
-                <label>Password:</label>
-                <input
-                  type="password"
-                  value={password}
-                  onChange={handlePasswordChange}
-                  required
-                  placeholder="Enter password"
-                />
-                <small>Min 6 characters, 1 number, 1 special character (!@#$%^&*)</small>
-              </div>
+              <form onSubmit={handleRegister}>
+                <div className="form-group">
+                  <label>Name:</label>
+                  <input
+                    type="text"
+                    value={name}
+                    onChange={(e) => setName(e.target.value)}
+                    required
+                    placeholder="John Doe"
+                  />
+                  <small>At least 3 characters</small>
+                </div>
 
-              <div className="form-group">
-                <label>Confirm Password:</label>
-                <input
-                  type="password"
-                  value={confirmPassword}
-                  onChange={handleConfirmPasswordChange}
-                  required
-                  placeholder="Re-enter password"
-                  style={{ borderColor: !passwordMatch ? '#ef4444' : '' }}
-                />
-                {!passwordMatch && confirmPassword && (
-                  <small style={{ color: '#ef4444', fontWeight: 600 }}>
-                    ⚠️ Passwords do not match
+                <div className="form-group">
+                  <label>Email:</label>
+                  <input
+                    type="email"
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                    required
+                    placeholder="john@example.com"
+                  />
+                  <small>Must be a valid email address</small>
+                </div>
+
+                <div className="form-group">
+                  <label>Password:</label>
+                  <input
+                    type="password"
+                    value={password}
+                    onChange={handlePasswordChange}
+                    required
+                    placeholder="Enter password"
+                  />
+                  <small>
+                    Min 6 characters, 1 number, 1 special character (!@#$%^&*)
                   </small>
-                )}
-              </div>
+                </div>
 
-              <div className="form-group">
-                <label>Account Type:</label>
-                <select 
-                  value={role} 
-                  onChange={(e) => setRole(e.target.value)}
-                  required
+                <div className="form-group">
+                  <label>Confirm Password:</label>
+                  <input
+                    type="password"
+                    value={confirmPassword}
+                    onChange={handleConfirmPasswordChange}
+                    required
+                    placeholder="Re-enter password"
+                    style={{ borderColor: !passwordMatch ? "#ef4444" : "" }}
+                  />
+                  {!passwordMatch && confirmPassword && (
+                    <small style={{ color: "#ef4444", fontWeight: 600 }}>
+                      ⚠️ Passwords do not match
+                    </small>
+                  )}
+                </div>
+
+                <div className="form-group checkbox-group">
+                  <label className="checkbox-label">
+                    <input
+                      type="checkbox"
+                      checked={requestAdmin}
+                      onChange={(e) => setRequestAdmin(e.target.checked)}
+                      className="checkbox-input"
+                    />
+                    <span>Request Admin Access to Create & Manage Events</span>
+                  </label>
+                  <small>
+                    {requestAdmin
+                      ? "Your admin request will be reviewed by our team. You can book events immediately, and manage events once approved."
+                      : "You can book events with your regular account. Upgrade to admin later from your dashboard."}
+                  </small>
+                </div>
+
+                <button type="submit" disabled={loading} className="submit-btn">
+                  {loading ? "Creating Account..." : "Register"}
+                </button>
+              </form>
+
+              <p className="auth-switch">
+                Already have an account?
+                <button
+                  onClick={() => onRegisterSuccess(null)}
+                  className="link-btn"
                 >
-                  <option value="user">User (Book Events)</option>
-                  <option value="admin">Admin (Create & Manage Events)</option>
-                </select>
-                <small>Choose User to book events or Admin to create events</small>
-              </div>
-
-              <button type="submit" disabled={loading} className="submit-btn">
-                {loading ? 'Creating Account...' : 'Register'}
-              </button>
-            </form>
-
-            <p className="auth-switch">
-              Already have an account? 
-              <button onClick={() => onRegisterSuccess(null)} className="link-btn">
-                Login here
-              </button>
-            </p>
-          </>
-        )}
+                  Login here
+                </button>
+              </p>
+            </>
+          )}
+        </div>
       </div>
-    </div>
     </>
   );
 }

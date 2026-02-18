@@ -2,6 +2,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { getAllPublicEvents, getEventById } from '../api';
+import { EventListSkeleton } from './SkeletonLoader';
 
 function EventList() {
   const navigate = useNavigate();
@@ -190,8 +191,8 @@ function EventList() {
       {/* Show error message if any */}
       {error && <p className="error">{error}</p>}
 
-      {/* Show loading message */}
-      {loading && <p className="info">Loading events...</p>}
+      {/* Show skeleton loading */}
+      {loading && <EventListSkeleton />}
 
       {/* Show message if no events */}
       {!loading && events.filter(e => selectedCategory === 'all' || (Array.isArray(e.category) ? e.category.includes(selectedCategory) : e.category === selectedCategory)).length === 0 && (
@@ -199,6 +200,7 @@ function EventList() {
       )}
 
       {/* Display all events as cards */}
+      {!loading && (
       <div className="events-grid">
         {events
           .filter(event => selectedCategory === 'all' || (Array.isArray(event.category) ? event.category.includes(selectedCategory) : event.category === selectedCategory))

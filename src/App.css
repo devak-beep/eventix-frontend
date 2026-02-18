@@ -697,6 +697,17 @@ input::placeholder, textarea::placeholder {
   }
 }
 
+.adaptive-logo-large {
+  filter: drop-shadow(0 0 10px rgba(97, 218, 251, 0.3));
+  transition: filter 0.3s ease;
+}
+
+@media (prefers-color-scheme: dark) {
+  .adaptive-logo-large {
+    filter: drop-shadow(0 0 10px rgba(59, 130, 246, 0.3));
+  }
+}
+
 .logo-circle-adaptive {
   fill: url(#simpleGradLight);
   transition: fill 0.3s ease;
@@ -705,6 +716,39 @@ input::placeholder, textarea::placeholder {
 @media (prefers-color-scheme: dark) {
   .logo-circle-adaptive {
     fill: url(#simpleGradDark);
+  }
+}
+
+.logo-circle-large.logo-circle-1 {
+  fill: url(#circle1Light);
+  transition: fill 0.3s ease;
+}
+
+@media (prefers-color-scheme: dark) {
+  .logo-circle-large.logo-circle-1 {
+    fill: url(#circle1Dark);
+  }
+}
+
+.logo-circle-large.logo-circle-2 {
+  fill: url(#circle2Light);
+  transition: fill 0.3s ease;
+}
+
+@media (prefers-color-scheme: dark) {
+  .logo-circle-large.logo-circle-2 {
+    fill: url(#circle2Dark);
+  }
+}
+
+.logo-circle-large.logo-circle-3 {
+  fill: url(#circle3Light);
+  transition: fill 0.3s ease;
+}
+
+@media (prefers-color-scheme: dark) {
+  .logo-circle-large.logo-circle-3 {
+    fill: url(#circle3Dark);
   }
 }
 

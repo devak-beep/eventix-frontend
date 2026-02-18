@@ -178,64 +178,66 @@ function EventList() {
       <div className="list-header">
         <h2>Available Events</h2>
 
-        {/* Dual-mode search interface */}
-        <div className="search-mode-selector">
-          <button
-            className={`mode-btn ${searchMode === "public" ? "active" : ""}`}
-            onClick={() => setSearchMode("public")}
-          >
-            <span className="mode-icon">🔍</span>
-            <span className="mode-text">Search Public Events</span>
-          </button>
-          <button
-            className={`mode-btn ${searchMode === "private" ? "active" : ""}`}
-            onClick={() => setSearchMode("private")}
-          >
-            <span className="mode-icon">🔐</span>
-            <span className="mode-text">Find Private Event</span>
-          </button>
-        </div>
-
-        {/* Public event search */}
-        {searchMode === "public" && (
-          <div className="search-input-group public-search">
-            <input
-              type="text"
-              placeholder="Search by event name or organizer..."
-              value={publicEventSearch}
-              onChange={(e) => setPublicEventSearch(e.target.value)}
-              className="public-search-input"
-            />
-            <span className="search-hint">
-              💡 Search by name, organizer name, or email
-            </span>
-          </div>
-        )}
-
-        {/* Private event search */}
-        {searchMode === "private" && (
-          <div className="search-input-group private-search">
-            <input
-              type="text"
-              placeholder="Paste the private event ID..."
-              value={eventIdInput}
-              onChange={(e) => setEventIdInput(e.target.value)}
-              onKeyPress={(e) => e.key === "Enter" && addEventById()}
-              className="private-search-input"
-            />
+        <div>
+          {/* Dual-mode search interface */}
+          <div className="search-mode-selector">
             <button
-              onClick={addEventById}
-              disabled={loading}
-              className="search-btn"
+              className={`mode-btn ${searchMode === "public" ? "active" : ""}`}
+              onClick={() => setSearchMode("public")}
             >
-              {loading ? "Loading..." : "Add Event"}
+              <span className="mode-icon">🔍</span>
+              <span className="mode-text">Search Public Events</span>
             </button>
-            <span className="search-hint">
-              💡 You can share private event IDs with friends to let them access
-              them
-            </span>
+            <button
+              className={`mode-btn ${searchMode === "private" ? "active" : ""}`}
+              onClick={() => setSearchMode("private")}
+            >
+              <span className="mode-icon">🔐</span>
+              <span className="mode-text">Find Private Event</span>
+            </button>
           </div>
-        )}
+
+          {/* Public event search */}
+          {searchMode === "public" && (
+            <div className="search-input-group public-search">
+              <input
+                type="text"
+                placeholder="Search by event name or organizer..."
+                value={publicEventSearch}
+                onChange={(e) => setPublicEventSearch(e.target.value)}
+                className="public-search-input"
+              />
+              <span className="search-hint">
+                💡 Search by name, organizer name, or email
+              </span>
+            </div>
+          )}
+
+          {/* Private event search */}
+          {searchMode === "private" && (
+            <div className="search-input-group private-search">
+              <input
+                type="text"
+                placeholder="Paste the private event ID..."
+                value={eventIdInput}
+                onChange={(e) => setEventIdInput(e.target.value)}
+                onKeyPress={(e) => e.key === "Enter" && addEventById()}
+                className="private-search-input"
+              />
+              <button
+                onClick={addEventById}
+                disabled={loading}
+                className="search-btn"
+              >
+                {loading ? "Loading..." : "Add Event"}
+              </button>
+              <span className="search-hint">
+                💡 You can share private event IDs with friends to let them
+                access them
+              </span>
+            </div>
+          )}
+        </div>
       </div>
 
       {/* Category filter tabs */}

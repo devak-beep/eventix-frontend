@@ -849,10 +849,21 @@ input::placeholder, textarea::placeholder {
   margin-bottom: 30px;
 }
 
+.list-header h2 {
+  margin-bottom: -10px;
+}
+
+.list-header > div:last-child {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
 .search-mode-selector {
   display: flex;
   gap: 12px;
   flex-wrap: wrap;
+  justify-content: flex-end;
 }
 
 .mode-btn {
@@ -920,6 +931,7 @@ input::placeholder, textarea::placeholder {
   flex-direction: column;
   gap: 10px;
   width: 100%;
+  align-items: flex-end;
 }
 
 .public-search {
@@ -934,6 +946,7 @@ input::placeholder, textarea::placeholder {
 .private-search-input,
 .search-input-group input {
   width: 100%;
+  max-width: 500px;
   padding: 12px 16px;
   background: rgba(255, 255, 255, 0.05);
   border: 2px solid var(--border-color);

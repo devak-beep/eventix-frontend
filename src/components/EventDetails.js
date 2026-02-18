@@ -248,17 +248,40 @@ function EventDetails({ userId }) {
 
         <p className="description">{event.description}</p>
         <div className="event-meta">
-          <p>📅 Date: {new Date(event.eventDate).toLocaleString()}</p>
+          <p>
+            📅{" "}
+            {new Date(event.eventDate).toLocaleString("en-IN", {
+              weekday: "long",
+              year: "numeric",
+              month: "long",
+              day: "numeric",
+              hour: "2-digit",
+              minute: "2-digit",
+            })}
+          </p>
           <p>
             🪑 Available Seats: {event.availableSeats} / {event.totalSeats}
           </p>
           <p>💰 Price: ₹{event.amount || 0} per ticket</p>
-          {event.createdBy && (
-            <p>
-              👤 Organized by: {event.createdBy.name} ({event.createdBy.email})
-            </p>
-          )}
         </div>
+
+        {event.createdBy && (
+          <div className="event-organizer-meta">
+            <div className="org-avatar">
+              {event.createdBy.name
+                ?.split(" ")
+                .map((n) => n[0])
+                .join("")
+                .toUpperCase()
+                .slice(0, 2)}
+            </div>
+            <div className="org-info">
+              <span className="org-label">Organized by</span>
+              <span className="org-name">{event.createdBy.name}</span>
+              <span className="org-email">{event.createdBy.email}</span>
+            </div>
+          </div>
+        )}
       </div>
 
       {/* Show expired, sold out, or booking section */}

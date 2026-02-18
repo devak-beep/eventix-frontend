@@ -89,31 +89,32 @@ function Navbar({ user, onLogout, isDarkMode, onToggleTheme }) {
                   {!user.role && "User"}
                 </div>
               </div>
-              <hr className="dropdown-divider" />
-              <button
-                className="dropdown-item"
-                onClick={() => handleNavClick("/")}
-              >
-                📋 All Events
-              </button>
-              {(user.role === "admin" || user.role === "superAdmin") && (
+              <div className="dropdown-items-wrapper">
                 <button
                   className="dropdown-item"
-                  onClick={() => handleNavClick("/create")}
+                  onClick={() => handleNavClick("/")}
                 >
-                  ➕ Create Event
+                  📋 All Events
                 </button>
-              )}
-              <button
-                className="dropdown-item"
-                onClick={() => handleNavClick("/bookings")}
-              >
-                📊 My Dashboard
-              </button>
-              <hr className="dropdown-divider" />
-              <button className="dropdown-item logout" onClick={handleLogout}>
-                🚪 Logout
-              </button>
+                {(user.role === "admin" || user.role === "superAdmin") && (
+                  <button
+                    className="dropdown-item"
+                    onClick={() => handleNavClick("/create")}
+                  >
+                    ➕ Create Event
+                  </button>
+                )}
+                <button
+                  className="dropdown-item"
+                  onClick={() => handleNavClick("/bookings")}
+                >
+                  📊 My Dashboard
+                </button>
+                <hr className="dropdown-divider" />
+                <button className="dropdown-item logout" onClick={handleLogout}>
+                  🚪 Logout
+                </button>
+              </div>
             </div>
           )}
         </div>

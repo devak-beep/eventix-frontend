@@ -2550,7 +2550,7 @@ input::placeholder, textarea::placeholder {
 
 .btn-approve {
   background: rgba(34, 197, 94, 0.15);
-  color: #86efac;
+  color: #16a34a;
   border: 1px solid rgba(34, 197, 94, 0.3);
 }
 
@@ -2560,9 +2560,13 @@ input::placeholder, textarea::placeholder {
   transform: translateY(-1px);
 }
 
+.dark .btn-approve {
+  color: #86efac;
+}
+
 .btn-reject {
   background: rgba(239, 68, 68, 0.15);
-  color: #fca5a5;
+  color: #dc2626;
   border: 1px solid rgba(239, 68, 68, 0.3);
 }
 
@@ -2570,6 +2574,10 @@ input::placeholder, textarea::placeholder {
   background: rgba(239, 68, 68, 0.25);
   border-color: rgba(239, 68, 68, 0.5);
   transform: translateY(-1px);
+}
+
+.dark .btn-reject {
+  color: #fca5a5;
 }
 
 .btn-secondary {

@@ -166,7 +166,7 @@ body {
 
 .nav-links {
   display: flex;
-  gap: 15px;
+  gap: 16px;
   align-items: center;
 }
 
@@ -204,19 +204,18 @@ body {
   background: rgba(100, 116, 139, 0.1);
   color: var(--text-primary);
   border: 1px solid var(--border-color);
-  padding: 8px 14px;
-  border-radius: 6px;
+  padding: 10px 16px;
+  border-radius: 20px;
   cursor: pointer;
-  font-size: 13px;
+  font-size: 16px;
   font-weight: 600;
   transition: all 0.3s ease;
-  margin: 0 8px;
 }
 
 .theme-toggle-btn:hover {
   background: rgba(100, 116, 139, 0.2);
-  transform: translateY(-2px);
-  box-shadow: 0 5px 15px rgba(100, 116, 139, 0.2);
+  transform: scale(1.1) rotate(15deg);
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
 }
 
 /* User menu dropdown */
@@ -226,27 +225,28 @@ body {
 }
 
 .user-avatar-btn {
-  background: var(--gradient-accent);
+  background: linear-gradient(135deg, #00d4ff 0%, #0099ff 100%);
   color: white;
-  border: none;
-  padding: 8px 12px;
+  border: 2px solid rgba(0, 212, 255, 0.5);
+  padding: 10px 14px;
   cursor: pointer;
   border-radius: 50%;
-  width: 45px;
-  height: 45px;
+  width: 50px;
+  height: 50px;
   display: flex;
   align-items: center;
   justify-content: center;
   font-weight: 700;
-  font-size: 14px;
+  font-size: 16px;
   transition: all 0.3s ease;
   position: relative;
-  box-shadow: 0 4px 12px rgba(0, 212, 255, 0.3);
+  box-shadow: 0 6px 20px rgba(0, 212, 255, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.2);
 }
 
 .user-avatar-btn:hover {
-  transform: scale(1.05);
-  box-shadow: 0 6px 16px rgba(0, 212, 255, 0.5);
+  transform: scale(1.1) translateY(-2px);
+  box-shadow: 0 10px 30px rgba(0, 212, 255, 0.6), inset 0 1px 0 rgba(255, 255, 255, 0.3);
+  border-color: rgba(0, 212, 255, 0.8);
 }
 
 .user-avatar-btn .avatar {
@@ -257,31 +257,34 @@ body {
 
 .user-avatar-btn .dropdown-arrow {
   position: absolute;
-  bottom: 0;
-  right: 0;
-  font-size: 10px;
-  background: rgba(0, 0, 0, 0.3);
+  bottom: -1px;
+  right: -1px;
+  font-size: 8px;
+  background: linear-gradient(135deg, #00d4ff, #0099ff);
+  border: 2px solid var(--bg-card);
   border-radius: 50%;
-  width: 16px;
-  height: 16px;
+  width: 18px;
+  height: 18px;
   display: flex;
   align-items: center;
   justify-content: center;
+  color: white;
 }
 
 .dropdown-menu {
   position: absolute;
   top: 100%;
   right: 0;
-  margin-top: 8px;
+  margin-top: 12px;
   background: var(--bg-card);
-  border: 1px solid var(--border-color);
-  border-radius: 12px;
-  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
-  min-width: 220px;
+  border: 1px solid rgba(0, 212, 255, 0.2);
+  border-radius: 16px;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.4), 0 0 40px rgba(0, 212, 255, 0.1);
+  min-width: 260px;
   z-index: 1001;
   overflow: hidden;
-  animation: slideDown 0.3s ease forwards;
+  animation: slideDown 0.3s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+  backdrop-filter: blur(10px);
 }
 
 @keyframes slideDown {
@@ -296,36 +299,43 @@ body {
 }
 
 .dropdown-header {
-  padding: 12px 16px;
-  background: rgba(0, 212, 255, 0.05);
-  border-bottom: 1px solid var(--border-color);
+  padding: 20px 20px;
+  background: linear-gradient(135deg, rgba(0, 212, 255, 0.08) 0%, rgba(0, 212, 255, 0.04) 100%);
+  border-bottom: 1px solid rgba(0, 212, 255, 0.15);
 }
 
 .dropdown-user-name {
   font-weight: 700;
   color: var(--text-primary);
-  font-size: 14px;
-  margin-bottom: 2px;
+  font-size: 15px;
+  margin-bottom: 6px;
+  letter-spacing: -0.3px;
 }
 
 .dropdown-user-role {
-  font-size: 12px;
-  color: var(--text-secondary);
+  font-size: 11px;
+  color: #00d4ff;
   text-transform: uppercase;
-  letter-spacing: 0.5px;
+  letter-spacing: 0.8px;
+  font-weight: 600;
+  background: rgba(0, 212, 255, 0.15);
+  padding: 4px 8px;
+  border-radius: 4px;
+  display: inline-block;
 }
 
 .dropdown-divider {
   height: 1px;
   border: none;
-  background: var(--border-color);
-  margin: 0;
+  background: linear-gradient(90deg, transparent 0%, rgba(0, 212, 255, 0.2) 50%, transparent 100%);
+  margin: 8px 0;
 }
 
 .dropdown-item {
-  display: block;
+  display: flex;
+  align-items: center;
   width: 100%;
-  padding: 12px 16px;
+  padding: 13px 20px;
   border: none;
   background: transparent;
   color: var(--text-primary);
@@ -334,12 +344,13 @@ body {
   font-size: 14px;
   font-weight: 500;
   transition: all 0.2s ease;
+  gap: 4px;
 }
 
 .dropdown-item:hover {
-  background: rgba(0, 212, 255, 0.1);
+  background: linear-gradient(90deg, transparent 0%, rgba(0, 212, 255, 0.15) 100%);
   color: #00d4ff;
-  padding-left: 20px;
+  padding-left: 26px;
 }
 
 .dropdown-item.logout {
@@ -347,8 +358,9 @@ body {
 }
 
 .dropdown-item.logout:hover {
-  background: rgba(239, 68, 68, 0.1);
+  background: linear-gradient(90deg, transparent 0%, rgba(239, 68, 68, 0.15) 100%);
   color: #ef4444;
+  padding-left: 26px;
 }
 
 .user-info {

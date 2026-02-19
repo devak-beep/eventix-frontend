@@ -252,11 +252,17 @@ function App() {
   // If user is not logged in, show login/register page
   if (!user) {
     return showRegister ? (
-      <Register onRegisterSuccess={handleRegisterSuccess} />
+      <Register
+        onRegisterSuccess={handleRegisterSuccess}
+        isDarkMode={isDarkMode}
+        onToggleTheme={handleToggleTheme}
+      />
     ) : (
       <Login
         onLoginSuccess={handleLoginSuccess}
         onSwitchToRegister={() => setShowRegister(true)}
+        isDarkMode={isDarkMode}
+        onToggleTheme={handleToggleTheme}
       />
     );
   }

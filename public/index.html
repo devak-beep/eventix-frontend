@@ -2,42 +2,108 @@
 <html lang="en">
   <head>
     <meta charset="utf-8" />
-    <link rel="icon" href="%PUBLIC_URL%/eventix-logo-simplified.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <meta name="theme-color" content="#00d4ff" />
-    <meta
-      name="description"
-      content="Eventix - Book your favorite events easily and securely"
-    />
-    <link rel="apple-touch-icon" href="%PUBLIC_URL%/eventix-logo.svg" />
-    <!--
-      manifest.json provides metadata used when your web app is installed on a
-      user's mobile device or desktop. See https://developers.google.com/web/fundamentals/web-app-manifest/
-    -->
-    <link rel="manifest" href="%PUBLIC_URL%/manifest.json" />
-    <!--
-      Notice the use of %PUBLIC_URL% in the tags above.
-      It will be replaced with the URL of the `public` folder during the build.
-      Only files inside the `public` folder can be referenced from the HTML.
 
-      Unlike "/favicon.ico" or "favicon.ico", "%PUBLIC_URL%/favicon.ico" will
-      work correctly both with client-side routing and a non-root public URL.
-      Learn how to configure a non-root public URL by running `npm run build`.
-    -->
-    <title>Eventix - Book Your Events</title>
+    <!-- ===================== PRIMARY SEO ===================== -->
+    <title>Eventix – Enterprise Event Booking Platform</title>
+    <meta name="description" content="Eventix is an enterprise event booking platform. Browse, book, and manage events securely online. Discover concerts, conferences, and more — all in one place." />
+    <meta name="keywords" content="Eventix, Eventix Enterprise, Eventix event booking, event booking platform, online event tickets, book events online, enterprise event management, event registration, Eventix app" />
+    <meta name="author" content="Eventix Enterprise" />
+    <meta name="robots" content="index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1" />
+    <meta name="theme-color" content="#3b82f6" />
+    <link rel="canonical" href="https://eventix-frontend-8v2j.vercel.app/" />
+
+    <!-- ===================== OPEN GRAPH (Facebook / LinkedIn / WhatsApp) ===================== -->
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="Eventix" />
+    <meta property="og:title" content="Eventix – Enterprise Event Booking Platform" />
+    <meta property="og:description" content="Browse and book your favorite events securely with Eventix. An enterprise-grade event management platform built for everyone." />
+    <meta property="og:url" content="https://eventix-frontend-8v2j.vercel.app/" />
+    <meta property="og:image" content="https://eventix-frontend-8v2j.vercel.app/og-image.png" />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:locale" content="en_US" />
+
+    <!-- ===================== TWITTER CARD ===================== -->
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="Eventix – Enterprise Event Booking Platform" />
+    <meta name="twitter:description" content="Browse and book your favorite events securely with Eventix. An enterprise-grade event management platform." />
+    <meta name="twitter:image" content="https://eventix-frontend-8v2j.vercel.app/og-image.png" />
+    <meta name="twitter:site" content="@EventixApp" />
+
+    <!-- ===================== STRUCTURED DATA – JSON-LD ===================== -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@graph": [
+        {
+          "@type": "Organization",
+          "@id": "https://eventix-frontend-8v2j.vercel.app/#organization",
+          "name": "Eventix",
+          "alternateName": ["Eventix Enterprise", "Eventix Event Booking"],
+          "url": "https://eventix-frontend-8v2j.vercel.app/",
+          "logo": {
+            "@type": "ImageObject",
+            "url": "https://eventix-frontend-8v2j.vercel.app/eventix-logo-simplified.svg",
+            "width": 120,
+            "height": 120
+          },
+          "description": "Eventix is an enterprise event booking and management platform that lets users browse, book, and manage events securely online.",
+          "sameAs": [
+            "https://github.com/devak-beep/eventix-frontend"
+          ]
+        },
+        {
+          "@type": "WebSite",
+          "@id": "https://eventix-frontend-8v2j.vercel.app/#website",
+          "url": "https://eventix-frontend-8v2j.vercel.app/",
+          "name": "Eventix",
+          "description": "Enterprise Event Booking Platform",
+          "publisher": {
+            "@id": "https://eventix-frontend-8v2j.vercel.app/#organization"
+          },
+          "potentialAction": {
+            "@type": "SearchAction",
+            "target": {
+              "@type": "EntryPoint",
+              "urlTemplate": "https://eventix-frontend-8v2j.vercel.app/?search={search_term_string}"
+            },
+            "query-input": "required name=search_term_string"
+          }
+        },
+        {
+          "@type": "WebApplication",
+          "name": "Eventix – Event Booking Platform",
+          "url": "https://eventix-frontend-8v2j.vercel.app/",
+          "applicationCategory": "BusinessApplication",
+          "operatingSystem": "Web",
+          "offers": {
+            "@type": "Offer",
+            "price": "0",
+            "priceCurrency": "INR"
+          },
+          "description": "Book and manage events online with Eventix — a secure enterprise event management platform.",
+          "publisher": {
+            "@id": "https://eventix-frontend-8v2j.vercel.app/#organization"
+          }
+        }
+      ]
+    }
+    </script>
+
+    <!-- ===================== ICONS & MANIFEST ===================== -->
+    <link rel="icon" href="%PUBLIC_URL%/eventix-logo-simplified.svg" type="image/svg+xml" />
+    <link rel="apple-touch-icon" href="%PUBLIC_URL%/eventix-logo.svg" />
+    <link rel="manifest" href="%PUBLIC_URL%/manifest.json" />
+
+    <!-- ===================== PERFORMANCE ===================== -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="dns-prefetch" href="https://eventix-backend.vercel.app" />
   </head>
   <body>
-    <noscript>You need to enable JavaScript to run this app.</noscript>
+    <noscript>
+      <p>Eventix – Enterprise Event Booking Platform. Enable JavaScript to browse and book events on Eventix.</p>
+    </noscript>
     <div id="root"></div>
-    <!--
-      This HTML file is a template.
-      If you open it directly in the browser, you will see an empty page.
-
-      You can add webfonts, meta tags, or analytics to this file.
-      The build step will place the bundled scripts into the <body> tag.
-
-      To begin the development, run `npm start` or `yarn start`.
-      To create a production bundle, use `npm run build` or `yarn build`.
-    -->
   </body>
 </html>

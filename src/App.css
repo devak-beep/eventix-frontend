@@ -547,6 +547,30 @@ input::placeholder, textarea::placeholder {
 }
 
 /* AUTH PAGES */
+/* ===== AUTH PAGE THEME TOGGLE ===== */
+.auth-theme-toggle {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  z-index: 100;
+  background: var(--bg-card);
+  color: var(--text-primary);
+  border: 1px solid var(--border-color);
+  padding: 10px 14px;
+  border-radius: 50px;
+  cursor: pointer;
+  font-size: 18px;
+  line-height: 1;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
+  transition: all 0.3s ease;
+}
+
+.auth-theme-toggle:hover {
+  background: var(--bg-hover, rgba(100, 116, 139, 0.15));
+  transform: scale(1.12) rotate(15deg);
+  box-shadow: 0 6px 24px rgba(0, 0, 0, 0.25);
+}
+
 .auth-container {
   min-height: 100vh;
   display: flex;

@@ -5,7 +5,7 @@ import { EventixLogo } from "./EventixLogo";
 import { FullScreenLogoSequence } from "./FullScreenLogoSequence";
 import OtpVerification from "./OtpVerification";
 
-function Register({ onRegisterSuccess }) {
+function Register({ onRegisterSuccess, isDarkMode, onToggleTheme }) {
   // Form data
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
@@ -181,6 +181,13 @@ function Register({ onRegisterSuccess }) {
         />
       ) : (
         <div className="auth-container">
+          <button
+            className="auth-theme-toggle"
+            onClick={onToggleTheme}
+            title={isDarkMode ? "Switch to light mode" : "Switch to dark mode"}
+          >
+            {isDarkMode ? "☀️" : "🌙"}
+          </button>
           <div className="auth-box">
             {/* Show success message after registration */}
             {showSuccess ? (

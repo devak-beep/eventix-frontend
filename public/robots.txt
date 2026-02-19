@@ -1,3 +1,9 @@
+# Eventix – Enterprise Event Booking Platform
 # https://www.robotstxt.org/robotstxt.html
+
 User-agent: *
-Disallow:
+Allow: /
+Disallow: /api/
+
+# Sitemap location
+Sitemap: https://eventix-frontend-8v2j.vercel.app/sitemap.xml

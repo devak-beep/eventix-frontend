@@ -5,7 +5,12 @@ import { EventixLogo } from "./EventixLogo";
 import { FullScreenLogoSequence } from "./FullScreenLogoSequence";
 import OtpVerification from "./OtpVerification";
 
-function Login({ onLoginSuccess, onSwitchToRegister }) {
+function Login({
+  onLoginSuccess,
+  onSwitchToRegister,
+  isDarkMode,
+  onToggleTheme,
+}) {
   // Form data
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -92,6 +97,13 @@ function Login({ onLoginSuccess, onSwitchToRegister }) {
         />
       ) : (
         <div className="auth-container">
+          <button
+            className="auth-theme-toggle"
+            onClick={onToggleTheme}
+            title={isDarkMode ? "Switch to light mode" : "Switch to dark mode"}
+          >
+            {isDarkMode ? "☀️" : "🌙"}
+          </button>
           <div className="auth-box">
             <div className="auth-logo">
               <EventixLogo width={80} height={80} />

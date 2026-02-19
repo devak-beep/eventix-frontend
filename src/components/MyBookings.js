@@ -3,6 +3,7 @@ import React, { useState, useEffect, useRef } from "react";
 import { getAllBookings, cancelBooking, getUserById } from "../api";
 import { MyBookingsSkeleton } from "./SkeletonLoader";
 import AdminRequests from "./AdminRequests";
+import ConfirmModal from "./ConfirmModal";
 import axios from "axios";
 
 const API_BASE_URL =
@@ -109,6 +110,11 @@ function MyBookings({ userId }) {
   // Image upload state
   const [uploadingImageFor, setUploadingImageFor] = useState(null);
   const fileInputRef = useRef(null);
+
+  // Delete event state
+  const [deleteModalOpen, setDeleteModalOpen] = useState(false);
+  const [eventToDelete, setEventToDelete] = useState(null);
+  const [deleting, setDeleting] = useState(false);
 
   // Fetch user role on mount
   useEffect(() => {
@@ -281,6 +287,47 @@ function MyBookings({ userId }) {
     }
     // Reset file input
     e.target.value = "";
+  };
+
+  // Open delete confirmation modal
+  const openDeleteModal = (event) => {
+    setEventToDelete(event);
+    setDeleteModalOpen(true);
+  };
+
+  // Close delete modal
+  const closeDeleteModal = () => {
+    setDeleteModalOpen(false);
+    setEventToDelete(null);
+  };
+
+  // Handle event deletion
+  const handleDeleteEvent = async () => {
+    if (!eventToDelete) return;
+
+    setDeleting(true);
+    setError("");
+
+    try {
+      const response = await axios.delete(
+        `${API_BASE_URL}/events/${eventToDelete._id}`,
+        {
+          data: { userId, userRole },
+        },
+      );
+
+      if (response.data.success) {
+        setSuccess("Event deleted successfully!");
+        setTimeout(() => setSuccess(""), 3000);
+        closeDeleteModal();
+        fetchMyEvents();
+      }
+    } catch (err) {
+      setError(err.response?.data?.message || "Failed to delete event");
+      closeDeleteModal();
+    } finally {
+      setDeleting(false);
+    }
   };
 
   // Function to cancel a booking
@@ -657,6 +704,53 @@ function MyBookings({ userId }) {
                       {(event.totalSeats - event.availableSeats) *
                         (event.amount || 0)}
                     </p>
+
+                    {/* Delete Event Button - Show for SuperAdmin or Creator */}
+                    {canUpdateImage && (
+                      <button
+                        onClick={() => openDeleteModal(event)}
+                        className="delete-event-btn"
+                        style={{
+                          marginTop: "16px",
+                          padding: "10px 20px",
+                          background:
+                            "linear-gradient(135deg, #ef4444, #dc2626)",
+                          color: "white",
+                          border: "none",
+                          borderRadius: "8px",
+                          cursor: "pointer",
+                          fontSize: "14px",
+                          fontWeight: "600",
+                          display: "flex",
+                          alignItems: "center",
+                          gap: "8px",
+                          width: "100%",
+                          justifyContent: "center",
+                          transition: "all 0.2s ease",
+                        }}
+                        onMouseEnter={(e) => {
+                          e.target.style.transform = "translateY(-1px)";
+                          e.target.style.boxShadow =
+                            "0 4px 12px rgba(239, 68, 68, 0.4)";
+                        }}
+                        onMouseLeave={(e) => {
+                          e.target.style.transform = "translateY(0)";
+                          e.target.style.boxShadow = "none";
+                        }}
+                      >
+                        <svg
+                          width="16"
+                          height="16"
+                          viewBox="0 0 24 24"
+                          fill="none"
+                          stroke="currentColor"
+                          strokeWidth="2"
+                        >
+                          <path d="M3 6h18M19 6v14a2 2 0 01-2 2H7a2 2 0 01-2-2V6M8 6V4a2 2 0 012-2h4a2 2 0 012 2v2" />
+                        </svg>
+                        Delete Event
+                      </button>
+                    )}
                   </div>
                 </div>
               );
@@ -669,6 +763,19 @@ function MyBookings({ userId }) {
       {activeTab === "admin-requests" && userRole === "superAdmin" && (
         <AdminRequests />
       )}
+
+      {/* Delete Confirmation Modal */}
+      <ConfirmModal
+        isOpen={deleteModalOpen}
+        onClose={closeDeleteModal}
+        onConfirm={handleDeleteEvent}
+        title="Delete Event"
+        message={`Are you sure you want to delete "${eventToDelete?.name}"? This action cannot be undone.`}
+        confirmText="Delete Event"
+        cancelText="Cancel"
+        type="danger"
+        loading={deleting}
+      />
     </div>
   );
 }

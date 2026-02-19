@@ -147,15 +147,31 @@ function Register({ onRegisterSuccess, isDarkMode, onToggleTheme }) {
 
   // OTP verified — user/admin created on backend, show success
   const handleOtpVerified = async (otpCode) => {
-    const response = await verifyRegisterOtp({
-      email: pendingEmail,
-      otp: otpCode,
-    });
-    if (response.success) {
-      setShowOtp(false);
-      setShowSuccess(true);
-    } else {
-      throw new Error(response.message || "OTP verification failed");
+    try {
+      const response = await verifyRegisterOtp({
+        email: pendingEmail,
+        otp: otpCode,
+      });
+      if (response.success) {
+        setShowOtp(false);
+        setShowSuccess(true);
+      } else {
+        throw new Error(response.message || "OTP verification failed");
+      }
+    } catch (err) {
+      // Extract meaningful error message
+      const message = err.response?.data?.message || err.message;
+      if (message.includes("expired") || message.includes("not found")) {
+        throw new Error("OTP has expired. Please request a new one.");
+      } else if (
+        message.includes("Invalid OTP") ||
+        message.includes("incorrect")
+      ) {
+        throw new Error("Invalid OTP. Please check and try again.");
+      } else if (message.includes("400")) {
+        throw new Error("OTP has expired. Please request a new one.");
+      }
+      throw new Error(message || "Verification failed. Please try again.");
     }
   };
 

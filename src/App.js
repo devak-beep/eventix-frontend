@@ -19,6 +19,7 @@ import BookingSuccessPage from "./components/BookingSuccessPage";
 import MyBookings from "./components/MyBookings";
 import CreateEvent from "./components/CreateEvent";
 import Settings from "./components/Settings";
+import ConfirmModal from "./components/ConfirmModal";
 import { EventixLogoSimple } from "./components/EventixLogo";
 import { getUserById } from "./api";
 
@@ -26,6 +27,7 @@ import { getUserById } from "./api";
 function Navbar({ user, onLogout, onUserUpdate, isDarkMode, onToggleTheme }) {
   const navigate = useNavigate();
   const [menuOpen, setMenuOpen] = useState(false);
+  const [logoutModalOpen, setLogoutModalOpen] = useState(false);
   const menuRef = useRef(null);
 
   // Close menu when clicking outside
@@ -39,11 +41,14 @@ function Navbar({ user, onLogout, onUserUpdate, isDarkMode, onToggleTheme }) {
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, [menuOpen]);
 
-  const handleLogout = () => {
-    if (window.confirm("Are you sure you want to logout?")) {
-      onLogout();
-      setMenuOpen(false);
-    }
+  const handleLogoutClick = () => {
+    setMenuOpen(false);
+    setLogoutModalOpen(true);
+  };
+
+  const handleLogoutConfirm = () => {
+    setLogoutModalOpen(false);
+    onLogout();
   };
 
   const getUserInitials = (name) =>
@@ -145,7 +150,10 @@ function Navbar({ user, onLogout, onUserUpdate, isDarkMode, onToggleTheme }) {
                 </button>
               </div>
               <div className="dropdown-footer">
-                <button className="dropdown-item logout" onClick={handleLogout}>
+                <button
+                  className="dropdown-item logout"
+                  onClick={handleLogoutClick}
+                >
                   <span className="di-icon">🚪</span>
                   <span>Logout</span>
                 </button>
@@ -154,6 +162,18 @@ function Navbar({ user, onLogout, onUserUpdate, isDarkMode, onToggleTheme }) {
           )}
         </div>
       </div>
+
+      {/* Logout Confirmation Modal */}
+      <ConfirmModal
+        isOpen={logoutModalOpen}
+        onClose={() => setLogoutModalOpen(false)}
+        onConfirm={handleLogoutConfirm}
+        title="Logout"
+        message="Are you sure you want to logout? You will need to login again to access your account."
+        confirmText="Logout"
+        cancelText="Stay Logged In"
+        type="warning"
+      />
     </nav>
   );
 }

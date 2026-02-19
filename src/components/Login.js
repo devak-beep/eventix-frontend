@@ -59,19 +59,35 @@ function Login({
 
   // OTP verified — save user and continue
   const handleOtpVerified = async (otpCode) => {
-    const response = await verifyLoginOtp({
-      email: pendingEmail,
-      otp: otpCode,
-    });
-    if (response.success) {
-      const userData = response.data;
-      localStorage.setItem("user", JSON.stringify(userData));
-      console.log("Login successful:", userData);
-      setUser(userData);
-      setShowOtp(false);
-      setShowAnimation(true);
-    } else {
-      throw new Error(response.message || "OTP verification failed");
+    try {
+      const response = await verifyLoginOtp({
+        email: pendingEmail,
+        otp: otpCode,
+      });
+      if (response.success) {
+        const userData = response.data;
+        localStorage.setItem("user", JSON.stringify(userData));
+        console.log("Login successful:", userData);
+        setUser(userData);
+        setShowOtp(false);
+        setShowAnimation(true);
+      } else {
+        throw new Error(response.message || "OTP verification failed");
+      }
+    } catch (err) {
+      // Extract meaningful error message
+      const message = err.response?.data?.message || err.message;
+      if (message.includes("expired") || message.includes("not found")) {
+        throw new Error("OTP has expired. Please request a new one.");
+      } else if (
+        message.includes("Invalid OTP") ||
+        message.includes("incorrect")
+      ) {
+        throw new Error("Invalid OTP. Please check and try again.");
+      } else if (message.includes("400")) {
+        throw new Error("OTP has expired. Please request a new one.");
+      }
+      throw new Error(message || "Verification failed. Please try again.");
     }
   };
 

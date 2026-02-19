@@ -98,69 +98,73 @@ function Navbar({ user, onLogout, onUserUpdate, isDarkMode, onToggleTheme }) {
               className={`user-avatar-btn ${menuOpen ? "active" : ""}`}
               onClick={() => setMenuOpen(!menuOpen)}
             >
-              <span className="avatar-circle">{getUserInitials(user.name)}</span>
-            <span className="avatar-name">{user.name.split(" ")[0]}</span>
-            <span className={`dropdown-arrow ${menuOpen ? "open" : ""}`}>
-              ▼
-            </span>
-          </button>
-          {menuOpen && (
-            <div className="dropdown-menu">
-              <div className="dropdown-header">
-                <div className="dropdown-user-avatar-lg">
-                  {getUserInitials(user.name)}
+              <span className="avatar-circle">
+                {getUserInitials(user.name)}
+              </span>
+              <span className="avatar-name">{user.name.split(" ")[0]}</span>
+              <span className={`dropdown-arrow ${menuOpen ? "open" : ""}`}>
+                ▼
+              </span>
+            </button>
+            {menuOpen && (
+              <div className="dropdown-menu">
+                <div className="dropdown-header">
+                  <div className="dropdown-user-avatar-lg">
+                    {getUserInitials(user.name)}
+                  </div>
+                  <div className="dropdown-header-info">
+                    <div className="dropdown-user-name">{user.name}</div>
+                    <div className="dropdown-user-email">
+                      {user.email || ""}
+                    </div>
+                    <span className="dropdown-user-role">
+                      {getRoleLabel(user.role)}
+                    </span>
+                  </div>
                 </div>
-                <div className="dropdown-header-info">
-                  <div className="dropdown-user-name">{user.name}</div>
-                  <div className="dropdown-user-email">{user.email || ""}</div>
-                  <span className="dropdown-user-role">
-                    {getRoleLabel(user.role)}
-                  </span>
-                </div>
-              </div>
-              <div className="dropdown-items-wrapper">
-                <button
-                  className="dropdown-item"
-                  onClick={() => handleNavClick("/")}
-                >
-                  <span className="di-icon">📋</span>
-                  <span>All Events</span>
-                </button>
-                {(user.role === "admin" || user.role === "superAdmin") && (
+                <div className="dropdown-items-wrapper">
                   <button
                     className="dropdown-item"
-                    onClick={() => handleNavClick("/create")}
+                    onClick={() => handleNavClick("/")}
                   >
-                    <span className="di-icon">➕</span>
-                    <span>Create Event</span>
+                    <span className="di-icon">📋</span>
+                    <span>All Events</span>
                   </button>
-                )}
-                <button
-                  className="dropdown-item"
-                  onClick={() => handleNavClick("/bookings")}
-                >
-                  <span className="di-icon">📊</span>
-                  <span>My Dashboard</span>
-                </button>
-                <button
-                  className="dropdown-item"
-                  onClick={() => handleNavClick("/settings")}
-                >
-                  <span className="di-icon">⚙️</span>
-                  <span>Settings</span>
-                </button>
+                  {(user.role === "admin" || user.role === "superAdmin") && (
+                    <button
+                      className="dropdown-item"
+                      onClick={() => handleNavClick("/create")}
+                    >
+                      <span className="di-icon">➕</span>
+                      <span>Create Event</span>
+                    </button>
+                  )}
+                  <button
+                    className="dropdown-item"
+                    onClick={() => handleNavClick("/bookings")}
+                  >
+                    <span className="di-icon">📊</span>
+                    <span>My Dashboard</span>
+                  </button>
+                  <button
+                    className="dropdown-item"
+                    onClick={() => handleNavClick("/settings")}
+                  >
+                    <span className="di-icon">⚙️</span>
+                    <span>Settings</span>
+                  </button>
+                </div>
+                <div className="dropdown-footer">
+                  <button
+                    className="dropdown-item logout"
+                    onClick={handleLogoutClick}
+                  >
+                    <span className="di-icon">🚪</span>
+                    <span>Logout</span>
+                  </button>
+                </div>
               </div>
-              <div className="dropdown-footer">
-                <button
-                  className="dropdown-item logout"
-                  onClick={handleLogoutClick}
-                >
-                  <span className="di-icon">🚪</span>
-                  <span>Logout</span>
-                </button>
-              </div>
-            </div>
-          )}
+            )}
           </div>
         </div>
       </nav>
@@ -174,7 +178,7 @@ function Navbar({ user, onLogout, onUserUpdate, isDarkMode, onToggleTheme }) {
         message="Are you sure you want to logout? You will need to login again to access your account."
         confirmText="Logout"
         cancelText="Stay Logged In"
-        type="danger"
+        type="logout"
       />
     </>
   );

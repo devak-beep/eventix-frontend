@@ -141,95 +141,10 @@ function CreateEvent({ userId }) {
   // Card aspect ratio (16:9 for standard card display)
   const CARD_ASPECT_RATIO = 16 / 9;
 
-  // Extract dominant color from image edges
-  const extractEdgeColors = (img, ctx, tempCanvas) => {
-    tempCanvas.width = img.width;
-    tempCanvas.height = img.height;
-    const tempCtx = tempCanvas.getContext("2d");
-    tempCtx.drawImage(img, 0, 0);
-
-    const sampleSize = Math.min(50, Math.floor(img.width * 0.1));
-    const colors = { left: [], right: [], top: [], bottom: [] };
-
-    try {
-      // Sample left edge
-      const leftData = tempCtx.getImageData(0, 0, sampleSize, img.height).data;
-      for (let i = 0; i < leftData.length; i += 4 * 10) {
-        colors.left.push([leftData[i], leftData[i + 1], leftData[i + 2]]);
-      }
-
-      // Sample right edge
-      const rightData = tempCtx.getImageData(
-        img.width - sampleSize,
-        0,
-        sampleSize,
-        img.height,
-      ).data;
-      for (let i = 0; i < rightData.length; i += 4 * 10) {
-        colors.right.push([rightData[i], rightData[i + 1], rightData[i + 2]]);
-      }
-
-      // Sample top edge
-      const topData = tempCtx.getImageData(0, 0, img.width, sampleSize).data;
-      for (let i = 0; i < topData.length; i += 4 * 10) {
-        colors.top.push([topData[i], topData[i + 1], topData[i + 2]]);
-      }
-
-      // Sample bottom edge
-      const bottomData = tempCtx.getImageData(
-        0,
-        img.height - sampleSize,
-        img.width,
-        sampleSize,
-      ).data;
-      for (let i = 0; i < bottomData.length; i += 4 * 10) {
-        colors.bottom.push([
-          bottomData[i],
-          bottomData[i + 1],
-          bottomData[i + 2],
-        ]);
-      }
-    } catch (e) {
-      // CORS or other error - return default colors
-      return {
-        left: [30, 30, 40],
-        right: [30, 30, 40],
-        dominant: [30, 30, 40],
-      };
-    }
-
-    // Calculate average colors
-    const avgColor = (colorArray) => {
-      if (colorArray.length === 0) return [30, 30, 40];
-      const sum = colorArray.reduce(
-        (acc, c) => [acc[0] + c[0], acc[1] + c[1], acc[2] + c[2]],
-        [0, 0, 0],
-      );
-      return [
-        Math.round(sum[0] / colorArray.length),
-        Math.round(sum[1] / colorArray.length),
-        Math.round(sum[2] / colorArray.length),
-      ];
-    };
-
-    const leftAvg = avgColor(colors.left);
-    const rightAvg = avgColor(colors.right);
-    const allColors = [
-      ...colors.left,
-      ...colors.right,
-      ...colors.top,
-      ...colors.bottom,
-    ];
-    const dominant = avgColor(allColors);
-
-    return { left: leftAvg, right: rightAvg, dominant };
-  };
-
-  // Process image to card aspect ratio with intelligent blur fill
+  // Process image to card aspect ratio with blur fill (PicsArt style)
   const processImageToCardRatio = (base64Image) => {
     return new Promise((resolve, reject) => {
       const img = new Image();
-      img.crossOrigin = "anonymous";
       img.onload = () => {
         const width = img.width;
         const height = img.height;
@@ -244,16 +159,15 @@ function CreateEvent({ userId }) {
           return;
         }
 
-        // Calculate canvas dimensions
+        // Calculate canvas dimensions based on the original image
         let canvasWidth, canvasHeight;
 
-        // For vertical images (portraits), make them fit nicely
-        if (imgAspectRatio < 1) {
-          // Portrait image - use a size that shows the image prominently
+        if (imgAspectRatio < CARD_ASPECT_RATIO) {
+          // Portrait or narrow image - height stays, width expands
           canvasHeight = height;
           canvasWidth = Math.round(height * CARD_ASPECT_RATIO);
         } else {
-          // Landscape or square - use width as base
+          // Landscape or wide image - width stays, height expands
           canvasWidth = width;
           canvasHeight = Math.round(width / CARD_ASPECT_RATIO);
         }
@@ -266,99 +180,47 @@ function CreateEvent({ userId }) {
           canvasHeight = Math.round(canvasHeight * scale);
         }
 
-        // Create temp canvas for color extraction
-        const tempCanvas = document.createElement("canvas");
-        const edgeColors = extractEdgeColors(img, null, tempCanvas);
-
         // Create main canvas
         const canvas = document.createElement("canvas");
         canvas.width = canvasWidth;
         canvas.height = canvasHeight;
         const ctx = canvas.getContext("2d");
 
-        // Step 1: Fill with gradient based on extracted edge colors
-        const gradient = ctx.createLinearGradient(0, 0, canvasWidth, 0);
-        const darkenColor = (c, factor = 0.7) =>
-          c.map((v) => Math.round(v * factor));
-        const leftColor = darkenColor(edgeColors.left, 0.6);
-        const rightColor = darkenColor(edgeColors.right, 0.6);
-
-        gradient.addColorStop(
-          0,
-          `rgb(${leftColor[0]}, ${leftColor[1]}, ${leftColor[2]})`,
-        );
-        gradient.addColorStop(
-          0.5,
-          `rgb(${edgeColors.dominant[0] * 0.5}, ${edgeColors.dominant[1] * 0.5}, ${edgeColors.dominant[2] * 0.5})`,
-        );
-        gradient.addColorStop(
-          1,
-          `rgb(${rightColor[0]}, ${rightColor[1]}, ${rightColor[2]})`,
-        );
-
-        ctx.fillStyle = gradient;
-        ctx.fillRect(0, 0, canvasWidth, canvasHeight);
-
-        // Step 2: Draw blurred scaled image on top of gradient for texture
+        // Calculate blur radius based on canvas size (40-80px range for good blur)
         const blurRadius = Math.min(
           80,
-          Math.max(40, Math.round(canvasWidth / 20)),
+          Math.max(40, Math.round(canvasWidth / 15)),
         );
 
-        // Scale image to cover canvas
+        // STEP 1: Draw the blurred background (scaled to COVER the entire canvas)
         const bgScaleX = canvasWidth / width;
         const bgScaleY = canvasHeight / height;
-        const bgScale = Math.max(bgScaleX, bgScaleY) * 1.1; // Slightly larger to avoid edges
+        const bgScale = Math.max(bgScaleX, bgScaleY); // Cover mode
         const bgWidth = width * bgScale;
         const bgHeight = height * bgScale;
         const bgX = (canvasWidth - bgWidth) / 2;
         const bgY = (canvasHeight - bgHeight) / 2;
 
-        // Draw blurred background with low opacity to blend with gradient
-        ctx.filter = `blur(${blurRadius}px) brightness(0.7) saturate(1.2)`;
-        ctx.globalAlpha = 0.6;
+        // Apply blur and slight darkening to background
+        ctx.filter = `blur(${blurRadius}px) brightness(0.85)`;
         ctx.drawImage(img, bgX, bgY, bgWidth, bgHeight);
 
-        // Reset
+        // Reset filter
         ctx.filter = "none";
-        ctx.globalAlpha = 1.0;
 
-        // Step 3: Add subtle vignette effect for depth
-        const vignetteGradient = ctx.createRadialGradient(
-          canvasWidth / 2,
-          canvasHeight / 2,
-          canvasHeight * 0.3,
-          canvasWidth / 2,
-          canvasHeight / 2,
-          canvasWidth * 0.8,
-        );
-        vignetteGradient.addColorStop(0, "rgba(0, 0, 0, 0)");
-        vignetteGradient.addColorStop(1, "rgba(0, 0, 0, 0.3)");
-        ctx.fillStyle = vignetteGradient;
-        ctx.fillRect(0, 0, canvasWidth, canvasHeight);
-
-        // Step 4: Draw original sharp image centered (contain mode - no cropping)
+        // STEP 2: Draw the sharp original image centered (CONTAIN mode - no cropping)
         const fgScaleX = canvasWidth / width;
         const fgScaleY = canvasHeight / height;
-        const fgScale = Math.min(fgScaleX, fgScaleY) * 0.95; // Slight padding
+        const fgScale = Math.min(fgScaleX, fgScaleY); // Contain mode - fits entirely
         const fgWidth = width * fgScale;
         const fgHeight = height * fgScale;
         const fgX = (canvasWidth - fgWidth) / 2;
         const fgY = (canvasHeight - fgHeight) / 2;
 
-        // Add subtle shadow behind the main image
-        ctx.shadowColor = "rgba(0, 0, 0, 0.4)";
-        ctx.shadowBlur = 30;
-        ctx.shadowOffsetX = 0;
-        ctx.shadowOffsetY = 10;
-
+        // Draw the sharp foreground image
         ctx.drawImage(img, fgX, fgY, fgWidth, fgHeight);
 
-        // Reset shadow
-        ctx.shadowColor = "transparent";
-        ctx.shadowBlur = 0;
-
-        // Convert to base64 (JPEG for smaller size, high quality)
+        // Convert to base64 (JPEG with high quality)
         const processedImage = canvas.toDataURL("image/jpeg", 0.92);
         resolve(processedImage);
       };

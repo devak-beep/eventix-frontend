@@ -159,7 +159,12 @@ function CreateEvent({ userId }) {
       }
 
       // Sample right edge
-      const rightData = tempCtx.getImageData(img.width - sampleSize, 0, sampleSize, img.height).data;
+      const rightData = tempCtx.getImageData(
+        img.width - sampleSize,
+        0,
+        sampleSize,
+        img.height,
+      ).data;
       for (let i = 0; i < rightData.length; i += 4 * 10) {
         colors.right.push([rightData[i], rightData[i + 1], rightData[i + 2]]);
       }
@@ -171,33 +176,50 @@ function CreateEvent({ userId }) {
       }
 
       // Sample bottom edge
-      const bottomData = tempCtx.getImageData(0, img.height - sampleSize, img.width, sampleSize).data;
+      const bottomData = tempCtx.getImageData(
+        0,
+        img.height - sampleSize,
+        img.width,
+        sampleSize,
+      ).data;
       for (let i = 0; i < bottomData.length; i += 4 * 10) {
-        colors.bottom.push([bottomData[i], bottomData[i + 1], bottomData[i + 2]]);
+        colors.bottom.push([
+          bottomData[i],
+          bottomData[i + 1],
+          bottomData[i + 2],
+        ]);
       }
     } catch (e) {
       // CORS or other error - return default colors
       return {
         left: [30, 30, 40],
         right: [30, 30, 40],
-        dominant: [30, 30, 40]
+        dominant: [30, 30, 40],
       };
     }
 
     // Calculate average colors
     const avgColor = (colorArray) => {
       if (colorArray.length === 0) return [30, 30, 40];
-      const sum = colorArray.reduce((acc, c) => [acc[0] + c[0], acc[1] + c[1], acc[2] + c[2]], [0, 0, 0]);
+      const sum = colorArray.reduce(
+        (acc, c) => [acc[0] + c[0], acc[1] + c[1], acc[2] + c[2]],
+        [0, 0, 0],
+      );
       return [
         Math.round(sum[0] / colorArray.length),
         Math.round(sum[1] / colorArray.length),
-        Math.round(sum[2] / colorArray.length)
+        Math.round(sum[2] / colorArray.length),
       ];
     };
 
     const leftAvg = avgColor(colors.left);
     const rightAvg = avgColor(colors.right);
-    const allColors = [...colors.left, ...colors.right, ...colors.top, ...colors.bottom];
+    const allColors = [
+      ...colors.left,
+      ...colors.right,
+      ...colors.top,
+      ...colors.bottom,
+    ];
     const dominant = avgColor(allColors);
 
     return { left: leftAvg, right: rightAvg, dominant };
@@ -224,7 +246,7 @@ function CreateEvent({ userId }) {
 
         // Calculate canvas dimensions
         let canvasWidth, canvasHeight;
-        
+
         // For vertical images (portraits), make them fit nicely
         if (imgAspectRatio < 1) {
           // Portrait image - use a size that shows the image prominently
@@ -256,20 +278,33 @@ function CreateEvent({ userId }) {
 
         // Step 1: Fill with gradient based on extracted edge colors
         const gradient = ctx.createLinearGradient(0, 0, canvasWidth, 0);
-        const darkenColor = (c, factor = 0.7) => c.map(v => Math.round(v * factor));
+        const darkenColor = (c, factor = 0.7) =>
+          c.map((v) => Math.round(v * factor));
         const leftColor = darkenColor(edgeColors.left, 0.6);
         const rightColor = darkenColor(edgeColors.right, 0.6);
-        
-        gradient.addColorStop(0, `rgb(${leftColor[0]}, ${leftColor[1]}, ${leftColor[2]})`);
-        gradient.addColorStop(0.5, `rgb(${edgeColors.dominant[0] * 0.5}, ${edgeColors.dominant[1] * 0.5}, ${edgeColors.dominant[2] * 0.5})`);
-        gradient.addColorStop(1, `rgb(${rightColor[0]}, ${rightColor[1]}, ${rightColor[2]})`);
-        
+
+        gradient.addColorStop(
+          0,
+          `rgb(${leftColor[0]}, ${leftColor[1]}, ${leftColor[2]})`,
+        );
+        gradient.addColorStop(
+          0.5,
+          `rgb(${edgeColors.dominant[0] * 0.5}, ${edgeColors.dominant[1] * 0.5}, ${edgeColors.dominant[2] * 0.5})`,
+        );
+        gradient.addColorStop(
+          1,
+          `rgb(${rightColor[0]}, ${rightColor[1]}, ${rightColor[2]})`,
+        );
+
         ctx.fillStyle = gradient;
         ctx.fillRect(0, 0, canvasWidth, canvasHeight);
 
         // Step 2: Draw blurred scaled image on top of gradient for texture
-        const blurRadius = Math.min(80, Math.max(40, Math.round(canvasWidth / 20)));
-        
+        const blurRadius = Math.min(
+          80,
+          Math.max(40, Math.round(canvasWidth / 20)),
+        );
+
         // Scale image to cover canvas
         const bgScaleX = canvasWidth / width;
         const bgScaleY = canvasHeight / height;
@@ -283,15 +318,19 @@ function CreateEvent({ userId }) {
         ctx.filter = `blur(${blurRadius}px) brightness(0.7) saturate(1.2)`;
         ctx.globalAlpha = 0.6;
         ctx.drawImage(img, bgX, bgY, bgWidth, bgHeight);
-        
+
         // Reset
         ctx.filter = "none";
         ctx.globalAlpha = 1.0;
 
         // Step 3: Add subtle vignette effect for depth
         const vignetteGradient = ctx.createRadialGradient(
-          canvasWidth / 2, canvasHeight / 2, canvasHeight * 0.3,
-          canvasWidth / 2, canvasHeight / 2, canvasWidth * 0.8
+          canvasWidth / 2,
+          canvasHeight / 2,
+          canvasHeight * 0.3,
+          canvasWidth / 2,
+          canvasHeight / 2,
+          canvasWidth * 0.8,
         );
         vignetteGradient.addColorStop(0, "rgba(0, 0, 0, 0)");
         vignetteGradient.addColorStop(1, "rgba(0, 0, 0, 0.3)");
@@ -312,9 +351,9 @@ function CreateEvent({ userId }) {
         ctx.shadowBlur = 30;
         ctx.shadowOffsetX = 0;
         ctx.shadowOffsetY = 10;
-        
+
         ctx.drawImage(img, fgX, fgY, fgWidth, fgHeight);
-        
+
         // Reset shadow
         ctx.shadowColor = "transparent";
         ctx.shadowBlur = 0;

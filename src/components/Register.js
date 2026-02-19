@@ -149,7 +149,10 @@ function Register({ onRegisterSuccess }) {
 
   // OTP verified — user/admin created on backend, show success
   const handleOtpVerified = async (otpCode) => {
-    const response = await verifyRegisterOtp({ email: pendingEmail, otp: otpCode });
+    const response = await verifyRegisterOtp({
+      email: pendingEmail,
+      otp: otpCode,
+    });
     if (response.success) {
       setShowOtp(false);
       setShowSuccess(true);
@@ -179,136 +182,146 @@ function Register({ onRegisterSuccess }) {
           onBack={() => setShowOtp(false)}
         />
       ) : (
-        <div className="auth-box">
-          {/* Show success message after registration */}
-          {showSuccess ? (
-            <div className="success-popup">
-              <div className="success-icon">🎉</div>
-              <h2>
-                {requestAdmin ? "Admin Request Submitted!" : "Congratulations!"}
-              </h2>
-              {requestAdmin ? (
-                <>
-                  <p>Your request to become an admin has been submitted.</p>
-                  <p>
-                    Your account will be created once approved by a super admin.
-                  </p>
-                  <p className="admin-request-info">
-                    ⏳ Waiting for approval...
-                  </p>
-                </>
-              ) : (
-                <>
-                  <p>You have registered successfully!</p>
-                  <p>Now you can login with your credentials.</p>
-                </>
-              )}
-              <button onClick={goToLogin} className="submit-btn">
-                {requestAdmin ? "Back to Login" : "Go to Login"}
-              </button>
-            </div>
-          ) : (
-            <>
-              <div className="auth-logo">
-                <EventixLogo width={80} height={80} />
-                <h1>Eventix</h1>
-                <p>Enterprise Event Management Platform</p>
+        <div className="auth-container">
+          <div className="auth-box">
+            {/* Show success message after registration */}
+            {showSuccess ? (
+              <div className="success-popup">
+                <div className="success-icon">🎉</div>
+                <h2>
+                  {requestAdmin
+                    ? "Admin Request Submitted!"
+                    : "Congratulations!"}
+                </h2>
+                {requestAdmin ? (
+                  <>
+                    <p>Your request to become an admin has been submitted.</p>
+                    <p>
+                      Your account will be created once approved by a super
+                      admin.
+                    </p>
+                    <p className="admin-request-info">
+                      ⏳ Waiting for approval...
+                    </p>
+                  </>
+                ) : (
+                  <>
+                    <p>You have registered successfully!</p>
+                    <p>Now you can login with your credentials.</p>
+                  </>
+                )}
+                <button onClick={goToLogin} className="submit-btn">
+                  {requestAdmin ? "Back to Login" : "Go to Login"}
+                </button>
               </div>
-              <h2>Create Account</h2>
-
-              {error && <div className="error">{error}</div>}
-
-              <form onSubmit={handleRegister}>
-                <div className="form-group">
-                  <label>Name:</label>
-                  <input
-                    type="text"
-                    value={name}
-                    onChange={(e) => setName(e.target.value)}
-                    required
-                    placeholder="John Doe"
-                  />
-                  <small>At least 3 characters</small>
+            ) : (
+              <>
+                <div className="auth-logo">
+                  <EventixLogo width={80} height={80} />
+                  <h1>Eventix</h1>
+                  <p>Enterprise Event Management Platform</p>
                 </div>
+                <h2>Create Account</h2>
 
-                <div className="form-group">
-                  <label>Email:</label>
-                  <input
-                    type="email"
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
-                    required
-                    placeholder="john@example.com"
-                  />
-                  <small>Must be a valid email address</small>
-                </div>
+                {error && <div className="error">{error}</div>}
 
-                <div className="form-group">
-                  <label>Password:</label>
-                  <input
-                    type="password"
-                    value={password}
-                    onChange={handlePasswordChange}
-                    required
-                    placeholder="Enter password"
-                  />
-                  <small>
-                    Min 6 characters, 1 number, 1 special character (!@#$%^&*)
-                  </small>
-                </div>
-
-                <div className="form-group">
-                  <label>Confirm Password:</label>
-                  <input
-                    type="password"
-                    value={confirmPassword}
-                    onChange={handleConfirmPasswordChange}
-                    required
-                    placeholder="Re-enter password"
-                    style={{ borderColor: !passwordMatch ? "#ef4444" : "" }}
-                  />
-                  {!passwordMatch && confirmPassword && (
-                    <small style={{ color: "#ef4444", fontWeight: 600 }}>
-                      ⚠️ Passwords do not match
-                    </small>
-                  )}
-                </div>
-
-                <div className="form-group checkbox-group">
-                  <label className="checkbox-label">
+                <form onSubmit={handleRegister}>
+                  <div className="form-group">
+                    <label>Name:</label>
                     <input
-                      type="checkbox"
-                      checked={requestAdmin}
-                      onChange={(e) => setRequestAdmin(e.target.checked)}
-                      className="checkbox-input"
+                      type="text"
+                      value={name}
+                      onChange={(e) => setName(e.target.value)}
+                      required
+                      placeholder="John Doe"
                     />
-                    <span>Request Admin Access to Create & Manage Events</span>
-                  </label>
-                  <small>
-                    {requestAdmin
-                      ? "Your admin request will be reviewed by our team. You can book events immediately, and manage events once approved."
-                      : "You can book events with your regular account. Upgrade to admin later from your dashboard."}
-                  </small>
-                </div>
+                    <small>At least 3 characters</small>
+                  </div>
 
-                <button type="submit" disabled={loading} className="submit-btn">
-                  {loading ? "Creating Account..." : "Register"}
-                </button>
-              </form>
+                  <div className="form-group">
+                    <label>Email:</label>
+                    <input
+                      type="email"
+                      value={email}
+                      onChange={(e) => setEmail(e.target.value)}
+                      required
+                      placeholder="john@example.com"
+                    />
+                    <small>Must be a valid email address</small>
+                  </div>
 
-              <p className="auth-switch">
-                Already have an account?
-                <button
-                  onClick={() => onRegisterSuccess(null)}
-                  className="link-btn"
-                >
-                  Login here
-                </button>
-              </p>
-            </>
-          )}
+                  <div className="form-group">
+                    <label>Password:</label>
+                    <input
+                      type="password"
+                      value={password}
+                      onChange={handlePasswordChange}
+                      required
+                      placeholder="Enter password"
+                    />
+                    <small>
+                      Min 6 characters, 1 number, 1 special character (!@#$%^&*)
+                    </small>
+                  </div>
+
+                  <div className="form-group">
+                    <label>Confirm Password:</label>
+                    <input
+                      type="password"
+                      value={confirmPassword}
+                      onChange={handleConfirmPasswordChange}
+                      required
+                      placeholder="Re-enter password"
+                      style={{ borderColor: !passwordMatch ? "#ef4444" : "" }}
+                    />
+                    {!passwordMatch && confirmPassword && (
+                      <small style={{ color: "#ef4444", fontWeight: 600 }}>
+                        ⚠️ Passwords do not match
+                      </small>
+                    )}
+                  </div>
+
+                  <div className="form-group checkbox-group">
+                    <label className="checkbox-label">
+                      <input
+                        type="checkbox"
+                        checked={requestAdmin}
+                        onChange={(e) => setRequestAdmin(e.target.checked)}
+                        className="checkbox-input"
+                      />
+                      <span>
+                        Request Admin Access to Create & Manage Events
+                      </span>
+                    </label>
+                    <small>
+                      {requestAdmin
+                        ? "Your admin request will be reviewed by our team. You can book events immediately, and manage events once approved."
+                        : "You can book events with your regular account. Upgrade to admin later from your dashboard."}
+                    </small>
+                  </div>
+
+                  <button
+                    type="submit"
+                    disabled={loading}
+                    className="submit-btn"
+                  >
+                    {loading ? "Creating Account..." : "Register"}
+                  </button>
+                </form>
+
+                <p className="auth-switch">
+                  Already have an account?
+                  <button
+                    onClick={() => onRegisterSuccess(null)}
+                    className="link-btn"
+                  >
+                    Login here
+                  </button>
+                </p>
+              </>
+            )}
+          </div>
         </div>
-      </div>
       )}
     </>
   );

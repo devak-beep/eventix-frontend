@@ -71,33 +71,34 @@ function Navbar({ user, onLogout, onUserUpdate, isDarkMode, onToggleTheme }) {
   };
 
   return (
-    <nav className="navbar">
-      <div
-        onClick={() => navigate("/")}
-        style={{
-          cursor: "pointer",
-          display: "flex",
-          alignItems: "center",
-          gap: "10px",
-        }}
-      >
-        <EventixLogoSimple width={40} height={40} />
-        <h1>Eventix</h1>
-      </div>
-      <div className="nav-links">
-        <button
-          onClick={onToggleTheme}
-          className="theme-toggle-btn"
-          title={isDarkMode ? "Switch to light mode" : "Switch to dark mode"}
+    <>
+      <nav className="navbar">
+        <div
+          onClick={() => navigate("/")}
+          style={{
+            cursor: "pointer",
+            display: "flex",
+            alignItems: "center",
+            gap: "10px",
+          }}
         >
-          {isDarkMode ? "☀️" : "🌙"}
-        </button>
-        <div className="user-menu-wrapper" ref={menuRef}>
+          <EventixLogoSimple width={40} height={40} />
+          <h1>Eventix</h1>
+        </div>
+        <div className="nav-links">
           <button
-            className={`user-avatar-btn ${menuOpen ? "active" : ""}`}
-            onClick={() => setMenuOpen(!menuOpen)}
+            onClick={onToggleTheme}
+            className="theme-toggle-btn"
+            title={isDarkMode ? "Switch to light mode" : "Switch to dark mode"}
           >
-            <span className="avatar-circle">{getUserInitials(user.name)}</span>
+            {isDarkMode ? "☀️" : "🌙"}
+          </button>
+          <div className="user-menu-wrapper" ref={menuRef}>
+            <button
+              className={`user-avatar-btn ${menuOpen ? "active" : ""}`}
+              onClick={() => setMenuOpen(!menuOpen)}
+            >
+              <span className="avatar-circle">{getUserInitials(user.name)}</span>
             <span className="avatar-name">{user.name.split(" ")[0]}</span>
             <span className={`dropdown-arrow ${menuOpen ? "open" : ""}`}>
               ▼
@@ -160,10 +161,11 @@ function Navbar({ user, onLogout, onUserUpdate, isDarkMode, onToggleTheme }) {
               </div>
             </div>
           )}
+          </div>
         </div>
-      </div>
+      </nav>
 
-      {/* Logout Confirmation Modal */}
+      {/* Logout Confirmation Modal - rendered outside nav for proper centering */}
       <ConfirmModal
         isOpen={logoutModalOpen}
         onClose={() => setLogoutModalOpen(false)}
@@ -172,9 +174,9 @@ function Navbar({ user, onLogout, onUserUpdate, isDarkMode, onToggleTheme }) {
         message="Are you sure you want to logout? You will need to login again to access your account."
         confirmText="Logout"
         cancelText="Stay Logged In"
-        type="warning"
+        type="danger"
       />
-    </nav>
+    </>
   );
 }
 

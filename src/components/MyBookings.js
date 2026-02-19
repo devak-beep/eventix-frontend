@@ -249,6 +249,8 @@ function MyBookings({ userId }) {
 
           if (response.data.success) {
             setSuccess("Image updated successfully!");
+            // Auto-dismiss success message after 3 seconds
+            setTimeout(() => setSuccess(""), 3000);
             // Refresh events list
             fetchMyEvents();
           }

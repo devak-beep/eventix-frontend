@@ -2257,11 +2257,14 @@ html.dark .logo-circle-large.logo-circle-3 {
   background: var(--bg-secondary);
   color: var(--text-primary);
   cursor: pointer;
-  display: flex;
+  display: inline-flex;
   align-items: center;
   justify-content: center;
   transition: all 0.2s ease;
   border-radius: 12px;
+  line-height: 1;
+  padding: 0;
+  flex-shrink: 0;
 }
 
 .stepper-btn:hover:not(:disabled) {
@@ -2282,6 +2285,8 @@ html.dark .logo-circle-large.logo-circle-3 {
 .stepper-btn svg {
   stroke-linecap: round;
   stroke-linejoin: round;
+  display: block;
+  vertical-align: middle;
 }
 
 .seat-input {

@@ -118,6 +118,203 @@ html.light {
   --gradient-accent: linear-gradient(135deg, #61dafb 0%, #4fc3e8 100%) !important;
 }
 
+/* ===== DARK MODE COLOR OVERRIDES ===== */
+/* User menu avatar button - blue in dark mode */
+html.dark .user-menu-wrapper .user-avatar-btn {
+  background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%) !important;
+  box-shadow: 0 4px 14px rgba(59, 130, 246, 0.35) !important;
+}
+
+html.dark .user-menu-wrapper .user-avatar-btn:hover,
+html.dark .user-menu-wrapper .user-avatar-btn.active {
+  box-shadow: 0 6px 20px rgba(59, 130, 246, 0.5) !important;
+  background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%) !important;
+}
+
+/* Dropdown avatar - blue in dark mode */
+html.dark .dropdown-user-avatar-lg {
+  background: linear-gradient(135deg, #3b82f6, #2563eb);
+}
+
+/* Search mode buttons - blue in dark mode */
+html.dark .mode-btn:hover {
+  border-color: rgba(59, 130, 246, 0.4);
+  background: rgba(59, 130, 246, 0.06);
+}
+
+html.dark .mode-btn.active {
+  border-color: #3b82f6;
+  background: rgba(59, 130, 246, 0.12);
+  color: #3b82f6;
+  box-shadow: 0 0 12px rgba(59, 130, 246, 0.15);
+}
+
+/* Search input focus - blue in dark mode */
+html.dark .search-input-group input:focus,
+html.dark .public-search-input:focus,
+html.dark .private-search-input:focus {
+  border-color: #3b82f6;
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.12);
+}
+
+/* Search button - blue in dark mode */
+html.dark .search-btn {
+  background: rgba(59, 130, 246, 0.2);
+  border: 1px solid rgba(59, 130, 246, 0.4);
+  color: #3b82f6;
+}
+
+html.dark .search-btn:hover:not(:disabled) {
+  background: rgba(59, 130, 246, 0.3);
+  border-color: #3b82f6;
+  box-shadow: 0 0 15px rgba(59, 130, 246, 0.3);
+}
+
+/* Event list heading - blue in dark mode */
+html.dark .event-list h2 {
+  background: linear-gradient(135deg, #3b82f6 0%, #2563eb 50%, #3b82f6 100%);
+  background-size: 200% auto;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  text-shadow: none;
+}
+
+/* Search toggle - blue in dark mode */
+html.dark .search-toggle {
+  background: rgba(59, 130, 246, 0.1);
+  color: #3b82f6;
+  border: 1px solid rgba(59, 130, 246, 0.2);
+}
+
+/* Event card hover effects - blue in dark mode */
+html.dark .event-card::before {
+  background: linear-gradient(90deg, #3b82f6 0%, #2563eb 100%);
+}
+
+html.dark .event-card:hover {
+  box-shadow: 0 20px 50px rgba(59, 130, 246, 0.3);
+  border-color: rgba(59, 130, 246, 0.2);
+}
+
+/* Event organizer tag - blue in dark mode */
+html.dark .event-organizer {
+  color: #3b82f6;
+  background: rgba(59, 130, 246, 0.1);
+}
+
+/* My Dashboard heading - blue in dark mode */
+html.dark .my-bookings h2 {
+  background: linear-gradient(135deg, #3b82f6 0%, #2563eb 50%, #3b82f6 100%);
+  background-size: 200% auto;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* Create Event heading - blue in dark mode */
+html.dark .create-event h2 {
+  background: linear-gradient(135deg, #3b82f6 0%, #2563eb 50%, #3b82f6 100%);
+  background-size: 200% auto;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* Form submit button - blue in dark mode */
+html.dark .event-form .submit-btn {
+  background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+  box-shadow: 0 4px 15px rgba(59, 130, 246, 0.3);
+}
+
+html.dark .event-form .submit-btn:hover {
+  box-shadow: 0 6px 20px rgba(59, 130, 246, 0.5);
+}
+
+/* Tab buttons active state - blue in dark mode */
+html.dark .tab-btn.active {
+  background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+  border-color: #3b82f6;
+  box-shadow: 0 4px 15px rgba(59, 130, 246, 0.3);
+}
+
+/* Category badge shadow - blue in dark mode */
+html.dark .event-category-badge {
+  box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
+}
+
+/* Primary buttons - blue in dark mode */
+html.dark button.primary,
+html.dark .btn-primary {
+  background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+  box-shadow: 0 4px 15px rgba(59, 130, 246, 0.3);
+}
+
+html.dark button.primary:hover,
+html.dark .btn-primary:hover {
+  box-shadow: 0 6px 20px rgba(59, 130, 246, 0.5);
+}
+
+/* Booking card accent - blue in dark mode */
+html.dark .booking-card::before {
+  background: linear-gradient(90deg, #3b82f6 0%, #2563eb 100%);
+}
+
+/* Link colors - blue in dark mode */
+html.dark a.accent-link,
+html.dark .accent-text {
+  color: #3b82f6;
+}
+
+/* Booking summary - blue in dark mode */
+html.dark .booking-summary {
+  background: rgba(59, 130, 246, 0.05);
+  border: 1px solid rgba(59, 130, 246, 0.1);
+}
+
+html.dark .booking-summary h4 {
+  color: #3b82f6;
+}
+
+/* Confirm page elements - blue in dark mode */
+html.dark .confirm-header h2 {
+  background: linear-gradient(135deg, #3b82f6 0%, #2563eb 50%, #3b82f6 100%);
+  background-size: 200% auto;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* Payment page elements - blue in dark mode */
+html.dark .payment-info .highlight {
+  color: #3b82f6;
+}
+
+/* Event details accent - blue in dark mode */
+html.dark .event-details .accent {
+  color: #3b82f6;
+}
+
+/* Navbar logo text - blue in dark mode */
+html.dark .navbar .logo-text {
+  background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* Nav links button - blue in dark mode */
+html.dark .nav-links > button {
+  background: rgba(59, 130, 246, 0.1);
+  color: #3b82f6;
+  border: 1px solid rgba(59, 130, 246, 0.3);
+}
+
+html.dark .nav-links > button:hover {
+  background: rgba(59, 130, 246, 0.2);
+  box-shadow: 0 5px 15px rgba(59, 130, 246, 0.3);
+}
+
 * {
   margin: 0;
   padding: 0;
@@ -3409,8 +3606,15 @@ html.dark .btn-reject {
 }
 
 .settings-header-icon {
-  font-size: 40px;
-  margin-bottom: 10px;
+  display: flex;
+  justify-content: center;
+  margin-bottom: 12px;
+  color: var(--accent-primary);
+}
+
+.settings-header-icon svg {
+  width: 40px;
+  height: 40px;
 }
 
 .settings-title {
@@ -3441,6 +3645,14 @@ html.dark .btn-reject {
   font-weight: 700;
   color: var(--text-primary);
   margin: 0 0 16px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.settings-section-title .section-icon {
+  color: var(--accent-primary);
+  flex-shrink: 0;
 }
 
 /* Settings Item (OTP toggle row) */
@@ -3472,14 +3684,34 @@ html.dark .btn-reject {
 .settings-item-status {
   font-size: 0.8rem;
   font-weight: 600;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.settings-item-status .status-indicator {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  display: inline-block;
 }
 
 .status-on {
   color: #10b981;
 }
 
+.status-on .status-indicator {
+  background: #10b981;
+  box-shadow: 0 0 6px rgba(16, 185, 129, 0.5);
+}
+
 .status-off {
   color: #f59e0b;
+}
+
+.status-off .status-indicator {
+  background: #f59e0b;
+  box-shadow: 0 0 6px rgba(245, 158, 11, 0.5);
 }
 
 /* Toggle Switch */

@@ -2240,9 +2240,8 @@ html.dark .logo-circle-large.logo-circle-3 {
 }
 
 .seat-stepper {
-  display: flex;
-  align-items: center;
-  gap: 0;
+  display: inline-flex;
+  align-items: stretch;
   background: var(--bg-tertiary);
   border-radius: 16px;
   padding: 6px;
@@ -2253,18 +2252,24 @@ html.dark .logo-circle-large.logo-circle-3 {
 .stepper-btn {
   width: 48px;
   height: 48px;
+  min-width: 48px;
+  min-height: 48px;
   border: none;
   background: var(--bg-secondary);
   color: var(--text-primary);
   cursor: pointer;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  transition: all 0.2s ease;
   border-radius: 12px;
-  line-height: 1;
-  padding: 0;
-  flex-shrink: 0;
+  transition: all 0.2s ease;
+  position: relative;
+}
+
+.stepper-btn svg {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  stroke-linecap: round;
+  stroke-linejoin: round;
 }
 
 .stepper-btn:hover:not(:disabled) {
@@ -2282,13 +2287,6 @@ html.dark .logo-circle-large.logo-circle-3 {
   cursor: not-allowed;
 }
 
-.stepper-btn svg {
-  stroke-linecap: round;
-  stroke-linejoin: round;
-  display: block;
-  vertical-align: middle;
-}
-
 .seat-input {
   width: 80px !important;
   height: 48px;
@@ -2301,6 +2299,7 @@ html.dark .logo-circle-large.logo-circle-3 {
   margin: 0 8px !important;
   padding: 0 !important;
   -moz-appearance: textfield;
+  line-height: 48px;
 }
 
 .seat-input::-webkit-outer-spin-button,

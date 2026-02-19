@@ -118,10 +118,10 @@ function CreateEvent({ userId }) {
         return;
       }
 
-      // Convert to base64 and process to 1:1 square with blurred background
+      // Convert to base64 and process to card aspect ratio with blurred background
       const reader = new FileReader();
       reader.onloadend = () => {
-        processImageToSquare(reader.result)
+        processImageToCardRatio(reader.result)
           .then((processedImage) => {
             setEventData({
               ...eventData,
@@ -138,55 +138,87 @@ function CreateEvent({ userId }) {
     }
   };
 
-  // Process image to 1:1 square with blurred background
-  const processImageToSquare = (base64Image) => {
+  // Card aspect ratio (16:9 for standard card display)
+  const CARD_ASPECT_RATIO = 16 / 9;
+
+  // Process image to card aspect ratio with blur fill technique
+  const processImageToCardRatio = (base64Image) => {
     return new Promise((resolve, reject) => {
       const img = new Image();
       img.onload = () => {
         const width = img.width;
         const height = img.height;
+        const imgAspectRatio = width / height;
 
-        // If already square (within 2% tolerance), return as-is
-        const aspectRatio = width / height;
-        if (aspectRatio >= 0.98 && aspectRatio <= 1.02) {
+        // If already matches card ratio (within 5% tolerance), return as-is
+        if (
+          Math.abs(imgAspectRatio - CARD_ASPECT_RATIO) / CARD_ASPECT_RATIO <
+          0.05
+        ) {
           resolve(base64Image);
           return;
         }
 
-        // Determine square size (use the larger dimension)
-        const squareSize = Math.max(width, height);
+        // Calculate canvas dimensions using the longer side
+        let canvasWidth, canvasHeight;
+        if (width > height) {
+          // Landscape or square - use width as base
+          canvasWidth = width;
+          canvasHeight = Math.round(width / CARD_ASPECT_RATIO);
+        } else {
+          // Portrait - use height to calculate width
+          canvasHeight = height;
+          canvasWidth = Math.round(height * CARD_ASPECT_RATIO);
+        }
 
-        // Create canvas for the final square image
+        // Ensure minimum resolution
+        const minWidth = 800;
+        if (canvasWidth < minWidth) {
+          const scale = minWidth / canvasWidth;
+          canvasWidth = minWidth;
+          canvasHeight = Math.round(canvasHeight * scale);
+        }
+
+        // Create canvas for the final image
         const canvas = document.createElement("canvas");
-        canvas.width = squareSize;
-        canvas.height = squareSize;
+        canvas.width = canvasWidth;
+        canvas.height = canvasHeight;
         const ctx = canvas.getContext("2d");
 
-        // Step 1: Draw blurred background (scaled to cover)
-        // First, draw the image scaled to cover the entire square
-        const bgScale = squareSize / Math.min(width, height);
+        // Calculate blur radius based on resolution (30-60px range)
+        const blurRadius = Math.min(
+          60,
+          Math.max(30, Math.round(canvasWidth / 25)),
+        );
+
+        // Step 1: Draw blurred background (scaled to cover mode)
+        const bgScaleX = canvasWidth / width;
+        const bgScaleY = canvasHeight / height;
+        const bgScale = Math.max(bgScaleX, bgScaleY); // Cover mode - use larger scale
         const bgWidth = width * bgScale;
         const bgHeight = height * bgScale;
-        const bgX = (squareSize - bgWidth) / 2;
-        const bgY = (squareSize - bgHeight) / 2;
+        const bgX = (canvasWidth - bgWidth) / 2;
+        const bgY = (canvasHeight - bgHeight) / 2;
 
-        // Draw background image
-        ctx.filter = "blur(30px) brightness(0.85)";
+        // Draw background with blur and reduced brightness
+        ctx.filter = `blur(${blurRadius}px) brightness(0.85)`;
         ctx.drawImage(img, bgX, bgY, bgWidth, bgHeight);
 
         // Reset filter
         ctx.filter = "none";
 
-        // Step 2: Draw original image centered (scaled to fit)
-        const scale = Math.min(squareSize / width, squareSize / height);
-        const scaledWidth = width * scale;
-        const scaledHeight = height * scale;
-        const x = (squareSize - scaledWidth) / 2;
-        const y = (squareSize - scaledHeight) / 2;
+        // Step 2: Draw original sharp image centered (contain mode - no cropping)
+        const fgScaleX = canvasWidth / width;
+        const fgScaleY = canvasHeight / height;
+        const fgScale = Math.min(fgScaleX, fgScaleY); // Contain mode - use smaller scale
+        const fgWidth = width * fgScale;
+        const fgHeight = height * fgScale;
+        const fgX = (canvasWidth - fgWidth) / 2;
+        const fgY = (canvasHeight - fgHeight) / 2;
 
-        ctx.drawImage(img, x, y, scaledWidth, scaledHeight);
+        ctx.drawImage(img, fgX, fgY, fgWidth, fgHeight);
 
-        // Convert to base64 (JPEG for smaller size)
+        // Convert to base64 (JPEG for smaller size, high quality)
         const processedImage = canvas.toDataURL("image/jpeg", 0.9);
         resolve(processedImage);
       };

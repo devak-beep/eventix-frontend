@@ -14,6 +14,7 @@ function PaymentPage() {
 
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
+  const [paymentCompleted, setPaymentCompleted] = useState(false);
 
   useEffect(() => {
     // Load Razorpay script
@@ -26,6 +27,24 @@ function PaymentPage() {
       document.body.removeChild(script);
     };
   }, []);
+
+  // Release seat lock when user navigates away without completing payment
+  useEffect(() => {
+    return () => {
+      // Only release if payment was not completed and we have a lockId
+      if (!paymentCompleted && lockId) {
+        // Use sendBeacon for reliable cleanup on page unload
+        const data = JSON.stringify({ lockId });
+        navigator.sendBeacon?.(
+          `${API_BASE_URL}/locks/${lockId}/cancel`,
+          new Blob([data], { type: "application/json" }),
+        );
+
+        // Also try axios as a fallback (won't work on page close but works on SPA navigation)
+        axios.post(`${API_BASE_URL}/locks/${lockId}/cancel`).catch(() => {});
+      }
+    };
+  }, [lockId, paymentCompleted]);
 
   const handlePayment = async () => {
     setLoading(true);
@@ -64,6 +83,8 @@ function PaymentPage() {
             );
 
             if (verifyResponse.data.success) {
+              // Mark payment as completed so cleanup doesn't release the lock
+              setPaymentCompleted(true);
               navigate("/booking/success", {
                 state: {
                   bookingId,

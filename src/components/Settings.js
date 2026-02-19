@@ -81,15 +81,6 @@ function Settings({ user, onUserUpdate }) {
             </button>
           </div>
 
-          {/* Info note about registration */}
-          <div className="settings-note">
-            <span className="settings-note-icon">ℹ️</span>
-            <span>
-              OTP verification for <strong>registration</strong> is always
-              required and cannot be disabled.
-            </span>
-          </div>
-
           {/* Save feedback message */}
           {message && (
             <div className={`settings-message settings-message-${messageType}`}>
@@ -109,16 +100,6 @@ function Settings({ user, onUserUpdate }) {
             <div className="settings-account-row">
               <span className="settings-account-label">Email</span>
               <span className="settings-account-value">{user.email}</span>
-            </div>
-            <div className="settings-account-row">
-              <span className="settings-account-label">Role</span>
-              <span className="settings-account-value settings-account-role">
-                {user.role === "superAdmin"
-                  ? "Super Admin"
-                  : user.role === "admin"
-                    ? "Admin"
-                    : "Member"}
-              </span>
             </div>
           </div>
         </div>

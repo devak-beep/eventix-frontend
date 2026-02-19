@@ -943,13 +943,12 @@ input::placeholder, textarea::placeholder {
   margin: 0 0 30px 0;
   font-size: 36px;
   font-weight: 700;
-  background: linear-gradient(135deg, #00d4ff 0%, #0099ff 50%, #00d4ff 100%);
+  background: var(--gradient-accent);
   background-size: 200% auto;
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
   animation: shimmer 3s linear infinite;
-  text-shadow: 0 0 30px rgba(0, 212, 255, 0.3);
 }
 
 .search-controls {
@@ -1362,12 +1361,13 @@ html.dark .logo-circle-large.logo-circle-3 {
 
 .event-image {
   width: 100%;
-  height: auto;
-  min-height: 300px;
-  background-size: contain;
+  height: 0;
+  padding-bottom: 100%; /* 1:1 aspect ratio */
+  background-size: cover;
   background-position: center;
   background-repeat: no-repeat;
   position: relative;
+  border-radius: 12px 12px 0 0;
 }
 
 .event-content {
@@ -1821,10 +1821,11 @@ html.dark .logo-circle-large.logo-circle-3 {
 
 .event-detail-image {
   width: 100%;
-  height: 400px;
-  border-radius: 12px;
+  max-width: 500px;
+  aspect-ratio: 1 / 1;
+  border-radius: 16px;
   overflow: hidden;
-  margin-bottom: 30px;
+  margin: 0 auto 30px auto;
   box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
   background: linear-gradient(135deg, rgba(0, 212, 255, 0.1) 0%, rgba(0, 153, 255, 0.05) 100%);
   border: 2px solid var(--border-color);

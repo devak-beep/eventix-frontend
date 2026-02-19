@@ -118,17 +118,85 @@ function CreateEvent({ userId }) {
         return;
       }
 
-      // Convert to base64
+      // Convert to base64 and process to 1:1 square with blurred background
       const reader = new FileReader();
       reader.onloadend = () => {
-        setEventData({
-          ...eventData,
-          image: reader.result,
-        });
-        setError("");
+        processImageToSquare(reader.result)
+          .then((processedImage) => {
+            setEventData({
+              ...eventData,
+              image: processedImage,
+            });
+            setError("");
+          })
+          .catch((err) => {
+            setError("Failed to process image");
+            console.error(err);
+          });
       };
       reader.readAsDataURL(file);
     }
+  };
+
+  // Process image to 1:1 square with blurred background
+  const processImageToSquare = (base64Image) => {
+    return new Promise((resolve, reject) => {
+      const img = new Image();
+      img.onload = () => {
+        const width = img.width;
+        const height = img.height;
+
+        // If already square (within 2% tolerance), return as-is
+        const aspectRatio = width / height;
+        if (aspectRatio >= 0.98 && aspectRatio <= 1.02) {
+          resolve(base64Image);
+          return;
+        }
+
+        // Determine square size (use the larger dimension)
+        const squareSize = Math.max(width, height);
+
+        // Create canvas for the final square image
+        const canvas = document.createElement("canvas");
+        canvas.width = squareSize;
+        canvas.height = squareSize;
+        const ctx = canvas.getContext("2d");
+
+        // Step 1: Draw blurred background (scaled to cover)
+        // First, draw the image scaled to cover the entire square
+        const bgScale = squareSize / Math.min(width, height);
+        const bgWidth = width * bgScale;
+        const bgHeight = height * bgScale;
+        const bgX = (squareSize - bgWidth) / 2;
+        const bgY = (squareSize - bgHeight) / 2;
+
+        // Draw background image
+        ctx.filter = "blur(30px) brightness(0.85)";
+        ctx.drawImage(img, bgX, bgY, bgWidth, bgHeight);
+
+        // Reset filter
+        ctx.filter = "none";
+
+        // Step 2: Draw original image centered (scaled to fit)
+        const scale = Math.min(squareSize / width, squareSize / height);
+        const scaledWidth = width * scale;
+        const scaledHeight = height * scale;
+        const x = (squareSize - scaledWidth) / 2;
+        const y = (squareSize - scaledHeight) / 2;
+
+        ctx.drawImage(img, x, y, scaledWidth, scaledHeight);
+
+        // Convert to base64 (JPEG for smaller size)
+        const processedImage = canvas.toDataURL("image/jpeg", 0.9);
+        resolve(processedImage);
+      };
+
+      img.onerror = () => {
+        reject(new Error("Failed to load image"));
+      };
+
+      img.src = base64Image;
+    });
   };
 
   // Submit event creation

@@ -3476,28 +3476,33 @@ html.dark .btn-reject {
 /* 6 digit input boxes */
 .otp-inputs {
   display: flex;
-  gap: 10px;
+  gap: 12px;
   justify-content: center;
   margin-bottom: 24px;
 }
 
 .otp-input {
-  width: 48px;
-  height: 56px;
+  width: 52px;
+  height: 64px;
   text-align: center;
-  font-size: 1.4rem;
+  font-size: 1.75rem;
   font-weight: 700;
   border: 2px solid var(--border-color);
   border-radius: 12px;
   background: var(--bg-secondary);
-  color: #0f172a;
+  color: #0f172a !important;
   outline: none;
   transition: border-color 0.2s, box-shadow 0.2s;
   caret-color: var(--accent-primary);
+  line-height: 1;
+  padding: 0;
+  -webkit-text-fill-color: #0f172a;
 }
 
 html.dark .otp-input {
-  color: #f1f5f9;
+  color: #f1f5f9 !important;
+  -webkit-text-fill-color: #f1f5f9;
+  background: var(--bg-tertiary);
 }
 
 .otp-input:focus {
@@ -3591,12 +3596,12 @@ html.dark .otp-input {
     padding: 30px 20px;
   }
   .otp-inputs {
-    gap: 7px;
+    gap: 8px;
   }
   .otp-input {
-    width: 42px;
-    height: 50px;
-    font-size: 1.2rem;
+    width: 44px;
+    height: 54px;
+    font-size: 1.5rem;
   }
 }
 

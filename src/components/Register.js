@@ -23,7 +23,6 @@ function Register({ onRegisterSuccess }) {
   // OTP states
   const [showOtp, setShowOtp] = useState(false);
   const [pendingEmail, setPendingEmail] = useState("");
-  const [isAdminRequest, setIsAdminRequest] = useState(false);
 
   // Check password match
   const handleConfirmPasswordChange = (e) => {
@@ -121,7 +120,6 @@ function Register({ onRegisterSuccess }) {
       // Backend now sends OTP — show the OTP screen
       if (response.requiresOtp) {
         setPendingEmail(email.toLowerCase().trim());
-        setIsAdminRequest(requestAdmin);
         setShowOtp(true);
       } else {
         // Fallback: backend didn't require OTP (shouldn't happen)

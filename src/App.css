@@ -2212,13 +2212,13 @@ html.dark .logo-circle-large.logo-circle-3 {
   font-weight: 500;
 }
 
-.booking-step input {
+.booking-step > input {
   display: block;
   margin-top: 12px;
   width: 100%;
 }
 
-.booking-step button {
+.booking-step > button {
   width: 100%;
   margin-top: 20px;
 }

@@ -57,7 +57,7 @@ function Navbar({ user, onLogout, onUserUpdate, isDarkMode, onToggleTheme }) {
   const getRoleLabel = (role) => {
     if (role === "admin") return "Admin";
     if (role === "superAdmin") return "Super Admin";
-    return "Member";
+    return "User";
   };
 
   const handleNavClick = (path) => {

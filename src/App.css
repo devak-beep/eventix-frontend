@@ -2223,6 +2223,113 @@ html.dark .logo-circle-large.logo-circle-3 {
   margin-top: 20px;
 }
 
+/* Creative Seat Selector */
+.seat-selector {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 20px;
+}
+
+.seat-label {
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--text-primary);
+  margin-bottom: 8px;
+}
+
+.seat-stepper {
+  display: flex;
+  align-items: center;
+  gap: 0;
+  background: var(--bg-tertiary);
+  border-radius: 16px;
+  padding: 6px;
+  border: 2px solid var(--border-color);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.stepper-btn {
+  width: 48px;
+  height: 48px;
+  border: none;
+  background: var(--bg-secondary);
+  color: var(--text-primary);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s ease;
+  border-radius: 12px;
+}
+
+.stepper-btn:hover:not(:disabled) {
+  background: var(--accent-primary);
+  color: white;
+  transform: scale(1.05);
+}
+
+.stepper-btn:active:not(:disabled) {
+  transform: scale(0.95);
+}
+
+.stepper-btn:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+.stepper-btn svg {
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.seat-input {
+  width: 80px !important;
+  height: 48px;
+  text-align: center;
+  font-size: 24px !important;
+  font-weight: 700;
+  border: none !important;
+  background: transparent !important;
+  color: var(--text-primary);
+  margin: 0 8px !important;
+  padding: 0 !important;
+  -moz-appearance: textfield;
+}
+
+.seat-input::-webkit-outer-spin-button,
+.seat-input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+.seat-input:focus {
+  outline: none;
+  background: rgba(139, 92, 246, 0.1) !important;
+  border-radius: 8px;
+}
+
+.seat-availability {
+  font-size: 13px;
+  color: var(--text-tertiary);
+  font-weight: 500;
+}
+
+/* Dark mode enhancements */
+html.dark .seat-stepper {
+  border-color: rgba(255, 255, 255, 0.1);
+  background: rgba(255, 255, 255, 0.05);
+}
+
+html.dark .stepper-btn {
+  background: rgba(255, 255, 255, 0.1);
+}
+
+html.dark .stepper-btn:hover:not(:disabled) {
+  background: var(--accent-primary);
+}
+
 .total-amount {
   margin-top: 16px;
   padding: 16px;

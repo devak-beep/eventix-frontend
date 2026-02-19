@@ -177,24 +177,92 @@ function LockSeatsPage({ userId }) {
           {error && <div className="error">{error}</div>}
 
           <div className="booking-step">
-            <label>
-              Number of seats:
-              <input
-                type="number"
-                min="1"
-                max={event.availableSeats}
-                value={seats}
-                onChange={(e) => setSeats(parseInt(e.target.value) || 1)}
-              />
-            </label>
+            <div className="seat-selector">
+              <label className="seat-label">Select Tickets</label>
+              <div className="seat-stepper">
+                <button
+                  type="button"
+                  className="stepper-btn stepper-minus"
+                  onClick={() => setSeats(Math.max(1, seats - 1))}
+                  disabled={seats <= 1}
+                  aria-label="Decrease seats"
+                >
+                  <svg
+                    width="20"
+                    height="20"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="2.5"
+                  >
+                    <line x1="5" y1="12" x2="19" y2="12" />
+                  </svg>
+                </button>
+                <input
+                  type="text"
+                  inputMode="numeric"
+                  pattern="[0-9]*"
+                  className="seat-input"
+                  value={seats}
+                  onChange={(e) => {
+                    const val = e.target.value;
+                    // Allow empty string for typing
+                    if (val === "") {
+                      setSeats("");
+                      return;
+                    }
+                    // Only allow numeric input
+                    const num = parseInt(val, 10);
+                    if (!isNaN(num) && num >= 0) {
+                      setSeats(Math.min(num, event.availableSeats));
+                    }
+                  }}
+                  onBlur={(e) => {
+                    // On blur, ensure valid value
+                    const num = parseInt(e.target.value, 10);
+                    if (isNaN(num) || num < 1) {
+                      setSeats(1);
+                    } else if (num > event.availableSeats) {
+                      setSeats(event.availableSeats);
+                    }
+                  }}
+                />
+                <button
+                  type="button"
+                  className="stepper-btn stepper-plus"
+                  onClick={() =>
+                    setSeats(Math.min(event.availableSeats, seats + 1))
+                  }
+                  disabled={seats >= event.availableSeats}
+                  aria-label="Increase seats"
+                >
+                  <svg
+                    width="20"
+                    height="20"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="2.5"
+                  >
+                    <line x1="12" y1="5" x2="12" y2="19" />
+                    <line x1="5" y1="12" x2="19" y2="12" />
+                  </svg>
+                </button>
+              </div>
+              <span className="seat-availability">
+                {event.availableSeats} tickets available
+              </span>
+            </div>
             <p className="total-amount">
-              Total Amount: ₹{(event.amount || 0) * seats}
+              Total Amount: ₹{(event.amount || 0) * (seats || 0)}
             </p>
             <button
               onClick={handleLockSeats}
-              disabled={loading || seats < 1 || seats > event.availableSeats}
+              disabled={
+                loading || !seats || seats < 1 || seats > event.availableSeats
+              }
             >
-              {loading ? "Processing..." : "Lock Seats"}
+              {loading ? "Processing..." : "Book Seats"}
             </button>
           </div>
         </div>

@@ -3443,10 +3443,14 @@ html.dark .btn-reject {
   border: 2px solid var(--border-color);
   border-radius: 12px;
   background: var(--bg-secondary);
-  color: var(--text-primary);
+  color: #0f172a;
   outline: none;
   transition: border-color 0.2s, box-shadow 0.2s;
   caret-color: var(--accent-primary);
+}
+
+html.dark .otp-input {
+  color: #f1f5f9;
 }
 
 .otp-input:focus {

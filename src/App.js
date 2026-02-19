@@ -18,11 +18,12 @@ import PaymentPage from "./components/PaymentPage";
 import BookingSuccessPage from "./components/BookingSuccessPage";
 import MyBookings from "./components/MyBookings";
 import CreateEvent from "./components/CreateEvent";
+import Settings from "./components/Settings";
 import { EventixLogoSimple } from "./components/EventixLogo";
 import { getUserById } from "./api";
 
 // Navigation bar component
-function Navbar({ user, onLogout, isDarkMode, onToggleTheme }) {
+function Navbar({ user, onLogout, onUserUpdate, isDarkMode, onToggleTheme }) {
   const navigate = useNavigate();
   const [menuOpen, setMenuOpen] = useState(false);
   const menuRef = useRef(null);
@@ -134,6 +135,13 @@ function Navbar({ user, onLogout, isDarkMode, onToggleTheme }) {
                 >
                   <span className="di-icon">📊</span>
                   <span>My Dashboard</span>
+                </button>
+                <button
+                  className="dropdown-item"
+                  onClick={() => handleNavClick("/settings")}
+                >
+                  <span className="di-icon">⚙️</span>
+                  <span>Settings</span>
                 </button>
               </div>
               <div className="dropdown-footer">
@@ -260,6 +268,7 @@ function App() {
         <Navbar
           user={user}
           onLogout={handleLogout}
+          onUserUpdate={setUser}
           isDarkMode={isDarkMode}
           onToggleTheme={handleToggleTheme}
         />
@@ -287,6 +296,10 @@ function App() {
             <Route
               path="/bookings"
               element={<MyBookings userId={user._id} />}
+            />
+            <Route
+              path="/settings"
+              element={<Settings user={user} onUserUpdate={setUser} />}
             />
             <Route
               path="/create"

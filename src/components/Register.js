@@ -1,8 +1,9 @@
 // This component handles user registration
 import React, { useState } from "react";
-import { createUser } from "../api";
+import { createUser, verifyRegisterOtp, resendOtp } from "../api";
 import { EventixLogo } from "./EventixLogo";
 import { FullScreenLogoSequence } from "./FullScreenLogoSequence";
+import OtpVerification from "./OtpVerification";
 
 function Register({ onRegisterSuccess }) {
   // Form data
@@ -18,6 +19,11 @@ function Register({ onRegisterSuccess }) {
   const [showSuccess, setShowSuccess] = useState(false);
   const [passwordMatch, setPasswordMatch] = useState(true);
   const [showAnimation, setShowAnimation] = useState(false);
+
+  // OTP states
+  const [showOtp, setShowOtp] = useState(false);
+  const [pendingEmail, setPendingEmail] = useState("");
+  const [isAdminRequest, setIsAdminRequest] = useState(false);
 
   // Check password match
   const handleConfirmPasswordChange = (e) => {
@@ -105,15 +111,22 @@ function Register({ onRegisterSuccess }) {
 
     try {
       // Create user in backend with normalized email
-      await createUser({
+      const response = await createUser({
         name: name.trim(),
         email: email.toLowerCase().trim(),
         password,
         requestAdmin, // Send admin request flag
       });
 
-      // Show success message
-      setShowSuccess(true);
+      // Backend now sends OTP — show the OTP screen
+      if (response.requiresOtp) {
+        setPendingEmail(email.toLowerCase().trim());
+        setIsAdminRequest(requestAdmin);
+        setShowOtp(true);
+      } else {
+        // Fallback: backend didn't require OTP (shouldn't happen)
+        setShowSuccess(true);
+      }
     } catch (err) {
       const errorMessage = err.response?.data?.message || "Registration failed";
       const isAlreadyRequested = err.response?.data?.isAlreadyRequested;
@@ -134,12 +147,38 @@ function Register({ onRegisterSuccess }) {
     setShowAnimation(true);
   };
 
+  // OTP verified — user/admin created on backend, show success
+  const handleOtpVerified = async (otpCode) => {
+    const response = await verifyRegisterOtp({ email: pendingEmail, otp: otpCode });
+    if (response.success) {
+      setShowOtp(false);
+      setShowSuccess(true);
+    } else {
+      throw new Error(response.message || "OTP verification failed");
+    }
+  };
+
+  // Resend OTP during registration
+  const handleResendOtp = async () => {
+    await resendOtp({ email: pendingEmail, purpose: "register" });
+  };
+
   return (
     <>
       {showAnimation && (
         <FullScreenLogoSequence onComplete={() => onRegisterSuccess(null)} />
       )}
-      <div className="auth-container">
+
+      {/* OTP Verification Screen */}
+      {showOtp ? (
+        <OtpVerification
+          email={pendingEmail}
+          purpose="register"
+          onVerified={handleOtpVerified}
+          onResend={handleResendOtp}
+          onBack={() => setShowOtp(false)}
+        />
+      ) : (
         <div className="auth-box">
           {/* Show success message after registration */}
           {showSuccess ? (
@@ -270,6 +309,7 @@ function Register({ onRegisterSuccess }) {
           )}
         </div>
       </div>
+      )}
     </>
   );
 }

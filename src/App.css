@@ -2240,13 +2240,17 @@ html.dark .logo-circle-large.logo-circle-3 {
 }
 
 .seat-stepper {
-  display: inline-flex;
-  align-items: stretch;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+  gap: 0;
   background: var(--bg-tertiary);
   border-radius: 16px;
   padding: 6px;
   border: 2px solid var(--border-color);
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  flex-wrap: nowrap;
 }
 
 .stepper-btn {
@@ -2254,6 +2258,8 @@ html.dark .logo-circle-large.logo-circle-3 {
   height: 48px;
   min-width: 48px;
   min-height: 48px;
+  max-width: 48px;
+  max-height: 48px;
   border: none;
   background: var(--bg-secondary);
   color: var(--text-primary);
@@ -2261,6 +2267,8 @@ html.dark .logo-circle-large.logo-circle-3 {
   border-radius: 12px;
   transition: all 0.2s ease;
   position: relative;
+  flex-shrink: 0;
+  flex-grow: 0;
 }
 
 .stepper-btn svg {
@@ -2275,7 +2283,6 @@ html.dark .logo-circle-large.logo-circle-3 {
 .stepper-btn:hover:not(:disabled) {
   background: var(--accent-primary);
   color: white;
-  transform: scale(1.05);
 }
 
 .stepper-btn:active:not(:disabled) {
@@ -2288,18 +2295,23 @@ html.dark .logo-circle-large.logo-circle-3 {
 }
 
 .seat-input {
-  width: 80px !important;
-  height: 48px;
-  text-align: center;
+  width: 70px !important;
+  min-width: 70px !important;
+  max-width: 70px !important;
+  height: 48px !important;
+  text-align: center !important;
   font-size: 24px !important;
-  font-weight: 700;
+  font-weight: 700 !important;
   border: none !important;
   background: transparent !important;
-  color: var(--text-primary);
-  margin: 0 8px !important;
+  color: var(--text-primary) !important;
+  margin: 0 4px !important;
   padding: 0 !important;
-  -moz-appearance: textfield;
-  line-height: 48px;
+  -moz-appearance: textfield !important;
+  line-height: 48px !important;
+  flex-shrink: 0;
+  flex-grow: 0;
+  display: inline-block !important;
 }
 
 .seat-input::-webkit-outer-spin-button,

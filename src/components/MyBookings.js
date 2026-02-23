@@ -582,12 +582,15 @@ function MyBookings({ userId }) {
         >
           My Bookings
         </button>
-        <button
-          className={`tab-btn ${activeTab === "my-requests" ? "active" : ""}`}
-          onClick={() => setActiveTab("my-requests")}
-        >
-          My Event Requests
-        </button>
+        {/* Only show "My Event Requests" for regular users - admins can create events directly */}
+        {userRole === "user" && (
+          <button
+            className={`tab-btn ${activeTab === "my-requests" ? "active" : ""}`}
+            onClick={() => setActiveTab("my-requests")}
+          >
+            My Event Requests
+          </button>
+        )}
         {(userRole === "admin" || userRole === "superAdmin") && (
           <button
             className={`tab-btn ${activeTab === "events" ? "active" : ""}`}

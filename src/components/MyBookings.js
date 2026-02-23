@@ -1311,6 +1311,19 @@ function MyBookings({ userId }) {
                     <p>
                       <strong>Booked Seats:</strong>{" "}
                       {event.totalSeats - event.availableSeats}
+                      {eventBookings[event._id] &&
+                        eventBookings[event._id].length !==
+                          event.totalSeats - event.availableSeats && (
+                          <span
+                            style={{
+                              color: "#ef4444",
+                              fontSize: "12px",
+                              marginLeft: "8px",
+                            }}
+                          >
+                            ⚠️ (Actual confirmed: {eventBookings[event._id].length})
+                          </span>
+                        )}
                     </p>
                     <p>
                       <strong>Ticket Price:</strong> ₹{event.amount || 0}
@@ -1405,8 +1418,10 @@ function MyBookings({ userId }) {
                             <circle cx="9" cy="7" r="4" />
                             <path d="M23 21v-2a4 4 0 00-3-3.87M16 3.13a4 4 0 010 7.75" />
                           </svg>
-                          View Bookings (
-                          {event.totalSeats - event.availableSeats})
+                          View Bookings
+                          {eventBookings[event._id]
+                            ? ` (${eventBookings[event._id].length})`
+                            : ` (${event.totalSeats - event.availableSeats})`}
                         </>
                       )}
                     </button>

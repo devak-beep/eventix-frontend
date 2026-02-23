@@ -124,7 +124,7 @@ function MyBookings({ userId }) {
   const [cancelModalOpen, setCancelModalOpen] = useState(false);
   const [bookingToCancel, setBookingToCancel] = useState(null);
   const [cancelling, setCancelling] = useState(false);
-  
+
   // Track which booking is being processed (prevents double-clicks)
   const [processingBookingId, setProcessingBookingId] = useState(null);
 
@@ -137,6 +137,33 @@ function MyBookings({ userId }) {
   const [myEventRequests, setMyEventRequests] = useState([]);
   const [loadingRequests, setLoadingRequests] = useState(false);
   const [payingForRequest, setPayingForRequest] = useState(null); // Request ID being paid
+
+  // --- Inline edit state for event name/description (per event) ---
+  const [editEventId, setEditEventId] = useState(null); // event._id being edited
+  const [editName, setEditName] = useState("");
+  const [editDescription, setEditDescription] = useState("");
+  const [savingEdit, setSavingEdit] = useState(false);
+
+  // Save handler for event details
+  const handleSaveEdit = async (event) => {
+    setSavingEdit(true);
+    try {
+      await axios.patch(`${API_BASE_URL}/events/${event._id}/details`, {
+        userId,
+        userRole,
+        name: editName,
+        description: editDescription,
+      });
+      setSuccess("Event details updated successfully!");
+      setTimeout(() => setSuccess(""), 3000);
+      setEditEventId(null);
+      fetchMyEvents();
+    } catch (err) {
+      setError(err.response?.data?.message || "Failed to update event details");
+    } finally {
+      setSavingEdit(false);
+    }
+  };
 
   // Fetch user role on mount
   useEffect(() => {
@@ -247,27 +274,29 @@ function MyBookings({ userId }) {
       setExpandedEventId(null);
       return;
     }
-    
+
     // Check if we already have bookings cached
     if (eventBookings[eventId]) {
       setExpandedEventId(eventId);
       return;
     }
-    
+
     setLoadingBookingsFor(eventId);
-    
+
     try {
       const response = await axios.get(
-        `${API_BASE_URL}/bookings?eventId=${eventId}`
+        `${API_BASE_URL}/bookings?eventId=${eventId}`,
       );
       const bookingsData = response.data.data || [];
-      
+
       // Filter to only show CONFIRMED bookings
-      const confirmedBookings = bookingsData.filter(b => b.status === "CONFIRMED");
-      
-      setEventBookings(prev => ({
+      const confirmedBookings = bookingsData.filter(
+        (b) => b.status === "CONFIRMED",
+      );
+
+      setEventBookings((prev) => ({
         ...prev,
-        [eventId]: confirmedBookings
+        [eventId]: confirmedBookings,
       }));
       setExpandedEventId(eventId);
     } catch (err) {
@@ -283,12 +312,15 @@ function MyBookings({ userId }) {
     setLoadingRequests(true);
     try {
       const user = JSON.parse(localStorage.getItem("user") || "{}");
-      const response = await axios.get(`${API_BASE_URL}/event-requests/my-requests`, {
-        headers: {
-          "x-user-id": user._id,
-          "x-user-role": user.role,
+      const response = await axios.get(
+        `${API_BASE_URL}/event-requests/my-requests`,
+        {
+          headers: {
+            "x-user-id": user._id,
+            "x-user-role": user.role,
+          },
         },
-      });
+      );
       if (response.data.success) {
         setMyEventRequests(response.data.requests || []);
       }
@@ -320,7 +352,7 @@ function MyBookings({ userId }) {
 
     try {
       const user = JSON.parse(localStorage.getItem("user") || "{}");
-      
+
       // Create payment order
       const orderResponse = await axios.post(
         `${API_BASE_URL}/event-requests/${request._id}/create-order`,
@@ -330,11 +362,13 @@ function MyBookings({ userId }) {
             "x-user-id": user._id,
             "x-user-role": user.role,
           },
-        }
+        },
       );
 
       if (!orderResponse.data.success) {
-        throw new Error(orderResponse.data.message || "Failed to create payment order");
+        throw new Error(
+          orderResponse.data.message || "Failed to create payment order",
+        );
       }
 
       const { order } = orderResponse.data;
@@ -362,7 +396,7 @@ function MyBookings({ userId }) {
                   "x-user-id": user._id,
                   "x-user-role": user.role,
                 },
-              }
+              },
             );
 
             if (verifyResponse.data.success) {
@@ -395,12 +429,18 @@ function MyBookings({ userId }) {
 
       const razorpay = new window.Razorpay(options);
       razorpay.on("payment.failed", function (response) {
-        setError(`Payment failed: ${response.error.description || "Transaction declined"}`);
+        setError(
+          `Payment failed: ${response.error.description || "Transaction declined"}`,
+        );
         setPayingForRequest(null);
       });
       razorpay.open();
     } catch (err) {
-      setError(err.response?.data?.message || err.message || "Failed to initiate payment");
+      setError(
+        err.response?.data?.message ||
+          err.message ||
+          "Failed to initiate payment",
+      );
       setPayingForRequest(null);
     }
   };
@@ -642,7 +682,9 @@ function MyBookings({ userId }) {
       </div>
 
       {/* Refresh button - only show for bookings, events, and my-requests tabs */}
-      {(activeTab === "bookings" || activeTab === "events" || activeTab === "my-requests") && (
+      {(activeTab === "bookings" ||
+        activeTab === "events" ||
+        activeTab === "my-requests") && (
         <button
           onClick={() => {
             if (activeTab === "bookings") fetchBookings();
@@ -652,7 +694,7 @@ function MyBookings({ userId }) {
           disabled={loading || loadingRequests}
           className="refresh-btn"
         >
-          {(loading || loadingRequests)
+          {loading || loadingRequests
             ? "Loading..."
             : activeTab === "bookings"
               ? "Refresh Bookings"
@@ -727,33 +769,40 @@ function MyBookings({ userId }) {
                     </p>
 
                     {/* Show payment expiry warning for pending bookings */}
-                    {booking.status === "PAYMENT_PENDING" && booking.paymentExpiresAt && (
-                      <p style={{ 
-                        color: new Date(booking.paymentExpiresAt) < new Date() ? "#ef4444" : "#f59e0b",
-                        fontWeight: "bold",
-                        padding: "8px",
-                        background: new Date(booking.paymentExpiresAt) < new Date() 
-                          ? "rgba(239, 68, 68, 0.1)" 
-                          : "rgba(245, 158, 11, 0.1)",
-                        borderRadius: "6px",
-                        marginTop: "8px"
-                      }}>
-                        {new Date(booking.paymentExpiresAt) < new Date() 
-                          ? "⚠️ Payment window expired! Seats will be released."
-                          : `⏰ Complete payment before: ${new Date(booking.paymentExpiresAt).toLocaleString("en-GB")}`
-                        }
-                      </p>
-                    )}
+                    {booking.status === "PAYMENT_PENDING" &&
+                      booking.paymentExpiresAt && (
+                        <p
+                          style={{
+                            color:
+                              new Date(booking.paymentExpiresAt) < new Date()
+                                ? "#ef4444"
+                                : "#f59e0b",
+                            fontWeight: "bold",
+                            padding: "8px",
+                            background:
+                              new Date(booking.paymentExpiresAt) < new Date()
+                                ? "rgba(239, 68, 68, 0.1)"
+                                : "rgba(245, 158, 11, 0.1)",
+                            borderRadius: "6px",
+                            marginTop: "8px",
+                          }}
+                        >
+                          {new Date(booking.paymentExpiresAt) < new Date()
+                            ? "⚠️ Payment window expired! Seats will be released."
+                            : `⏰ Complete payment before: ${new Date(booking.paymentExpiresAt).toLocaleString("en-GB")}`}
+                        </p>
+                      )}
 
                     {/* Show payment expiry for other statuses */}
-                    {booking.status !== "PAYMENT_PENDING" && booking.paymentExpiresAt && (
-                      <p>
-                        <strong>Payment Expires:</strong>{" "}
-                        {new Date(booking.paymentExpiresAt).toLocaleString(
-                          "en-GB",
-                        )}}
-                      </p>
-                    )}
+                    {booking.status !== "PAYMENT_PENDING" &&
+                      booking.paymentExpiresAt && (
+                        <p>
+                          <strong>Payment Expires:</strong>{" "}
+                          {new Date(booking.paymentExpiresAt).toLocaleString(
+                            "en-GB",
+                          )}
+                        </p>
+                      )}
                   </div>
 
                   {/* Show Pay Now button for PAYMENT_PENDING bookings */}
@@ -776,7 +825,8 @@ function MyBookings({ userId }) {
                                 : booking.seats,
                               eventName: booking.event?.name || "Event",
                               amount: booking.event?.amount || 100,
-                              lockId: booking.seatLockId?._id || booking.seatLockId,
+                              lockId:
+                                booking.seatLockId?._id || booking.seatLockId,
                             },
                           });
                         }}
@@ -799,7 +849,7 @@ function MyBookings({ userId }) {
                           // Prevent double-clicks
                           if (processingBookingId === booking._id) return;
                           setProcessingBookingId(booking._id);
-                          
+
                           try {
                             // Cancel the pending booking and release seats
                             await axios.post(
@@ -820,15 +870,23 @@ function MyBookings({ userId }) {
                         disabled={processingBookingId === booking._id}
                         className="cancel-pending-btn"
                         style={{
-                          background: processingBookingId === booking._id ? "#999" : "#666",
+                          background:
+                            processingBookingId === booking._id
+                              ? "#999"
+                              : "#666",
                           color: "white",
                           border: "none",
                           padding: "10px 20px",
                           borderRadius: "8px",
-                          cursor: processingBookingId === booking._id ? "not-allowed" : "pointer",
+                          cursor:
+                            processingBookingId === booking._id
+                              ? "not-allowed"
+                              : "pointer",
                         }}
                       >
-                        {processingBookingId === booking._id ? "Cancelling..." : "Cancel"}
+                        {processingBookingId === booking._id
+                          ? "Cancelling..."
+                          : "Cancel"}
                       </button>
                     </div>
                   )}
@@ -888,7 +946,8 @@ function MyBookings({ userId }) {
             {myEvents.map((event) => {
               // Check if user can update this event's image (superadmin: any, admin: created/approved, user: own)
               const isCreator = event.createdBy === userId;
-              const isApprover = event.approvedBy && event.approvedBy._id === userId;
+              const isApprover =
+                event.approvedBy && event.approvedBy._id === userId;
               const isSuperAdmin = userRole === "superAdmin";
               const isAdmin = userRole === "admin";
               let canUpdateImage = false;
@@ -899,9 +958,6 @@ function MyBookings({ userId }) {
               } else if (userRole === "user" && isCreator) {
                 canUpdateImage = true;
               }
-
-
-
 
               return (
                 <div key={event._id} className="booking-card event-card">
@@ -996,12 +1052,19 @@ function MyBookings({ userId }) {
                     )}
                   </div>
 
-                  <div className="booking-header" style={{ display: "flex", alignItems: "center", gap: "10px" }}>
+                  <div
+                    className="booking-header"
+                    style={{
+                      display: "flex",
+                      alignItems: "center",
+                      gap: "10px",
+                    }}
+                  >
                     {editEventId === event._id ? (
                       <input
                         type="text"
                         value={editName}
-                        onChange={e => setEditName(e.target.value)}
+                        onChange={(e) => setEditName(e.target.value)}
                         maxLength={100}
                         style={{ fontSize: "1.2em", fontWeight: 600, flex: 1 }}
                         autoFocus
@@ -1025,7 +1088,17 @@ function MyBookings({ userId }) {
                           marginLeft: "4px",
                         }}
                       >
-                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 1 1 3 3L7 19l-4 1 1-4 12.5-12.5z"/></svg>
+                        <svg
+                          width="18"
+                          height="18"
+                          viewBox="0 0 24 24"
+                          fill="none"
+                          stroke="currentColor"
+                          strokeWidth="2"
+                        >
+                          <path d="M12 20h9" />
+                          <path d="M16.5 3.5a2.121 2.121 0 1 1 3 3L7 19l-4 1 1-4 12.5-12.5z" />
+                        </svg>
                       </button>
                     )}
                     {editEventId === event._id && (
@@ -1081,10 +1154,14 @@ function MyBookings({ userId }) {
                       {editEventId === event._id ? (
                         <textarea
                           value={editDescription}
-                          onChange={e => setEditDescription(e.target.value)}
+                          onChange={(e) => setEditDescription(e.target.value)}
                           maxLength={1500}
                           rows={3}
-                          style={{ width: "100%", fontSize: "1em", marginTop: "4px" }}
+                          style={{
+                            width: "100%",
+                            fontSize: "1em",
+                            marginTop: "4px",
+                          }}
                         />
                       ) : (
                         <div className="description-text">
@@ -1147,8 +1224,15 @@ function MyBookings({ userId }) {
                           <strong>📝 Created via Request</strong>
                         </p>
                         {event.approvedBy && (
-                          <p style={{ margin: "0", fontSize: "13px", color: "var(--text-secondary)" }}>
-                            Approved by: <strong>{event.approvedBy.name}</strong>
+                          <p
+                            style={{
+                              margin: "0",
+                              fontSize: "13px",
+                              color: "var(--text-secondary)",
+                            }}
+                          >
+                            Approved by:{" "}
+                            <strong>{event.approvedBy.name}</strong>
                           </p>
                         )}
                       </div>
@@ -1161,13 +1245,15 @@ function MyBookings({ userId }) {
                       style={{
                         marginTop: "12px",
                         padding: "10px 20px",
-                        background: expandedEventId === event._id 
-                          ? "linear-gradient(135deg, #6366f1, #4f46e5)" 
-                          : "linear-gradient(135deg, #3b82f6, #2563eb)",
+                        background:
+                          expandedEventId === event._id
+                            ? "linear-gradient(135deg, #6366f1, #4f46e5)"
+                            : "linear-gradient(135deg, #3b82f6, #2563eb)",
                         color: "white",
                         border: "none",
                         borderRadius: "8px",
-                        cursor: loadingBookingsFor === event._id ? "wait" : "pointer",
+                        cursor:
+                          loadingBookingsFor === event._id ? "wait" : "pointer",
                         fontSize: "14px",
                         fontWeight: "600",
                         display: "flex",
@@ -1181,85 +1267,191 @@ function MyBookings({ userId }) {
                         "Loading..."
                       ) : expandedEventId === event._id ? (
                         <>
-                          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                            <path d="M18 15l-6-6-6 6"/>
+                          <svg
+                            width="16"
+                            height="16"
+                            viewBox="0 0 24 24"
+                            fill="none"
+                            stroke="currentColor"
+                            strokeWidth="2"
+                          >
+                            <path d="M18 15l-6-6-6 6" />
                           </svg>
                           Hide Bookings
                         </>
                       ) : (
                         <>
-                          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                            <path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/>
-                            <circle cx="9" cy="7" r="4"/>
-                            <path d="M23 21v-2a4 4 0 00-3-3.87M16 3.13a4 4 0 010 7.75"/>
+                          <svg
+                            width="16"
+                            height="16"
+                            viewBox="0 0 24 24"
+                            fill="none"
+                            stroke="currentColor"
+                            strokeWidth="2"
+                          >
+                            <path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2" />
+                            <circle cx="9" cy="7" r="4" />
+                            <path d="M23 21v-2a4 4 0 00-3-3.87M16 3.13a4 4 0 010 7.75" />
                           </svg>
-                          View Bookings ({event.totalSeats - event.availableSeats})
+                          View Bookings (
+                          {event.totalSeats - event.availableSeats})
                         </>
                       )}
                     </button>
 
                     {/* Bookings List - Expandable */}
-                    {expandedEventId === event._id && eventBookings[event._id] && (
-                      <div style={{
-                        marginTop: "16px",
-                        padding: "16px",
-                        background: "var(--background-secondary)",
-                        borderRadius: "8px",
-                        border: "1px solid var(--border-color)",
-                      }}>
-                        <h4 style={{ margin: "0 0 12px 0", color: "var(--text-primary)" }}>
-                          📋 Confirmed Bookings ({eventBookings[event._id].length})
-                        </h4>
-                        
-                        {eventBookings[event._id].length === 0 ? (
-                          <p style={{ color: "var(--text-secondary)", margin: 0 }}>
-                            No confirmed bookings yet.
-                          </p>
-                        ) : (
-                          <div style={{ maxHeight: "300px", overflowY: "auto" }}>
-                            <table style={{ 
-                              width: "100%", 
-                              borderCollapse: "collapse",
-                              fontSize: "14px",
-                            }}>
-                              <thead>
-                                <tr style={{ 
-                                  background: "var(--background-tertiary)",
-                                  textAlign: "left",
-                                }}>
-                                  <th style={{ padding: "10px", borderBottom: "1px solid var(--border-color)" }}>User</th>
-                                  <th style={{ padding: "10px", borderBottom: "1px solid var(--border-color)" }}>Email</th>
-                                  <th style={{ padding: "10px", borderBottom: "1px solid var(--border-color)" }}>Seats</th>
-                                  <th style={{ padding: "10px", borderBottom: "1px solid var(--border-color)" }}>Amount</th>
-                                  <th style={{ padding: "10px", borderBottom: "1px solid var(--border-color)" }}>Booked On</th>
-                                </tr>
-                              </thead>
-                              <tbody>
-                                {eventBookings[event._id].map((booking) => (
-                                  <tr key={booking._id} style={{ borderBottom: "1px solid var(--border-color)" }}>
-                                    <td style={{ padding: "10px" }}>
-                                      {booking.user?.name || "Unknown"}
-                                    </td>
-                                    <td style={{ padding: "10px", color: "var(--text-secondary)" }}>
-                                      {booking.user?.email || "N/A"}
-                                    </td>
-                                    <td style={{ padding: "10px", fontWeight: "600" }}>
-                                      {Array.isArray(booking.seats) ? booking.seats.length : booking.seats}
-                                    </td>
-                                    <td style={{ padding: "10px", color: "#10b981" }}>
-                                      ₹{booking.amount || 0}
-                                    </td>
-                                    <td style={{ padding: "10px", color: "var(--text-secondary)", fontSize: "12px" }}>
-                                      {new Date(booking.createdAt).toLocaleString("en-GB")}
-                                    </td>
+                    {expandedEventId === event._id &&
+                      eventBookings[event._id] && (
+                        <div
+                          style={{
+                            marginTop: "16px",
+                            padding: "16px",
+                            background: "var(--background-secondary)",
+                            borderRadius: "8px",
+                            border: "1px solid var(--border-color)",
+                          }}
+                        >
+                          <h4
+                            style={{
+                              margin: "0 0 12px 0",
+                              color: "var(--text-primary)",
+                            }}
+                          >
+                            📋 Confirmed Bookings (
+                            {eventBookings[event._id].length})
+                          </h4>
+
+                          {eventBookings[event._id].length === 0 ? (
+                            <p
+                              style={{
+                                color: "var(--text-secondary)",
+                                margin: 0,
+                              }}
+                            >
+                              No confirmed bookings yet.
+                            </p>
+                          ) : (
+                            <div
+                              style={{ maxHeight: "300px", overflowY: "auto" }}
+                            >
+                              <table
+                                style={{
+                                  width: "100%",
+                                  borderCollapse: "collapse",
+                                  fontSize: "14px",
+                                }}
+                              >
+                                <thead>
+                                  <tr
+                                    style={{
+                                      background: "var(--background-tertiary)",
+                                      textAlign: "left",
+                                    }}
+                                  >
+                                    <th
+                                      style={{
+                                        padding: "10px",
+                                        borderBottom:
+                                          "1px solid var(--border-color)",
+                                      }}
+                                    >
+                                      User
+                                    </th>
+                                    <th
+                                      style={{
+                                        padding: "10px",
+                                        borderBottom:
+                                          "1px solid var(--border-color)",
+                                      }}
+                                    >
+                                      Email
+                                    </th>
+                                    <th
+                                      style={{
+                                        padding: "10px",
+                                        borderBottom:
+                                          "1px solid var(--border-color)",
+                                      }}
+                                    >
+                                      Seats
+                                    </th>
+                                    <th
+                                      style={{
+                                        padding: "10px",
+                                        borderBottom:
+                                          "1px solid var(--border-color)",
+                                      }}
+                                    >
+                                      Amount
+                                    </th>
+                                    <th
+                                      style={{
+                                        padding: "10px",
+                                        borderBottom:
+                                          "1px solid var(--border-color)",
+                                      }}
+                                    >
+                                      Booked On
+                                    </th>
                                   </tr>
-                                ))}
-                              </tbody>
-                            </table>
-                          </div>
-                        )}
-                      </div>
-                    )}
+                                </thead>
+                                <tbody>
+                                  {eventBookings[event._id].map((booking) => (
+                                    <tr
+                                      key={booking._id}
+                                      style={{
+                                        borderBottom:
+                                          "1px solid var(--border-color)",
+                                      }}
+                                    >
+                                      <td style={{ padding: "10px" }}>
+                                        {booking.user?.name || "Unknown"}
+                                      </td>
+                                      <td
+                                        style={{
+                                          padding: "10px",
+                                          color: "var(--text-secondary)",
+                                        }}
+                                      >
+                                        {booking.user?.email || "N/A"}
+                                      </td>
+                                      <td
+                                        style={{
+                                          padding: "10px",
+                                          fontWeight: "600",
+                                        }}
+                                      >
+                                        {Array.isArray(booking.seats)
+                                          ? booking.seats.length
+                                          : booking.seats}
+                                      </td>
+                                      <td
+                                        style={{
+                                          padding: "10px",
+                                          color: "#10b981",
+                                        }}
+                                      >
+                                        ₹{booking.amount || 0}
+                                      </td>
+                                      <td
+                                        style={{
+                                          padding: "10px",
+                                          color: "var(--text-secondary)",
+                                          fontSize: "12px",
+                                        }}
+                                      >
+                                        {new Date(
+                                          booking.createdAt,
+                                        ).toLocaleString("en-GB")}
+                                      </td>
+                                    </tr>
+                                  ))}
+                                </tbody>
+                              </table>
+                            </div>
+                          )}
+                        </div>
+                      )}
 
                     {/* Delete Event Button - Show for SuperAdmin or Creator */}
                     {canUpdateImage && (
@@ -1321,9 +1513,10 @@ function MyBookings({ userId }) {
       )}
 
       {/* Event Requests Tab - For admin/superAdmin to approve/reject event creation requests */}
-      {activeTab === "event-requests" && (userRole === "admin" || userRole === "superAdmin") && (
-        <EventRequests />
-      )}
+      {activeTab === "event-requests" &&
+        (userRole === "admin" || userRole === "superAdmin") && (
+          <EventRequests />
+        )}
 
       {/* My Event Requests Tab - For users to see their pending requests and pay */}
       {activeTab === "my-requests" && (
@@ -1331,7 +1524,13 @@ function MyBookings({ userId }) {
           {loadingRequests ? (
             <MyBookingsSkeleton />
           ) : myEventRequests.length === 0 ? (
-            <div style={{ textAlign: "center", padding: "40px", color: "var(--text-secondary)" }}>
+            <div
+              style={{
+                textAlign: "center",
+                padding: "40px",
+                color: "var(--text-secondary)",
+              }}
+            >
               <p>You haven't submitted any event requests yet.</p>
               <button
                 className="submit-btn"
@@ -1342,7 +1541,9 @@ function MyBookings({ userId }) {
               </button>
             </div>
           ) : (
-            <div style={{ display: "flex", flexDirection: "column", gap: "15px" }}>
+            <div
+              style={{ display: "flex", flexDirection: "column", gap: "15px" }}
+            >
               {myEventRequests.map((request) => {
                 const isApproved = request.status === "APPROVED";
                 const isPaymentPending = request.status === "PAYMENT_PENDING";
@@ -1359,7 +1560,9 @@ function MyBookings({ userId }) {
                   const diff = expiresAt - now;
                   if (diff > 0) {
                     const hours = Math.floor(diff / (1000 * 60 * 60));
-                    const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+                    const minutes = Math.floor(
+                      (diff % (1000 * 60 * 60)) / (1000 * 60),
+                    );
                     timeRemaining = `${hours}h ${minutes}m`;
                   }
                 }
@@ -1374,10 +1577,25 @@ function MyBookings({ userId }) {
                       border: `1px solid ${isRejected ? "var(--danger-color)" : isCompleted ? "var(--success-color)" : canPay ? "var(--primary-color)" : "var(--border-color)"}`,
                     }}
                   >
-                    <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", flexWrap: "wrap", gap: "15px" }}>
+                    <div
+                      style={{
+                        display: "flex",
+                        justifyContent: "space-between",
+                        alignItems: "flex-start",
+                        flexWrap: "wrap",
+                        gap: "15px",
+                      }}
+                    >
                       {/* Left: Event Info */}
                       <div style={{ flex: "1", minWidth: "250px" }}>
-                        <div style={{ display: "flex", alignItems: "center", gap: "10px", marginBottom: "8px" }}>
+                        <div
+                          style={{
+                            display: "flex",
+                            alignItems: "center",
+                            gap: "10px",
+                            marginBottom: "8px",
+                          }}
+                        >
                           {request.image && (
                             <img
                               src={request.image}
@@ -1393,20 +1611,47 @@ function MyBookings({ userId }) {
                           <div>
                             <h3 style={{ margin: 0 }}>{request.name}</h3>
                             <small style={{ color: "var(--text-secondary)" }}>
-                              {new Date(request.eventDate).toLocaleString("en-IN", { dateStyle: "medium", timeStyle: "short" })}
+                              {new Date(request.eventDate).toLocaleString(
+                                "en-IN",
+                                { dateStyle: "medium", timeStyle: "short" },
+                              )}
                             </small>
                           </div>
                         </div>
-                        <p style={{ color: "var(--text-secondary)", fontSize: "14px", margin: "8px 0" }}>
-                          <strong>Seats:</strong> {request.totalSeats} | <strong>Type:</strong> {request.type} | <strong>Ticket:</strong> ₹{request.amount || 0}
+                        <p
+                          style={{
+                            color: "var(--text-secondary)",
+                            fontSize: "14px",
+                            margin: "8px 0",
+                          }}
+                        >
+                          <strong>Seats:</strong> {request.totalSeats} |{" "}
+                          <strong>Type:</strong> {request.type} |{" "}
+                          <strong>Ticket:</strong> ₹{request.amount || 0}
                         </p>
-                        <p style={{ color: "var(--text-secondary)", fontSize: "13px", margin: "4px 0" }}>
-                          Submitted: {new Date(request.createdAt).toLocaleString("en-IN", { dateStyle: "medium" })}
+                        <p
+                          style={{
+                            color: "var(--text-secondary)",
+                            fontSize: "13px",
+                            margin: "4px 0",
+                          }}
+                        >
+                          Submitted:{" "}
+                          {new Date(request.createdAt).toLocaleString("en-IN", {
+                            dateStyle: "medium",
+                          })}
                         </p>
                       </div>
 
                       {/* Right: Status & Actions */}
-                      <div style={{ display: "flex", flexDirection: "column", alignItems: "flex-end", gap: "10px" }}>
+                      <div
+                        style={{
+                          display: "flex",
+                          flexDirection: "column",
+                          alignItems: "flex-end",
+                          gap: "10px",
+                        }}
+                      >
                         {/* Status Badge */}
                         <span
                           style={{
@@ -1414,11 +1659,35 @@ function MyBookings({ userId }) {
                             borderRadius: "12px",
                             fontSize: "12px",
                             fontWeight: "600",
-                            background: isCompleted ? "#d1ecf1" : isRejected ? "#f8d7da" : isExpired ? "#e2e3e5" : canPay ? "#d4edda" : "#fef3cd",
-                            color: isCompleted ? "#0c5460" : isRejected ? "#721c24" : isExpired ? "#383d41" : canPay ? "#155724" : "#856404",
+                            background: isCompleted
+                              ? "#d1ecf1"
+                              : isRejected
+                                ? "#f8d7da"
+                                : isExpired
+                                  ? "#e2e3e5"
+                                  : canPay
+                                    ? "#d4edda"
+                                    : "#fef3cd",
+                            color: isCompleted
+                              ? "#0c5460"
+                              : isRejected
+                                ? "#721c24"
+                                : isExpired
+                                  ? "#383d41"
+                                  : canPay
+                                    ? "#155724"
+                                    : "#856404",
                           }}
                         >
-                          {isCompleted ? "🎉 Event Published" : isRejected ? "❌ Rejected" : isExpired ? "⌛ Expired" : canPay ? "✅ Approved - Pay Now" : "⏳ Pending Approval"}
+                          {isCompleted
+                            ? "🎉 Event Published"
+                            : isRejected
+                              ? "❌ Rejected"
+                              : isExpired
+                                ? "⌛ Expired"
+                                : canPay
+                                  ? "✅ Approved - Pay Now"
+                                  : "⏳ Pending Approval"}
                         </span>
 
                         {/* Pay Now Button */}
@@ -1443,7 +1712,9 @@ function MyBookings({ userId }) {
                               {payingForRequest === request._id ? (
                                 "Processing..."
                               ) : (
-                                <>💳 Pay ₹{request.platformFee} to Create Event</>
+                                <>
+                                  💳 Pay ₹{request.platformFee} to Create Event
+                                </>
                               )}
                             </button>
                           </>
@@ -1453,7 +1724,11 @@ function MyBookings({ userId }) {
                         {isCompleted && request.createdEventId && (
                           <button
                             className="submit-btn"
-                            onClick={() => navigate(`/event/${request.createdEventId._id || request.createdEventId}`)}
+                            onClick={() =>
+                              navigate(
+                                `/event/${request.createdEventId._id || request.createdEventId}`,
+                              )
+                            }
                             style={{ padding: "8px 16px" }}
                           >
                             View Event
@@ -1474,9 +1749,15 @@ function MyBookings({ userId }) {
                         }}
                       >
                         <small style={{ color: "var(--text-secondary)" }}>
-                          <strong>{isRejected ? "Rejection Reason:" : "Admin Note:"}</strong> {request.adminNote}
+                          <strong>
+                            {isRejected ? "Rejection Reason:" : "Admin Note:"}
+                          </strong>{" "}
+                          {request.adminNote}
                           {request.reviewedBy && (
-                            <span> — by {request.reviewedBy.name || "Admin"}</span>
+                            <span>
+                              {" "}
+                              — by {request.reviewedBy.name || "Admin"}
+                            </span>
                           )}
                         </small>
                       </div>
@@ -1508,7 +1789,7 @@ function MyBookings({ userId }) {
         onClose={closeCancelModal}
         onConfirm={handleCancelBooking}
         title="Cancel Booking"
-        message={`Are you sure you want to cancel your booking for "${bookingToCancel?.event?.name || 'this event'}"? You will receive a 50% refund.`}
+        message={`Are you sure you want to cancel your booking for "${bookingToCancel?.event?.name || "this event"}"? You will receive a 50% refund.`}
         confirmText="Yes, Cancel Booking"
         cancelText="Keep Booking"
         type="warning"

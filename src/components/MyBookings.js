@@ -1341,28 +1341,11 @@ function MyBookings({ userId }) {
                             <option value="">-- Select Category --</option>
                             <option value="music-live">🎵 Music (Live)</option>
                             <option value="sports-live">⚽ Sports (Live)</option>
-                            <option value="tech-conference">
-                              💻 Tech Conference
-                            </option>
-                            <option value="business-networking">
-                              💼 Business & Networking
-                            </option>
-                            <option value="education-workshop">
-                              📚 Education & Workshop
-                            </option>
-                            <option value="health-wellness">
-                              🧘 Health & Wellness
-                            </option>
-                            <option value="arts-theater">
-                              🎭 Arts & Theater
-                            </option>
-                            <option value="comedy-show">🎤 Comedy Show</option>
-                            <option value="charity-fundraiser">
-                              ❤️ Charity & Fundraiser
-                            </option>
-                            <option value="kids-family">
-                              👨‍👩‍👧‍👦 Kids & Family
-                            </option>
+                            <option value="music-live">🎵 Concerts</option>
+                            <option value="sports-live">⚽ Sports & Live</option>
+                            <option value="arts-theater">🎭 Arts & Theater</option>
+                            <option value="comedy-show">😂 Comedy</option>
+                            <option value="movies">🎬 Movies</option>
                             <option value="other">🔖 Other</option>
                           </select>
                         </div>

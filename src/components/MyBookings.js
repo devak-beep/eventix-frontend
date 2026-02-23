@@ -138,22 +138,34 @@ function MyBookings({ userId }) {
   const [loadingRequests, setLoadingRequests] = useState(false);
   const [payingForRequest, setPayingForRequest] = useState(null); // Request ID being paid
 
-  // --- Inline edit state for event name/description (per event) ---
+  // --- Inline edit state for event name/description/category/seats (per event) ---
   const [editEventId, setEditEventId] = useState(null); // event._id being edited
   const [editName, setEditName] = useState("");
   const [editDescription, setEditDescription] = useState("");
+  const [editCategory, setEditCategory] = useState("");
+  const [editTotalSeats, setEditTotalSeats] = useState("");
+  const [editAvailableSeats, setEditAvailableSeats] = useState("");
   const [savingEdit, setSavingEdit] = useState(false);
 
   // Save handler for event details
   const handleSaveEdit = async (event) => {
     setSavingEdit(true);
     try {
-      await axios.patch(`${API_BASE_URL}/events/${event._id}/details`, {
+      const payload = {
         userId,
         userRole,
         name: editName,
         description: editDescription,
-      });
+        category: editCategory,
+      };
+
+      // Only superAdmin can update seats
+      if (userRole === "superAdmin") {
+        payload.totalSeats = parseInt(editTotalSeats);
+        payload.availableSeats = parseInt(editAvailableSeats);
+      }
+
+      await axios.patch(`${API_BASE_URL}/events/${event._id}/details`, payload);
       setSuccess("Event details updated successfully!");
       setTimeout(() => setSuccess(""), 3000);
       setEditEventId(null);
@@ -1095,6 +1107,13 @@ function MyBookings({ userId }) {
                           setEditEventId(event._id);
                           setEditName(event.name);
                           setEditDescription(event.description);
+                          setEditCategory(
+                            Array.isArray(event.category)
+                              ? event.category.join(", ")
+                              : event.category || ""
+                          );
+                          setEditTotalSeats(event.totalSeats || "");
+                          setEditAvailableSeats(event.availableSeats || "");
                         }}
                         title="Edit event details"
                         style={{
@@ -1221,19 +1240,73 @@ function MyBookings({ userId }) {
                     </p>
                     <p>
                       <strong>Category:</strong>{" "}
-                      {Array.isArray(event.category)
-                        ? event.category.join(", ")
-                        : event.category}
+                      {editEventId === event._id ? (
+                        <input
+                          type="text"
+                          value={editCategory}
+                          onChange={(e) => setEditCategory(e.target.value)}
+                          placeholder="e.g., Music, Sports, Tech"
+                          style={{
+                            width: "100%",
+                            padding: "6px 10px",
+                            border: "1px solid #cbd5e1",
+                            borderRadius: "4px",
+                            fontSize: "14px",
+                            marginTop: "4px",
+                          }}
+                        />
+                      ) : (
+                        Array.isArray(event.category)
+                          ? event.category.join(", ")
+                          : event.category
+                      )}
                     </p>
                     <p>
                       <strong>Platform Fee Paid:</strong> ₹
                       {event.creationCharge || 0}
                     </p>
                     <p>
-                      <strong>Total Seats:</strong> {event.totalSeats}
+                      <strong>Total Seats:</strong>{" "}
+                      {editEventId === event._id && userRole === "superAdmin" ? (
+                        <input
+                          type="number"
+                          value={editTotalSeats}
+                          onChange={(e) => setEditTotalSeats(e.target.value)}
+                          min="1"
+                          style={{
+                            width: "120px",
+                            padding: "4px 8px",
+                            border: "1px solid #cbd5e1",
+                            borderRadius: "4px",
+                            fontSize: "14px",
+                            marginLeft: "8px",
+                          }}
+                        />
+                      ) : (
+                        event.totalSeats
+                      )}
                     </p>
                     <p>
-                      <strong>Available Seats:</strong> {event.availableSeats}
+                      <strong>Available Seats:</strong>{" "}
+                      {editEventId === event._id && userRole === "superAdmin" ? (
+                        <input
+                          type="number"
+                          value={editAvailableSeats}
+                          onChange={(e) => setEditAvailableSeats(e.target.value)}
+                          min="0"
+                          max={editTotalSeats}
+                          style={{
+                            width: "120px",
+                            padding: "4px 8px",
+                            border: "1px solid #cbd5e1",
+                            borderRadius: "4px",
+                            fontSize: "14px",
+                            marginLeft: "8px",
+                          }}
+                        />
+                      ) : (
+                        event.availableSeats
+                      )}
                     </p>
                     <p>
                       <strong>Booked Seats:</strong>{" "}

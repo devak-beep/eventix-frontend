@@ -900,35 +900,36 @@ function MyBookings({ userId }) {
                 canUpdateImage = true;
               }
 
-              // Inline edit state for name/description
-              const [editMode, setEditMode] = useState(false);
-              const [editName, setEditName] = useState(event.name);
-              const [editDescription, setEditDescription] = useState(event.description);
-              const [savingEdit, setSavingEdit] = useState(false);
 
-              // Save handler
-              const handleSaveEdit = async () => {
-                setSavingEdit(true);
-                try {
-                  await axios.patch(
-                    `${API_BASE_URL}/events/${event._id}/details`,
-                    {
-                      userId,
-                      userRole,
-                      name: editName,
-                      description: editDescription,
-                    },
-                  );
-                  setSuccess("Event details updated successfully!");
-                  setTimeout(() => setSuccess(""), 3000);
-                  setEditMode(false);
-                  fetchMyEvents();
-                } catch (err) {
-                  setError(err.response?.data?.message || "Failed to update event details");
-                } finally {
-                  setSavingEdit(false);
-                }
-              };
+// --- Inline edit state for event name/description (per event) ---
+const [editEventId, setEditEventId] = useState(null); // event._id being edited
+const [editName, setEditName] = useState("");
+const [editDescription, setEditDescription] = useState("");
+const [savingEdit, setSavingEdit] = useState(false);
+
+// Save handler for event details
+const handleSaveEdit = async (event) => {
+  setSavingEdit(true);
+  try {
+    await axios.patch(
+      `${API_BASE_URL}/events/${event._id}/details`,
+      {
+        userId,
+        userRole,
+        name: editName,
+        description: editDescription,
+      },
+    );
+    setSuccess("Event details updated successfully!");
+    setTimeout(() => setSuccess(""), 3000);
+    setEditEventId(null);
+    fetchMyEvents();
+  } catch (err) {
+    setError(err.response?.data?.message || "Failed to update event details");
+  } finally {
+    setSavingEdit(false);
+  }
+};
 
               return (
                 <div key={event._id} className="booking-card event-card">
@@ -1024,7 +1025,7 @@ function MyBookings({ userId }) {
                   </div>
 
                   <div className="booking-header" style={{ display: "flex", alignItems: "center", gap: "10px" }}>
-                    {editMode ? (
+                    {editEventId === event._id ? (
                       <input
                         type="text"
                         value={editName}
@@ -1036,10 +1037,10 @@ function MyBookings({ userId }) {
                     ) : (
                       <h3 style={{ flex: 1 }}>{event.name}</h3>
                     )}
-                    {canUpdateImage && !editMode && (
+                    {canUpdateImage && editEventId !== event._id && (
                       <button
                         onClick={() => {
-                          setEditMode(true);
+                          setEditEventId(event._id);
                           setEditName(event.name);
                           setEditDescription(event.description);
                         }}
@@ -1055,10 +1056,10 @@ function MyBookings({ userId }) {
                         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 1 1 3 3L7 19l-4 1 1-4 12.5-12.5z"/></svg>
                       </button>
                     )}
-                    {editMode && (
+                    {editEventId === event._id && (
                       <>
                         <button
-                          onClick={handleSaveEdit}
+                          onClick={() => handleSaveEdit(event)}
                           disabled={savingEdit}
                           style={{
                             background: "#10b981",
@@ -1074,7 +1075,7 @@ function MyBookings({ userId }) {
                           {savingEdit ? "Saving..." : "Save"}
                         </button>
                         <button
-                          onClick={() => setEditMode(false)}
+                          onClick={() => setEditEventId(null)}
                           disabled={savingEdit}
                           style={{
                             background: "#ef4444",
@@ -1105,7 +1106,7 @@ function MyBookings({ userId }) {
                   <div className="booking-details">
                     <div className="event-description">
                       <strong>Description:</strong>
-                      {editMode ? (
+                      {editEventId === event._id ? (
                         <textarea
                           value={editDescription}
                           onChange={e => setEditDescription(e.target.value)}

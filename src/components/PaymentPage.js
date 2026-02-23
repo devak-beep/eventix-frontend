@@ -10,7 +10,7 @@ function PaymentPage() {
   const { bookingId } = useParams();
   const navigate = useNavigate();
   const location = useLocation();
-  const { eventName, seats, amount, lockId } = location.state || {};
+  const { eventName, seats, amount } = location.state || {};
 
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");

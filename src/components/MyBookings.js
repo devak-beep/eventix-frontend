@@ -901,35 +901,7 @@ function MyBookings({ userId }) {
               }
 
 
-// --- Inline edit state for event name/description (per event) ---
-const [editEventId, setEditEventId] = useState(null); // event._id being edited
-const [editName, setEditName] = useState("");
-const [editDescription, setEditDescription] = useState("");
-const [savingEdit, setSavingEdit] = useState(false);
 
-// Save handler for event details
-const handleSaveEdit = async (event) => {
-  setSavingEdit(true);
-  try {
-    await axios.patch(
-      `${API_BASE_URL}/events/${event._id}/details`,
-      {
-        userId,
-        userRole,
-        name: editName,
-        description: editDescription,
-      },
-    );
-    setSuccess("Event details updated successfully!");
-    setTimeout(() => setSuccess(""), 3000);
-    setEditEventId(null);
-    fetchMyEvents();
-  } catch (err) {
-    setError(err.response?.data?.message || "Failed to update event details");
-  } finally {
-    setSavingEdit(false);
-  }
-};
 
               return (
                 <div key={event._id} className="booking-card event-card">

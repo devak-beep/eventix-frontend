@@ -1339,14 +1339,11 @@ function MyBookings({ userId }) {
                             }}
                           >
                             <option value="">-- Select Category --</option>
-                            <option value="music-live">🎵 Music (Live)</option>
-                            <option value="sports-live">⚽ Sports (Live)</option>
                             <option value="music-live">🎵 Concerts</option>
                             <option value="sports-live">⚽ Sports & Live</option>
                             <option value="arts-theater">🎭 Arts & Theater</option>
                             <option value="comedy-show">😂 Comedy</option>
                             <option value="movies">🎬 Movies</option>
-                            <option value="other">🔖 Other</option>
                           </select>
                         </div>
                       ) : (

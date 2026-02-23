@@ -1,5 +1,6 @@
 // This component shows all bookings made by users
 import React, { useState, useEffect, useRef } from "react";
+import { useNavigate } from "react-router-dom";
 import { getAllBookings, cancelBooking, getUserById } from "../api";
 import { MyBookingsSkeleton } from "./SkeletonLoader";
 import AdminRequests from "./AdminRequests";
@@ -90,6 +91,8 @@ const processImageToCardRatio = (base64Image) => {
 };
 
 function MyBookings({ userId }) {
+  const navigate = useNavigate();
+
   // State to store list of bookings
   const [bookings, setBookings] = useState([]);
 
@@ -483,16 +486,105 @@ function MyBookings({ userId }) {
                       {new Date(booking.createdAt).toLocaleString("en-GB")}
                     </p>
 
-                    {/* Show payment expiry if pending */}
-                    {booking.paymentExpiresAt && (
+                    {/* Show payment expiry warning for pending bookings */}
+                    {booking.status === "PAYMENT_PENDING" && booking.paymentExpiresAt && (
+                      <p style={{ 
+                        color: new Date(booking.paymentExpiresAt) < new Date() ? "#ef4444" : "#f59e0b",
+                        fontWeight: "bold",
+                        padding: "8px",
+                        background: new Date(booking.paymentExpiresAt) < new Date() 
+                          ? "rgba(239, 68, 68, 0.1)" 
+                          : "rgba(245, 158, 11, 0.1)",
+                        borderRadius: "6px",
+                        marginTop: "8px"
+                      }}>
+                        {new Date(booking.paymentExpiresAt) < new Date() 
+                          ? "⚠️ Payment window expired! Seats will be released."
+                          : `⏰ Complete payment before: ${new Date(booking.paymentExpiresAt).toLocaleString("en-GB")}`
+                        }
+                      </p>
+                    )}
+
+                    {/* Show payment expiry for other statuses */}
+                    {booking.status !== "PAYMENT_PENDING" && booking.paymentExpiresAt && (
                       <p>
                         <strong>Payment Expires:</strong>{" "}
                         {new Date(booking.paymentExpiresAt).toLocaleString(
                           "en-GB",
-                        )}
+                        )}}
                       </p>
                     )}
                   </div>
+
+                  {/* Show Pay Now button for PAYMENT_PENDING bookings */}
+                  {booking.status === "PAYMENT_PENDING" && (
+                    <div
+                      style={{
+                        display: "flex",
+                        gap: "10px",
+                        marginTop: "10px",
+                      }}
+                    >
+                      <button
+                        onClick={() => {
+                          // Navigate to payment page with booking details
+                          navigate(`/booking/payment/${booking._id}`, {
+                            state: {
+                              eventId: booking.event?._id || booking.event,
+                              seats: Array.isArray(booking.seats)
+                                ? booking.seats.length
+                                : booking.seats,
+                              eventName: booking.event?.name || "Event",
+                              amount: booking.event?.amount || 100,
+                              lockId: booking.seatLockId,
+                            },
+                          });
+                        }}
+                        className="pay-now-btn"
+                        style={{
+                          background:
+                            "linear-gradient(135deg, #10b981, #059669)",
+                          color: "white",
+                          border: "none",
+                          padding: "10px 20px",
+                          borderRadius: "8px",
+                          cursor: "pointer",
+                          fontWeight: "600",
+                        }}
+                      >
+                        💳 Pay Now
+                      </button>
+                      <button
+                        onClick={async () => {
+                          try {
+                            // Cancel the pending booking and release seats
+                            await axios.post(
+                              `${API_BASE_URL}/razorpay/payment-failed`,
+                              {
+                                bookingId: booking._id,
+                                error: "Cancelled by user from dashboard",
+                              },
+                            );
+                            setSuccess("Booking cancelled, seats released.");
+                            fetchBookings();
+                          } catch (err) {
+                            setError("Failed to cancel booking");
+                          }
+                        }}
+                        className="cancel-pending-btn"
+                        style={{
+                          background: "#666",
+                          color: "white",
+                          border: "none",
+                          padding: "10px 20px",
+                          borderRadius: "8px",
+                          cursor: "pointer",
+                        }}
+                      >
+                        Cancel
+                      </button>
+                    </div>
+                  )}
 
                   {/* Show cancel button only for confirmed bookings */}
                   {booking.status === "CONFIRMED" && (

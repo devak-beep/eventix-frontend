@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { useParams, useNavigate, useLocation } from "react-router-dom";
 import axios from "axios";
 import { PaymentPageSkeleton } from "./SkeletonLoader";
@@ -14,7 +14,10 @@ function PaymentPage() {
 
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
-  const [paymentCompleted, setPaymentCompleted] = useState(false);
+  // BUGFIX: Use ref instead of state to prevent race condition
+  // State updates are async, but ref updates are sync
+  // This ensures cleanup effect sees the correct value immediately
+  const paymentCompletedRef = useRef(false);
 
   useEffect(() => {
     // Load Razorpay script
@@ -31,20 +34,30 @@ function PaymentPage() {
   // Release seat lock when user navigates away without completing payment
   useEffect(() => {
     return () => {
-      // Only release if payment was not completed and we have a lockId
-      if (!paymentCompleted && lockId) {
+      // Only release if payment was not completed and we have a bookingId
+      // BUGFIX: Use ref.current (sync) instead of state (async) to prevent race condition
+      if (!paymentCompletedRef.current && bookingId) {
         // Use sendBeacon for reliable cleanup on page unload
-        const data = JSON.stringify({ lockId });
+        // paymentFailed handles both booking status AND lock release atomically
+        const data = JSON.stringify({
+          bookingId,
+          error: "User navigated away",
+        });
         navigator.sendBeacon?.(
-          `${API_BASE_URL}/locks/${lockId}/cancel`,
+          `${API_BASE_URL}/razorpay/payment-failed`,
           new Blob([data], { type: "application/json" }),
         );
 
         // Also try axios as a fallback (won't work on page close but works on SPA navigation)
-        axios.post(`${API_BASE_URL}/locks/${lockId}/cancel`).catch(() => {});
+        axios
+          .post(`${API_BASE_URL}/razorpay/payment-failed`, {
+            bookingId,
+            error: "User navigated away",
+          })
+          .catch(() => {});
       }
     };
-  }, [lockId, paymentCompleted]);
+  }, [bookingId]);
 
   const handlePayment = async () => {
     setLoading(true);
@@ -83,8 +96,10 @@ function PaymentPage() {
             );
 
             if (verifyResponse.data.success) {
-              // Mark payment as completed so cleanup doesn't release the lock
-              setPaymentCompleted(true);
+              // BUGFIX: Mark payment as completed SYNCHRONOUSLY using ref
+              // This prevents the cleanup effect from releasing the lock
+              // Must happen BEFORE navigate() which triggers unmount
+              paymentCompletedRef.current = true;
               navigate("/booking/success", {
                 state: {
                   bookingId,
@@ -110,16 +125,15 @@ function PaymentPage() {
         modal: {
           ondismiss: async function () {
             try {
+              // paymentFailed handles both booking status update AND seat lock release
+              // No need to call cancelLock separately (prevents race condition/double restore)
               await axios.post(`${API_BASE_URL}/razorpay/payment-failed`, {
                 bookingId,
                 error: "Payment cancelled by user",
               });
-              if (lockId) {
-                await axios.post(`${API_BASE_URL}/locks/${lockId}/cancel`);
-              }
               setError("Payment cancelled. Seats have been released.");
             } catch (err) {
-              console.error("Failed to release lock on dismiss:", err);
+              console.error("Failed to handle payment cancellation:", err);
               setError("Payment cancelled.");
             }
             setLoading(false);
@@ -132,18 +146,17 @@ function PaymentPage() {
       // Handle card declined / explicit payment failure
       razorpay.on("payment.failed", async function (response) {
         try {
+          // paymentFailed handles both booking status update AND seat lock release
+          // No need to call cancelLock separately (prevents race condition/double restore)
           await axios.post(`${API_BASE_URL}/razorpay/payment-failed`, {
             bookingId,
             error: response.error.description,
           });
-          if (lockId) {
-            await axios.post(`${API_BASE_URL}/locks/${lockId}/cancel`);
-          }
           setError(
             `Payment failed: ${response.error.description || "Card declined"}. Seats have been released.`,
           );
         } catch (err) {
-          console.error("Failed to release lock on payment failure:", err);
+          console.error("Failed to handle payment failure:", err);
           setError("Payment failed. Seats have been released.");
         }
         setLoading(false);
@@ -196,15 +209,12 @@ function PaymentPage() {
           <button
             onClick={async () => {
               try {
-                // Release the booking
+                // paymentFailed handles both booking status update AND seat lock release
+                // No need to call cancelLock separately (prevents race condition/double restore)
                 await axios.post(`${API_BASE_URL}/razorpay/payment-failed`, {
                   bookingId,
                   error: "Cancelled by user",
                 });
-                // Release the seat lock
-                if (lockId) {
-                  await axios.post(`${API_BASE_URL}/locks/${lockId}/cancel`);
-                }
               } catch (err) {
                 console.error("Cleanup on cancel failed:", err);
               }

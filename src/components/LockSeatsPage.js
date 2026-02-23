@@ -33,6 +33,19 @@ function LockSeatsPage({ userId }) {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [eventId]);
 
+  // CRITICAL: Cleanup lock on component unmount (when user navigates away)
+  useEffect(() => {
+    return () => {
+      // If there's an active lock when component unmounts, cancel it
+      if (currentLockId) {
+        console.log("Component unmounting with active lock, cancelling:", currentLockId);
+        cancelLock(currentLockId).catch((err) =>
+          console.error("Failed to cancel lock on unmount:", err)
+        );
+      }
+    };
+  }, [currentLockId]);
+
   // Warn user if they try to leave after locking seats
   useEffect(() => {
     if (lockCreated && currentLockId) {

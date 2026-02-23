@@ -745,13 +745,30 @@ function MyBookings({ userId }) {
 
                   <div className="booking-details">
                     <p>
+                      <strong>Booking ID:</strong> <code>{booking._id}</code>
+                    </p>
+                    <p>
                       <strong>Event:</strong>{" "}
                       {booking.event?.name || booking.event || "N/A"}
                     </p>
+                    {(userRole === "admin" || userRole === "superAdmin") &&
+                      booking.event?._id && (
+                        <p>
+                          <strong>Event ID:</strong>{" "}
+                          <code>{booking.event._id}</code>
+                        </p>
+                      )}
                     <p>
                       <strong>User:</strong>{" "}
                       {booking.user?.name || booking.user || "N/A"}
                     </p>
+                    {(userRole === "admin" || userRole === "superAdmin") &&
+                      booking.user?._id && (
+                        <p>
+                          <strong>User ID:</strong>{" "}
+                          <code>{booking.user._id}</code>
+                        </p>
+                      )}
                     <p>
                       <strong>Seats:</strong>{" "}
                       {Array.isArray(booking.seats)
@@ -1180,6 +1197,24 @@ function MyBookings({ userId }) {
                     <p>
                       <strong>Event ID:</strong> <code>{event._id}</code>
                     </p>
+                    {(userRole === "admin" || userRole === "superAdmin") && (
+                      <>
+                        {event.createdBy && (
+                          <p>
+                            <strong>Created By:</strong>{" "}
+                            {event.createdBy.name} (
+                            <code>{event.createdBy._id}</code>)
+                          </p>
+                        )}
+                        {event.approvedBy && (
+                          <p>
+                            <strong>Approved By:</strong>{" "}
+                            {event.approvedBy.name} (
+                            <code>{event.approvedBy._id}</code>)
+                          </p>
+                        )}
+                      </>
+                    )}
                     <p>
                       <strong>Created:</strong>{" "}
                       {new Date(event.createdAt).toLocaleString("en-GB")}

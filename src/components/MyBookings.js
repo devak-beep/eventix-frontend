@@ -996,9 +996,12 @@ function MyBookings({ userId }) {
           <div className="bookings-list">
             {myEvents.map((event) => {
               // Check if user can update this event's image (superadmin: any, admin: created/approved, user: own)
-              const isCreator = event.createdBy === userId;
+              const isCreator =
+                event.createdBy &&
+                (event.createdBy._id === userId || event.createdBy === userId);
               const isApprover =
-                event.approvedBy && event.approvedBy._id === userId;
+                event.approvedBy &&
+                (event.approvedBy._id === userId || event.approvedBy === userId);
               const isSuperAdmin = userRole === "superAdmin";
               const isAdmin = userRole === "admin";
               let canUpdateImage = false;

@@ -1271,42 +1271,18 @@ function MyBookings({ userId }) {
                       </strong>
                       {editEventId === event._id ? (
                         <div>
-                          <div
-                            style={{
-                              display: "flex",
-                              flexDirection: "column",
-                              gap: "6px",
-                              marginBottom: "12px",
-                            }}
-                          >
-                            <label
-                              style={{
-                                display: "flex",
-                                alignItems: "center",
-                                gap: "8px",
-                                cursor: "pointer",
-                                fontSize: "14px",
-                              }}
-                            >
+                          <div className="category-checkboxes">
+                            <label className="checkbox-label">
                               <input
                                 type="checkbox"
                                 checked={editCategory.includes("food-drink")}
                                 onChange={() =>
                                   handleEditCategoryChange("food-drink")
                                 }
-                                style={{ margin: 0, flexShrink: 0 }}
                               />
-                              <span>🍔 Food & Drink</span>
+                              <span className="checkbox-text">🍔 Food & Drink</span>
                             </label>
-                            <label
-                              style={{
-                                display: "flex",
-                                alignItems: "center",
-                                gap: "8px",
-                                cursor: "pointer",
-                                fontSize: "14px",
-                              }}
-                            >
+                            <label className="checkbox-label">
                               <input
                                 type="checkbox"
                                 checked={editCategory.includes(
@@ -1315,28 +1291,18 @@ function MyBookings({ userId }) {
                                 onChange={() =>
                                   handleEditCategoryChange("festivals-cultural")
                                 }
-                                style={{ margin: 0, flexShrink: 0 }}
                               />
-                              <span>🎊 Festivals & Cultural</span>
+                              <span className="checkbox-text">🎊 Festivals & Cultural</span>
                             </label>
-                            <label
-                              style={{
-                                display: "flex",
-                                alignItems: "center",
-                                gap: "8px",
-                                cursor: "pointer",
-                                fontSize: "14px",
-                              }}
-                            >
+                            <label className="checkbox-label">
                               <input
                                 type="checkbox"
                                 checked={editCategory.includes("dance-party")}
                                 onChange={() =>
                                   handleEditCategoryChange("dance-party")
                                 }
-                                style={{ margin: 0, flexShrink: 0 }}
                               />
-                              <span>💃 Dance & Party</span>
+                              <span className="checkbox-text">💃 Dance & Party</span>
                             </label>
                           </div>
                           <label

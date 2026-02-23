@@ -337,7 +337,7 @@ function MyBookings({ userId }) {
         throw new Error(orderResponse.data.message || "Failed to create payment order");
       }
 
-      const { order, platformFee } = orderResponse.data;
+      const { order } = orderResponse.data;
 
       // Open Razorpay checkout
       const options = {

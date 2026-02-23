@@ -1,8 +1,9 @@
 // Confirm Booking Page - Step 2 of booking
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { useParams, useNavigate, useLocation } from "react-router-dom";
 import { confirmBooking, cancelLock } from "../api";
 import { ConfirmBookingSkeleton } from "./SkeletonLoader";
+import ConfirmModal from "./ConfirmModal";
 
 function ConfirmBookingPage() {
   const { lockId } = useParams();
@@ -13,29 +14,39 @@ function ConfirmBookingPage() {
   const [error, setError] = useState("");
   const [timeRemaining, setTimeRemaining] = useState(0);
 
+  // Modal state for back navigation
+  const [showBackModal, setShowBackModal] = useState(false);
+  const [backModalPending, setBackModalPending] = useState(false);
+
+  // Track if booking was confirmed (to prevent cleanup from cancelling)
+  const bookingConfirmedRef = useRef(false);
+
   const { eventId, seats, expiresAt, eventName, amount } = location.state || {};
 
-  // Cancel lock when leaving the page
+  // BUGFIX: Cancel lock when component unmounts (user navigates away via any link)
   useEffect(() => {
-    let isNavigating = false;
+    return () => {
+      // Only cancel if booking was NOT confirmed
+      if (!bookingConfirmedRef.current && lockId) {
+        // Use sendBeacon for reliable cleanup
+        const API_BASE_URL =
+          process.env.REACT_APP_API_URL || "http://localhost:3000/api";
+        navigator.sendBeacon?.(
+          `${API_BASE_URL}/locks/${lockId}/cancel`,
+          new Blob([JSON.stringify({})], { type: "application/json" }),
+        );
+      }
+    };
+  }, [lockId]);
 
-    const handlePopState = async (e) => {
-      if (!isNavigating && lockId) {
+  // Handle browser back button and page close
+  useEffect(() => {
+    const handlePopState = (e) => {
+      if (lockId) {
         // Push state back to prevent immediate navigation
         window.history.pushState(null, "", window.location.href);
-
-        if (
-          window.confirm("Going back will cancel your seat lock. Continue?")
-        ) {
-          isNavigating = true;
-          try {
-            await cancelLock(lockId);
-          } catch (err) {
-            console.error("Failed to cancel lock:", err);
-          }
-          // Navigate using React Router instead of browser back
-          navigate("/");
-        }
+        // Show custom modal instead of window.confirm
+        setShowBackModal(true);
       }
     };
 
@@ -55,7 +66,7 @@ function ConfirmBookingPage() {
       window.removeEventListener("popstate", handlePopState);
       window.removeEventListener("beforeunload", handleBeforeUnload);
     };
-  }, [lockId, navigate]);
+  }, [lockId]);
 
   useEffect(() => {
     if (!expiresAt) return;
@@ -84,6 +95,10 @@ function ConfirmBookingPage() {
     try {
       const response = await confirmBooking(lockId);
 
+      // BUGFIX: Mark booking as confirmed BEFORE navigating
+      // This prevents cleanup effect from cancelling the lock
+      bookingConfirmedRef.current = true;
+
       // Navigate to payment page
       navigate(`/booking/payment/${response.booking._id}`, {
         state: { eventId, seats, eventName, amount, lockId },
@@ -99,16 +114,22 @@ function ConfirmBookingPage() {
     }
   };
 
-  const handleBackClick = async () => {
-    if (window.confirm("Going back will cancel your seat lock. Continue?")) {
-      try {
-        await cancelLock(lockId);
-        navigate("/");
-      } catch (err) {
-        console.error("Failed to cancel lock:", err);
-        navigate("/");
-      }
+  const handleBackClick = () => {
+    // Show custom modal instead of window.confirm
+    setShowBackModal(true);
+  };
+
+  // Handle confirmed back navigation
+  const handleConfirmBack = async () => {
+    setBackModalPending(true);
+    try {
+      await cancelLock(lockId);
+    } catch (err) {
+      console.error("Failed to cancel lock:", err);
     }
+    setShowBackModal(false);
+    setBackModalPending(false);
+    navigate("/");
   };
 
   // Show loading skeleton if no data
@@ -171,6 +192,19 @@ function ConfirmBookingPage() {
           </button>
         </div>
       </div>
+
+      {/* Confirm Back Modal */}
+      <ConfirmModal
+        isOpen={showBackModal}
+        onClose={() => setShowBackModal(false)}
+        onConfirm={handleConfirmBack}
+        title="Cancel Seat Lock?"
+        message="Going back will cancel your seat lock and restore the seats. Are you sure you want to continue?"
+        confirmText="Yes, Go Back"
+        cancelText="Stay Here"
+        type="warning"
+        loading={backModalPending}
+      />
     </div>
   );
 }

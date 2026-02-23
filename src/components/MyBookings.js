@@ -4,6 +4,7 @@ import { useNavigate } from "react-router-dom";
 import { getAllBookings, cancelBooking, getUserById } from "../api";
 import { MyBookingsSkeleton } from "./SkeletonLoader";
 import AdminRequests from "./AdminRequests";
+import EventRequests from "./EventRequests";
 import ConfirmModal from "./ConfirmModal";
 import axios from "axios";
 
@@ -118,9 +119,24 @@ function MyBookings({ userId }) {
   const [deleteModalOpen, setDeleteModalOpen] = useState(false);
   const [eventToDelete, setEventToDelete] = useState(null);
   const [deleting, setDeleting] = useState(false);
+
+  // Cancel booking modal state
+  const [cancelModalOpen, setCancelModalOpen] = useState(false);
+  const [bookingToCancel, setBookingToCancel] = useState(null);
+  const [cancelling, setCancelling] = useState(false);
   
   // Track which booking is being processed (prevents double-clicks)
   const [processingBookingId, setProcessingBookingId] = useState(null);
+
+  // Event bookings state (for admin/superAdmin to see who booked)
+  const [eventBookings, setEventBookings] = useState({}); // { eventId: [bookings] }
+  const [expandedEventId, setExpandedEventId] = useState(null); // Which event's bookings are expanded
+  const [loadingBookingsFor, setLoadingBookingsFor] = useState(null); // Loading state per event
+
+  // My Event Requests state (for users to see their pending requests)
+  const [myEventRequests, setMyEventRequests] = useState([]);
+  const [loadingRequests, setLoadingRequests] = useState(false);
+  const [payingForRequest, setPayingForRequest] = useState(null); // Request ID being paid
 
   // Fetch user role on mount
   useEffect(() => {
@@ -149,8 +165,10 @@ function MyBookings({ userId }) {
   useEffect(() => {
     if (activeTab === "bookings") {
       fetchBookings();
-    } else {
+    } else if (activeTab === "events") {
       fetchMyEvents();
+    } else if (activeTab === "my-requests") {
+      fetchMyEventRequests();
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [activeTab]);
@@ -219,6 +237,171 @@ function MyBookings({ userId }) {
       console.error("Error fetching events:", err);
     } finally {
       setLoading(false);
+    }
+  };
+
+  // Function to fetch bookings for a specific event (admin/superAdmin feature)
+  const fetchEventBookings = async (eventId) => {
+    // Toggle off if already expanded
+    if (expandedEventId === eventId) {
+      setExpandedEventId(null);
+      return;
+    }
+    
+    // Check if we already have bookings cached
+    if (eventBookings[eventId]) {
+      setExpandedEventId(eventId);
+      return;
+    }
+    
+    setLoadingBookingsFor(eventId);
+    
+    try {
+      const response = await axios.get(
+        `${API_BASE_URL}/bookings?eventId=${eventId}`
+      );
+      const bookingsData = response.data.data || [];
+      
+      // Filter to only show CONFIRMED bookings
+      const confirmedBookings = bookingsData.filter(b => b.status === "CONFIRMED");
+      
+      setEventBookings(prev => ({
+        ...prev,
+        [eventId]: confirmedBookings
+      }));
+      setExpandedEventId(eventId);
+    } catch (err) {
+      console.error("Error fetching event bookings:", err);
+      setError("Failed to load bookings for this event");
+    } finally {
+      setLoadingBookingsFor(null);
+    }
+  };
+
+  // Function to fetch user's event creation requests
+  const fetchMyEventRequests = async () => {
+    setLoadingRequests(true);
+    try {
+      const user = JSON.parse(localStorage.getItem("user") || "{}");
+      const response = await axios.get(`${API_BASE_URL}/event-requests/my-requests`, {
+        headers: {
+          "x-user-id": user._id,
+          "x-user-role": user.role,
+        },
+      });
+      if (response.data.success) {
+        setMyEventRequests(response.data.requests || []);
+      }
+    } catch (err) {
+      console.error("Error fetching event requests:", err);
+      setError("Failed to load event requests");
+    } finally {
+      setLoadingRequests(false);
+    }
+  };
+
+  // Load Razorpay script for event request payment
+  useEffect(() => {
+    const script = document.createElement("script");
+    script.src = "https://checkout.razorpay.com/v1/checkout.js";
+    script.async = true;
+    document.body.appendChild(script);
+    return () => {
+      if (document.body.contains(script)) {
+        document.body.removeChild(script);
+      }
+    };
+  }, []);
+
+  // Function to pay platform fee for approved event request
+  const payPlatformFee = async (request) => {
+    setPayingForRequest(request._id);
+    setError("");
+
+    try {
+      const user = JSON.parse(localStorage.getItem("user") || "{}");
+      
+      // Create payment order
+      const orderResponse = await axios.post(
+        `${API_BASE_URL}/event-requests/${request._id}/create-order`,
+        {},
+        {
+          headers: {
+            "x-user-id": user._id,
+            "x-user-role": user.role,
+          },
+        }
+      );
+
+      if (!orderResponse.data.success) {
+        throw new Error(orderResponse.data.message || "Failed to create payment order");
+      }
+
+      const { order, platformFee } = orderResponse.data;
+
+      // Open Razorpay checkout
+      const options = {
+        key: process.env.REACT_APP_RAZORPAY_KEY_ID || "rzp_test_yourkeyhere",
+        amount: order.amount,
+        currency: order.currency,
+        name: "Eventix",
+        description: `Platform Fee - ${request.name}`,
+        order_id: order.id,
+        handler: async function (response) {
+          try {
+            // Verify payment and create event
+            const verifyResponse = await axios.post(
+              `${API_BASE_URL}/event-requests/${request._id}/verify-payment`,
+              {
+                razorpay_order_id: response.razorpay_order_id,
+                razorpay_payment_id: response.razorpay_payment_id,
+                razorpay_signature: response.razorpay_signature,
+              },
+              {
+                headers: {
+                  "x-user-id": user._id,
+                  "x-user-role": user.role,
+                },
+              }
+            );
+
+            if (verifyResponse.data.success) {
+              setSuccess(`🎉 Event "${request.name}" created successfully!`);
+              fetchMyEventRequests(); // Refresh list
+              setTimeout(() => setSuccess(""), 5000);
+            } else {
+              setError("Payment verification failed");
+            }
+          } catch (err) {
+            setError("Payment verification failed");
+            console.error(err);
+          } finally {
+            setPayingForRequest(null);
+          }
+        },
+        prefill: {
+          name: user.name || "",
+          email: user.email || "",
+        },
+        theme: {
+          color: "#0070f3",
+        },
+        modal: {
+          ondismiss: function () {
+            setPayingForRequest(null);
+          },
+        },
+      };
+
+      const razorpay = new window.Razorpay(options);
+      razorpay.on("payment.failed", function (response) {
+        setError(`Payment failed: ${response.error.description || "Transaction declined"}`);
+        setPayingForRequest(null);
+      });
+      razorpay.open();
+    } catch (err) {
+      setError(err.response?.data?.message || err.message || "Failed to initiate payment");
+      setPayingForRequest(null);
     }
   };
 
@@ -336,31 +519,38 @@ function MyBookings({ userId }) {
     }
   };
 
-  // Function to cancel a booking
-  const handleCancelBooking = async (bookingId) => {
-    // Ask user to confirm cancellation
-    if (
-      !window.confirm(
-        "Are you sure you want to cancel this booking? You will get 50% refund.",
-      )
-    ) {
-      return;
-    }
+  // Open cancel booking modal
+  const openCancelModal = (booking) => {
+    setBookingToCancel(booking);
+    setCancelModalOpen(true);
+  };
 
+  // Close cancel booking modal
+  const closeCancelModal = () => {
+    setCancelModalOpen(false);
+    setBookingToCancel(null);
+  };
+
+  // Function to cancel a booking (after modal confirmation)
+  const handleCancelBooking = async () => {
+    if (!bookingToCancel) return;
+
+    setCancelling(true);
     setError("");
     setSuccess("");
-    setLoading(true);
 
     try {
-      await cancelBooking(bookingId);
+      await cancelBooking(bookingToCancel._id);
       setSuccess("Booking cancelled successfully! 50% refund processed.");
 
       // Refresh bookings list
       fetchBookings();
+      closeCancelModal();
     } catch (err) {
       setError(err.response?.data?.message || "Failed to cancel booking");
+      closeCancelModal();
     } finally {
-      setLoading(false);
+      setCancelling(false);
     }
   };
 
@@ -392,12 +582,26 @@ function MyBookings({ userId }) {
         >
           My Bookings
         </button>
+        <button
+          className={`tab-btn ${activeTab === "my-requests" ? "active" : ""}`}
+          onClick={() => setActiveTab("my-requests")}
+        >
+          My Event Requests
+        </button>
         {(userRole === "admin" || userRole === "superAdmin") && (
           <button
             className={`tab-btn ${activeTab === "events" ? "active" : ""}`}
             onClick={() => setActiveTab("events")}
           >
             My Events
+          </button>
+        )}
+        {(userRole === "admin" || userRole === "superAdmin") && (
+          <button
+            className={`tab-btn ${activeTab === "event-requests" ? "active" : ""}`}
+            onClick={() => setActiveTab("event-requests")}
+          >
+            Event Requests
           </button>
         )}
         {userRole === "superAdmin" && (
@@ -410,20 +614,26 @@ function MyBookings({ userId }) {
         )}
       </div>
 
-      {/* Refresh button */}
-      <button
-        onClick={() =>
-          activeTab === "bookings" ? fetchBookings() : fetchMyEvents()
-        }
-        disabled={loading}
-        className="refresh-btn"
-      >
-        {loading
-          ? "Loading..."
-          : activeTab === "bookings"
-            ? "Refresh Bookings"
-            : "Refresh Events"}
-      </button>
+      {/* Refresh button - only show for bookings, events, and my-requests tabs */}
+      {(activeTab === "bookings" || activeTab === "events" || activeTab === "my-requests") && (
+        <button
+          onClick={() => {
+            if (activeTab === "bookings") fetchBookings();
+            else if (activeTab === "events") fetchMyEvents();
+            else if (activeTab === "my-requests") fetchMyEventRequests();
+          }}
+          disabled={loading || loadingRequests}
+          className="refresh-btn"
+        >
+          {(loading || loadingRequests)
+            ? "Loading..."
+            : activeTab === "bookings"
+              ? "Refresh Bookings"
+              : activeTab === "events"
+                ? "Refresh Events"
+                : "Refresh Requests"}
+        </button>
+      )}
 
       {/* Show error or success messages */}
       {error && <div className="error">{error}</div>}
@@ -599,8 +809,8 @@ function MyBookings({ userId }) {
                   {/* Show cancel button only for confirmed bookings */}
                   {booking.status === "CONFIRMED" && (
                     <button
-                      onClick={() => handleCancelBooking(booking._id)}
-                      disabled={loading}
+                      onClick={() => openCancelModal(booking)}
+                      disabled={cancelling}
                       className="cancel-btn"
                     >
                       Cancel Booking (50% refund)
@@ -807,6 +1017,135 @@ function MyBookings({ userId }) {
                         (event.amount || 0)}
                     </p>
 
+                    {/* Show who created and approved for events created via request */}
+                    {event.createdViaRequest && (
+                      <div
+                        style={{
+                          marginTop: "12px",
+                          padding: "10px",
+                          background: "var(--bg-secondary)",
+                          borderRadius: "8px",
+                          borderLeft: "3px solid var(--primary-color)",
+                        }}
+                      >
+                        <p style={{ margin: "0 0 4px 0", fontSize: "13px" }}>
+                          <strong>📝 Created via Request</strong>
+                        </p>
+                        {event.approvedBy && (
+                          <p style={{ margin: "0", fontSize: "13px", color: "var(--text-secondary)" }}>
+                            Approved by: <strong>{event.approvedBy.name}</strong>
+                          </p>
+                        )}
+                      </div>
+                    )}
+
+                    {/* View Bookings Button - Show who booked */}
+                    <button
+                      onClick={() => fetchEventBookings(event._id)}
+                      disabled={loadingBookingsFor === event._id}
+                      style={{
+                        marginTop: "12px",
+                        padding: "10px 20px",
+                        background: expandedEventId === event._id 
+                          ? "linear-gradient(135deg, #6366f1, #4f46e5)" 
+                          : "linear-gradient(135deg, #3b82f6, #2563eb)",
+                        color: "white",
+                        border: "none",
+                        borderRadius: "8px",
+                        cursor: loadingBookingsFor === event._id ? "wait" : "pointer",
+                        fontSize: "14px",
+                        fontWeight: "600",
+                        display: "flex",
+                        alignItems: "center",
+                        gap: "8px",
+                        width: "100%",
+                        justifyContent: "center",
+                      }}
+                    >
+                      {loadingBookingsFor === event._id ? (
+                        "Loading..."
+                      ) : expandedEventId === event._id ? (
+                        <>
+                          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                            <path d="M18 15l-6-6-6 6"/>
+                          </svg>
+                          Hide Bookings
+                        </>
+                      ) : (
+                        <>
+                          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                            <path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/>
+                            <circle cx="9" cy="7" r="4"/>
+                            <path d="M23 21v-2a4 4 0 00-3-3.87M16 3.13a4 4 0 010 7.75"/>
+                          </svg>
+                          View Bookings ({event.totalSeats - event.availableSeats})
+                        </>
+                      )}
+                    </button>
+
+                    {/* Bookings List - Expandable */}
+                    {expandedEventId === event._id && eventBookings[event._id] && (
+                      <div style={{
+                        marginTop: "16px",
+                        padding: "16px",
+                        background: "var(--background-secondary)",
+                        borderRadius: "8px",
+                        border: "1px solid var(--border-color)",
+                      }}>
+                        <h4 style={{ margin: "0 0 12px 0", color: "var(--text-primary)" }}>
+                          📋 Confirmed Bookings ({eventBookings[event._id].length})
+                        </h4>
+                        
+                        {eventBookings[event._id].length === 0 ? (
+                          <p style={{ color: "var(--text-secondary)", margin: 0 }}>
+                            No confirmed bookings yet.
+                          </p>
+                        ) : (
+                          <div style={{ maxHeight: "300px", overflowY: "auto" }}>
+                            <table style={{ 
+                              width: "100%", 
+                              borderCollapse: "collapse",
+                              fontSize: "14px",
+                            }}>
+                              <thead>
+                                <tr style={{ 
+                                  background: "var(--background-tertiary)",
+                                  textAlign: "left",
+                                }}>
+                                  <th style={{ padding: "10px", borderBottom: "1px solid var(--border-color)" }}>User</th>
+                                  <th style={{ padding: "10px", borderBottom: "1px solid var(--border-color)" }}>Email</th>
+                                  <th style={{ padding: "10px", borderBottom: "1px solid var(--border-color)" }}>Seats</th>
+                                  <th style={{ padding: "10px", borderBottom: "1px solid var(--border-color)" }}>Amount</th>
+                                  <th style={{ padding: "10px", borderBottom: "1px solid var(--border-color)" }}>Booked On</th>
+                                </tr>
+                              </thead>
+                              <tbody>
+                                {eventBookings[event._id].map((booking) => (
+                                  <tr key={booking._id} style={{ borderBottom: "1px solid var(--border-color)" }}>
+                                    <td style={{ padding: "10px" }}>
+                                      {booking.user?.name || "Unknown"}
+                                    </td>
+                                    <td style={{ padding: "10px", color: "var(--text-secondary)" }}>
+                                      {booking.user?.email || "N/A"}
+                                    </td>
+                                    <td style={{ padding: "10px", fontWeight: "600" }}>
+                                      {Array.isArray(booking.seats) ? booking.seats.length : booking.seats}
+                                    </td>
+                                    <td style={{ padding: "10px", color: "#10b981" }}>
+                                      ₹{booking.amount || 0}
+                                    </td>
+                                    <td style={{ padding: "10px", color: "var(--text-secondary)", fontSize: "12px" }}>
+                                      {new Date(booking.createdAt).toLocaleString("en-GB")}
+                                    </td>
+                                  </tr>
+                                ))}
+                              </tbody>
+                            </table>
+                          </div>
+                        )}
+                      </div>
+                    )}
+
                     {/* Delete Event Button - Show for SuperAdmin or Creator */}
                     {canUpdateImage && (
                       <button
@@ -866,6 +1205,175 @@ function MyBookings({ userId }) {
         <AdminRequests />
       )}
 
+      {/* Event Requests Tab - For admin/superAdmin to approve/reject event creation requests */}
+      {activeTab === "event-requests" && (userRole === "admin" || userRole === "superAdmin") && (
+        <EventRequests />
+      )}
+
+      {/* My Event Requests Tab - For users to see their pending requests and pay */}
+      {activeTab === "my-requests" && (
+        <div className="my-requests-section">
+          {loadingRequests ? (
+            <MyBookingsSkeleton />
+          ) : myEventRequests.length === 0 ? (
+            <div style={{ textAlign: "center", padding: "40px", color: "var(--text-secondary)" }}>
+              <p>You haven't submitted any event requests yet.</p>
+              <button
+                className="submit-btn"
+                onClick={() => navigate("/request-event")}
+                style={{ marginTop: "15px" }}
+              >
+                📝 Request to Create Event
+              </button>
+            </div>
+          ) : (
+            <div style={{ display: "flex", flexDirection: "column", gap: "15px" }}>
+              {myEventRequests.map((request) => {
+                const isApproved = request.status === "APPROVED";
+                const isPaymentPending = request.status === "PAYMENT_PENDING";
+                const canPay = isApproved || isPaymentPending;
+                const isExpired = request.status === "EXPIRED";
+                const isCompleted = request.status === "COMPLETED";
+                const isRejected = request.status === "REJECTED";
+
+                // Calculate time remaining for payment
+                let timeRemaining = null;
+                if (canPay && request.paymentExpiresAt) {
+                  const expiresAt = new Date(request.paymentExpiresAt);
+                  const now = new Date();
+                  const diff = expiresAt - now;
+                  if (diff > 0) {
+                    const hours = Math.floor(diff / (1000 * 60 * 60));
+                    const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+                    timeRemaining = `${hours}h ${minutes}m`;
+                  }
+                }
+
+                return (
+                  <div
+                    key={request._id}
+                    style={{
+                      padding: "20px",
+                      borderRadius: "12px",
+                      background: "var(--card-bg)",
+                      border: `1px solid ${isRejected ? "var(--danger-color)" : isCompleted ? "var(--success-color)" : canPay ? "var(--primary-color)" : "var(--border-color)"}`,
+                    }}
+                  >
+                    <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", flexWrap: "wrap", gap: "15px" }}>
+                      {/* Left: Event Info */}
+                      <div style={{ flex: "1", minWidth: "250px" }}>
+                        <div style={{ display: "flex", alignItems: "center", gap: "10px", marginBottom: "8px" }}>
+                          {request.image && (
+                            <img
+                              src={request.image}
+                              alt={request.name}
+                              style={{
+                                width: "60px",
+                                height: "40px",
+                                objectFit: "cover",
+                                borderRadius: "6px",
+                              }}
+                            />
+                          )}
+                          <div>
+                            <h3 style={{ margin: 0 }}>{request.name}</h3>
+                            <small style={{ color: "var(--text-secondary)" }}>
+                              {new Date(request.eventDate).toLocaleString("en-IN", { dateStyle: "medium", timeStyle: "short" })}
+                            </small>
+                          </div>
+                        </div>
+                        <p style={{ color: "var(--text-secondary)", fontSize: "14px", margin: "8px 0" }}>
+                          <strong>Seats:</strong> {request.totalSeats} | <strong>Type:</strong> {request.type} | <strong>Ticket:</strong> ₹{request.amount || 0}
+                        </p>
+                        <p style={{ color: "var(--text-secondary)", fontSize: "13px", margin: "4px 0" }}>
+                          Submitted: {new Date(request.createdAt).toLocaleString("en-IN", { dateStyle: "medium" })}
+                        </p>
+                      </div>
+
+                      {/* Right: Status & Actions */}
+                      <div style={{ display: "flex", flexDirection: "column", alignItems: "flex-end", gap: "10px" }}>
+                        {/* Status Badge */}
+                        <span
+                          style={{
+                            padding: "4px 12px",
+                            borderRadius: "12px",
+                            fontSize: "12px",
+                            fontWeight: "600",
+                            background: isCompleted ? "#d1ecf1" : isRejected ? "#f8d7da" : isExpired ? "#e2e3e5" : canPay ? "#d4edda" : "#fef3cd",
+                            color: isCompleted ? "#0c5460" : isRejected ? "#721c24" : isExpired ? "#383d41" : canPay ? "#155724" : "#856404",
+                          }}
+                        >
+                          {isCompleted ? "🎉 Event Created" : isRejected ? "❌ Rejected" : isExpired ? "⌛ Expired" : canPay ? "✅ Approved - Pay Now" : "⏳ Pending Approval"}
+                        </span>
+
+                        {/* Pay Now Button */}
+                        {canPay && (
+                          <>
+                            {timeRemaining && (
+                              <small style={{ color: "var(--warning-color)" }}>
+                                ⏰ Pay within: {timeRemaining}
+                              </small>
+                            )}
+                            <button
+                              className="submit-btn"
+                              onClick={() => payPlatformFee(request)}
+                              disabled={payingForRequest === request._id}
+                              style={{
+                                padding: "10px 20px",
+                                display: "flex",
+                                alignItems: "center",
+                                gap: "8px",
+                              }}
+                            >
+                              {payingForRequest === request._id ? (
+                                "Processing..."
+                              ) : (
+                                <>💳 Pay ₹{request.platformFee} to Create Event</>
+                              )}
+                            </button>
+                          </>
+                        )}
+
+                        {/* View Created Event */}
+                        {isCompleted && request.createdEventId && (
+                          <button
+                            className="submit-btn"
+                            onClick={() => navigate(`/event/${request.createdEventId._id || request.createdEventId}`)}
+                            style={{ padding: "8px 16px" }}
+                          >
+                            View Event
+                          </button>
+                        )}
+                      </div>
+                    </div>
+
+                    {/* Admin Note */}
+                    {request.adminNote && (
+                      <div
+                        style={{
+                          marginTop: "15px",
+                          padding: "10px",
+                          background: "var(--bg-secondary)",
+                          borderRadius: "6px",
+                          borderLeft: `3px solid ${isRejected ? "var(--danger-color)" : "var(--primary-color)"}`,
+                        }}
+                      >
+                        <small style={{ color: "var(--text-secondary)" }}>
+                          <strong>{isRejected ? "Rejection Reason:" : "Admin Note:"}</strong> {request.adminNote}
+                          {request.reviewedBy && (
+                            <span> — by {request.reviewedBy.name || "Admin"}</span>
+                          )}
+                        </small>
+                      </div>
+                    )}
+                  </div>
+                );
+              })}
+            </div>
+          )}
+        </div>
+      )}
+
       {/* Delete Confirmation Modal */}
       <ConfirmModal
         isOpen={deleteModalOpen}
@@ -877,6 +1385,19 @@ function MyBookings({ userId }) {
         cancelText="Cancel"
         type="danger"
         loading={deleting}
+      />
+
+      {/* Cancel Booking Confirmation Modal */}
+      <ConfirmModal
+        isOpen={cancelModalOpen}
+        onClose={closeCancelModal}
+        onConfirm={handleCancelBooking}
+        title="Cancel Booking"
+        message={`Are you sure you want to cancel your booking for "${bookingToCancel?.event?.name || 'this event'}"? You will receive a 50% refund.`}
+        confirmText="Yes, Cancel Booking"
+        cancelText="Keep Booking"
+        type="warning"
+        loading={cancelling}
       />
     </div>
   );

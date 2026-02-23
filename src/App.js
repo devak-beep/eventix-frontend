@@ -18,6 +18,7 @@ import PaymentPage from "./components/PaymentPage";
 import BookingSuccessPage from "./components/BookingSuccessPage";
 import MyBookings from "./components/MyBookings";
 import CreateEvent from "./components/CreateEvent";
+import RequestEvent from "./components/RequestEvent";
 import Settings from "./components/Settings";
 import ConfirmModal from "./components/ConfirmModal";
 import { EventixLogoSimple } from "./components/EventixLogo";
@@ -137,6 +138,15 @@ function Navbar({ user, onLogout, onUserUpdate, isDarkMode, onToggleTheme }) {
                     >
                       <span className="di-icon">➕</span>
                       <span>Create Event</span>
+                    </button>
+                  )}
+                  {user.role === "user" && (
+                    <button
+                      className="dropdown-item"
+                      onClick={() => handleNavClick("/request-event")}
+                    >
+                      <span className="di-icon">📝</span>
+                      <span>Request Event</span>
                     </button>
                   )}
                   <button
@@ -342,6 +352,10 @@ function App() {
                   <Navigate to="/" replace />
                 )
               }
+            />
+            <Route
+              path="/request-event"
+              element={<RequestEvent userId={user._id} />}
             />
             <Route path="*" element={<Navigate to="/" replace />} />
           </Routes>

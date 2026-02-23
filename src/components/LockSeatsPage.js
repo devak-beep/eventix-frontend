@@ -3,6 +3,7 @@ import React, { useState, useEffect, useRef } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { getEventById, lockSeats, cancelLock } from "../api";
 import { LockSeatsPageSkeleton } from "./SkeletonLoader";
+import ConfirmModal from "./ConfirmModal";
 import { v4 as uuidv4 } from "uuid";
 
 function LockSeatsPage({ userId }) {
@@ -16,8 +17,16 @@ function LockSeatsPage({ userId }) {
   const [lockCreated, setLockCreated] = useState(false);
   const [currentLockId, setCurrentLockId] = useState(null);
 
+  // Confirm modal state for back navigation
+  const [showBackModal, setShowBackModal] = useState(false);
+  const [backModalPending, setBackModalPending] = useState(false);
+
   // Prevent double-clicks
   const isProcessingRef = useRef(false);
+
+  // Get user role
+  const user = JSON.parse(localStorage.getItem("user") || "{}");
+  const isAdmin = user?.role === "admin" || user?.role === "superAdmin";
 
   useEffect(() => {
     fetchEventDetails();
@@ -27,26 +36,11 @@ function LockSeatsPage({ userId }) {
   // Warn user if they try to leave after locking seats
   useEffect(() => {
     if (lockCreated && currentLockId) {
-      let isNavigating = false;
-
-      const handlePopState = async (e) => {
-        if (!isNavigating) {
-          // Push state back to prevent immediate navigation
-          window.history.pushState(null, "", window.location.href);
-
-          if (
-            window.confirm("Going back will cancel your seat lock. Continue?")
-          ) {
-            isNavigating = true;
-            try {
-              await cancelLock(currentLockId);
-            } catch (err) {
-              console.error("Failed to cancel lock:", err);
-            }
-            // Navigate using React Router instead of browser back
-            navigate("/");
-          }
-        }
+      const handlePopState = (e) => {
+        // Push state back to prevent immediate navigation
+        window.history.pushState(null, "", window.location.href);
+        // Show custom modal instead of window.confirm
+        setShowBackModal(true);
       };
 
       const handleBeforeUnload = (e) => {
@@ -67,7 +61,7 @@ function LockSeatsPage({ userId }) {
         window.removeEventListener("beforeunload", handleBeforeUnload);
       };
     }
-  }, [lockCreated, currentLockId, navigate]);
+  }, [lockCreated, currentLockId]);
 
   const fetchEventDetails = async () => {
     setLoading(true);
@@ -124,24 +118,26 @@ function LockSeatsPage({ userId }) {
     }
   };
 
-  const handleBackClick = async () => {
+  const handleBackClick = () => {
     if (lockCreated && currentLockId) {
-      if (
-        window.confirm(
-          "You have locked seats. Going back will cancel your lock and restore the seats. Continue?",
-        )
-      ) {
-        try {
-          await cancelLock(currentLockId);
-          navigate("/");
-        } catch (err) {
-          console.error("Failed to cancel lock:", err);
-          navigate("/");
-        }
-      }
+      // Show custom modal instead of window.confirm
+      setShowBackModal(true);
     } else {
       navigate("/");
     }
+  };
+
+  // Handle confirmed back navigation (cancel lock and go back)
+  const handleConfirmBack = async () => {
+    setBackModalPending(true);
+    try {
+      await cancelLock(currentLockId);
+    } catch (err) {
+      console.error("Failed to cancel lock:", err);
+    }
+    setShowBackModal(false);
+    setBackModalPending(false);
+    navigate("/");
   };
 
   if (loading && !event) {
@@ -179,6 +175,17 @@ function LockSeatsPage({ userId }) {
             <p>
               <strong>Price:</strong> ₹{event.amount || 0} per ticket
             </p>
+            {event.createdBy && (
+              <p>
+                <strong>Organized by:</strong> {event.createdBy.name}
+              </p>
+            )}
+            {/* Show "Approved by" only to admin/superAdmin */}
+            {isAdmin && event.createdViaRequest && event.approvedBy && (
+              <p>
+                <strong>Approved by:</strong> {event.approvedBy.name}
+              </p>
+            )}
           </div>
         </div>
 
@@ -278,6 +285,19 @@ function LockSeatsPage({ userId }) {
           </div>
         </div>
       </div>
+
+      {/* Confirm Back Modal */}
+      <ConfirmModal
+        isOpen={showBackModal}
+        onClose={() => setShowBackModal(false)}
+        onConfirm={handleConfirmBack}
+        title="Cancel Seat Lock?"
+        message="Going back will cancel your seat lock and restore the seats. Are you sure you want to continue?"
+        confirmText="Yes, Go Back"
+        cancelText="Stay Here"
+        type="warning"
+        loading={backModalPending}
+      />
     </div>
   );
 }

@@ -344,7 +344,16 @@ function EventList() {
                   <h3>{event.name}</h3>
                   {event.createdBy && (
                     <p className="event-organizer">
-                      👤 by {event.createdBy.name}
+                      👤 Organized by {event.createdBy.name}
+                    </p>
+                  )}
+                  {/* Show "Approved by" only for admin/superAdmin */}
+                  {isAdmin && event.createdViaRequest && event.approvedBy && (
+                    <p
+                      className="event-organizer"
+                      style={{ fontSize: "11px", opacity: 0.8 }}
+                    >
+                      ✅ Approved by {event.approvedBy.name}
                     </p>
                   )}
                 </div>

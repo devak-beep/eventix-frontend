@@ -1265,16 +1265,17 @@ function MyBookings({ userId }) {
                       <strong>Created:</strong>{" "}
                       {new Date(event.createdAt).toLocaleString("en-GB")}
                     </p>
-                    <p>
+                    <p style={{ display: "flex", flexDirection: "column" }}>
                       <strong>Category:</strong>{" "}
                       {editEventId === event._id ? (
-                        <div style={{ marginTop: "8px" }}>
+                        <div style={{ marginTop: "8px", marginLeft: "0" }}>
                           <div
                             style={{
                               display: "flex",
                               flexDirection: "column",
-                              gap: "8px",
+                              gap: "6px",
                               marginBottom: "12px",
+                              paddingLeft: "0",
                             }}
                           >
                             <label
@@ -1283,6 +1284,7 @@ function MyBookings({ userId }) {
                                 alignItems: "center",
                                 gap: "8px",
                                 cursor: "pointer",
+                                fontSize: "14px",
                               }}
                             >
                               <input
@@ -1291,6 +1293,7 @@ function MyBookings({ userId }) {
                                 onChange={() =>
                                   handleEditCategoryChange("food-drink")
                                 }
+                                style={{ margin: 0 }}
                               />
                               <span>🍔 Food & Drink</span>
                             </label>
@@ -1300,6 +1303,7 @@ function MyBookings({ userId }) {
                                 alignItems: "center",
                                 gap: "8px",
                                 cursor: "pointer",
+                                fontSize: "14px",
                               }}
                             >
                               <input
@@ -1310,6 +1314,7 @@ function MyBookings({ userId }) {
                                 onChange={() =>
                                   handleEditCategoryChange("festivals-cultural")
                                 }
+                                style={{ margin: 0 }}
                               />
                               <span>🎊 Festivals & Cultural</span>
                             </label>
@@ -1319,6 +1324,7 @@ function MyBookings({ userId }) {
                                 alignItems: "center",
                                 gap: "8px",
                                 cursor: "pointer",
+                                fontSize: "14px",
                               }}
                             >
                               <input
@@ -1327,6 +1333,7 @@ function MyBookings({ userId }) {
                                 onChange={() =>
                                   handleEditCategoryChange("dance-party")
                                 }
+                                style={{ margin: 0 }}
                               />
                               <span>💃 Dance & Party</span>
                             </label>

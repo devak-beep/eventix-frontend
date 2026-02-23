@@ -253,9 +253,9 @@ function MyBookings({ userId }) {
     setError("");
 
     try {
-      console.log("Fetching events for userId:", userId);
+      console.log("Fetching events for userId:", userId, "role:", userRole);
       const response = await axios.get(
-        `${API_BASE_URL}/events/my-events?userId=${userId}&t=${Date.now()}`,
+        `${API_BASE_URL}/events/my-events?userId=${userId}&userRole=${userRole}&t=${Date.now()}`,
       );
       console.log("My events response:", response.data);
       setMyEvents(response.data.data || []);
@@ -1081,11 +1081,15 @@ function MyBookings({ userId }) {
                         }}
                         title="Edit event details"
                         style={{
-                          background: "none",
+                          background: "#3b82f6",
                           border: "none",
                           cursor: "pointer",
-                          padding: 0,
-                          marginLeft: "4px",
+                          padding: "6px",
+                          marginLeft: "8px",
+                          borderRadius: "4px",
+                          display: "flex",
+                          alignItems: "center",
+                          justifyContent: "center",
                         }}
                       >
                         <svg
@@ -1093,7 +1097,7 @@ function MyBookings({ userId }) {
                           height="18"
                           viewBox="0 0 24 24"
                           fill="none"
-                          stroke="currentColor"
+                          stroke="white"
                           strokeWidth="2"
                         >
                           <path d="M12 20h9" />

@@ -16,7 +16,7 @@ function RequestEvent({ userId }) {
 
   // Prevent double-clicks / duplicate submissions
   const isSubmittingRef = useRef(false);
-  const [idempotencyKey] = useState(() => uuidv4()); // Generate once per form
+  const [idempotencyKey] = useState(() => uuidv4());
 
   // State for event form
   const [eventData, setEventData] = useState({
@@ -26,7 +26,7 @@ function RequestEvent({ userId }) {
     totalSeats: 10,
     type: "public",
     category: [],
-    amount: 0, // Price per ticket
+    amount: 0,
     currency: "INR",
     image: null,
   });
@@ -232,7 +232,6 @@ function RequestEvent({ userId }) {
 
   // Submit request to backend
   const submitRequest = async () => {
-    // Prevent duplicate submissions
     if (isSubmittingRef.current) {
       console.log("Already submitting, ignoring duplicate click");
       return;
@@ -256,7 +255,7 @@ function RequestEvent({ userId }) {
         },
         body: JSON.stringify({
           ...eventData,
-          idempotencyKey, // Include idempotency key
+          idempotencyKey,
         }),
       });
 
@@ -264,7 +263,6 @@ function RequestEvent({ userId }) {
 
       if (data.success) {
         setSuccess(true);
-        // Reset form
         setEventData({
           name: "",
           description: "",
@@ -278,103 +276,148 @@ function RequestEvent({ userId }) {
         });
       } else {
         setError(data.message || "Failed to submit request");
-        isSubmittingRef.current = false; // Allow retry on error
+        isSubmittingRef.current = false;
       }
     } catch (err) {
       setError(err.message || "Failed to submit request");
-      isSubmittingRef.current = false; // Allow retry on error
+      isSubmittingRef.current = false;
     } finally {
       setLoading(false);
     }
   };
 
-  // Success state
+  // Success state - matching CreateEvent success style
   if (success) {
     return (
-      <div
-        className="create-event-form"
-        style={{ textAlign: "center", padding: "40px" }}
-      >
-        <div style={{ fontSize: "60px", marginBottom: "20px" }}>🎉</div>
-        <h2>Request Submitted!</h2>
-        <p style={{ color: "var(--text-secondary)", marginBottom: "30px" }}>
-          Your event request has been submitted for admin approval.
-          <br />
-          You will be notified when it's approved, and then you can pay the
-          platform fee (₹{PLATFORM_FEE}) to create your event.
-        </p>
-        <div style={{ display: "flex", gap: "15px", justifyContent: "center" }}>
-          <button className="submit-btn" onClick={() => setSuccess(false)}>
-            Submit Another Request
-          </button>
-          <button className="cancel-btn" onClick={() => navigate("/bookings")}>
-            View My Requests
-          </button>
+      <div className="create-event">
+        <div className="created-event-info">
+          <h3>🎉 Request Submitted Successfully!</h3>
+          <p>Your event request has been submitted for admin approval.</p>
+          <p style={{ color: "var(--text-secondary)", marginTop: "10px" }}>
+            You will be notified when it's approved. After approval, pay the
+            platform fee of <strong>₹{PLATFORM_FEE}</strong> to publish your
+            event.
+          </p>
+          <div
+            style={{
+              display: "flex",
+              gap: "15px",
+              marginTop: "20px",
+              justifyContent: "center",
+            }}
+          >
+            <button
+              className="submit-btn"
+              onClick={() => {
+                setSuccess(false);
+                isSubmittingRef.current = false;
+              }}
+            >
+              ✨ Submit Another Request
+            </button>
+            <button
+              className="cancel-btn"
+              onClick={() => navigate("/bookings")}
+            >
+              📋 View My Requests
+            </button>
+          </div>
         </div>
       </div>
     );
   }
 
   if (loading) {
-    return <CreateEventSkeleton />;
+    return (
+      <div className="create-event">
+        <CreateEventSkeleton />
+      </div>
+    );
   }
 
   return (
-    <div className="create-event-form">
-      <h2 style={{ marginBottom: "10px" }}>📝 Request to Create Event</h2>
-      <p
-        style={{
-          color: "var(--text-secondary)",
-          marginBottom: "25px",
-          fontSize: "14px",
-        }}
-      >
+    <div className="create-event">
+      <button onClick={() => navigate("/")} className="back-btn">
+        ← Back to Events
+      </button>
+
+      <h2>📝 Request to Create Event</h2>
+      <p style={{ color: "var(--text-secondary)", marginBottom: "25px" }}>
         Fill in the event details below. Your request will be reviewed by an
-        admin.
-        <br />
-        Once approved, you'll pay a platform fee of{" "}
+        admin. Once approved, you'll pay a platform fee of{" "}
         <strong>₹{PLATFORM_FEE}</strong> to create your event.
       </p>
 
-      {error && (
-        <div className="error-message" style={{ marginBottom: "20px" }}>
-          {error}
+      {/* Confirmation Modal */}
+      {showConfirmModal && (
+        <div className="payment-modal">
+          <div className="payment-modal-content">
+            <h3>📋 Confirm Event Request</h3>
+            <p>You're about to submit a request to create:</p>
+            <div
+              className="payment-amount"
+              style={{ fontSize: "18px", marginBottom: "10px" }}
+            >
+              {eventData.name}
+            </div>
+            <p style={{ color: "var(--text-secondary)", marginBottom: "5px" }}>
+              📅 {new Date(eventData.eventDate).toLocaleString()}
+            </p>
+            <p style={{ color: "var(--text-secondary)", marginBottom: "15px" }}>
+              🎫 {eventData.totalSeats} seats •{" "}
+              {eventData.type === "public" ? "🌍 Public" : "🔒 Private"}
+            </p>
+            <p className="payment-warning">
+              ⚠️ After admin approval, you'll pay ₹{PLATFORM_FEE} platform fee.
+            </p>
+            <div className="payment-buttons">
+              <button onClick={submitRequest} className="success-btn">
+                ✅ Submit Request
+              </button>
+              <button
+                onClick={() => setShowConfirmModal(false)}
+                className="cancel-btn"
+              >
+                Cancel
+              </button>
+            </div>
+          </div>
         </div>
       )}
 
-      <form onSubmit={handleSubmit}>
-        {/* Event Name */}
+      {/* Error display */}
+      {error && <div className="error">{error}</div>}
+
+      {/* Event Request Form - matching CreateEvent style */}
+      <form onSubmit={handleSubmit} className="event-form">
         <div className="form-group">
-          <label>Event Name *</label>
+          <label>Event Name:</label>
           <input
             type="text"
             name="name"
             value={eventData.name}
             onChange={handleChange}
-            placeholder="Enter event name"
             required
+            placeholder="e.g., Rock Concert 2024"
           />
         </div>
 
-        {/* Description */}
         <div className="form-group">
-          <label>Description *</label>
+          <label>Description:</label>
           <textarea
             name="description"
             value={eventData.description}
             onChange={handleChange}
-            placeholder="Describe your event (10-1500 characters)"
+            required
+            placeholder="Describe your event..."
             rows="4"
-            style={{ resize: "vertical" }}
+            maxLength="1500"
           />
-          <small style={{ color: "var(--text-secondary)" }}>
-            {eventData.description.length}/1500 characters
-          </small>
+          <small>{eventData.description.length}/1500 characters</small>
         </div>
 
-        {/* Event Date */}
         <div className="form-group">
-          <label>Event Date & Time *</label>
+          <label>Event Date & Time:</label>
           <input
             type="datetime-local"
             name="eventDate"
@@ -384,50 +427,37 @@ function RequestEvent({ userId }) {
           />
         </div>
 
-        {/* Total Seats */}
         <div className="form-group">
-          <label>Total Seats *</label>
-          <input
-            type="number"
-            name="totalSeats"
-            value={eventData.totalSeats}
-            onChange={handleChange}
-            min="1"
-            required
-          />
-        </div>
-
-        {/* Event Type */}
-        <div className="form-group">
-          <label>Event Type</label>
-          <select name="type" value={eventData.type} onChange={handleChange}>
-            <option value="public">Public</option>
-            <option value="private">Private</option>
-          </select>
-        </div>
-
-        {/* Category Selection */}
-        <div className="form-group">
-          <label>Category *</label>
-          <div style={{ marginBottom: "10px" }}>
-            {["food-drink", "festivals-cultural", "dance-party"].map((cat) => (
-              <label
-                key={cat}
-                style={{ marginRight: "15px", cursor: "pointer" }}
-              >
-                <input
-                  type="checkbox"
-                  checked={eventData.category.includes(cat)}
-                  onChange={() => handleCategoryChange(cat)}
-                  style={{ marginRight: "5px" }}
-                />
-                {cat
-                  .split("-")
-                  .map((w) => w.charAt(0).toUpperCase() + w.slice(1))
-                  .join(" & ")}
-              </label>
-            ))}
+          <label>Event Category (Multi-select):</label>
+          <div className="category-checkboxes">
+            <label className="checkbox-label">
+              <input
+                type="checkbox"
+                checked={eventData.category.includes("food-drink")}
+                onChange={() => handleCategoryChange("food-drink")}
+              />
+              <span className="checkbox-text">🍔 Food & Drink</span>
+            </label>
+            <label className="checkbox-label">
+              <input
+                type="checkbox"
+                checked={eventData.category.includes("festivals-cultural")}
+                onChange={() => handleCategoryChange("festivals-cultural")}
+              />
+              <span className="checkbox-text">🎊 Festivals & Cultural</span>
+            </label>
+            <label className="checkbox-label">
+              <input
+                type="checkbox"
+                checked={eventData.category.includes("dance-party")}
+                onChange={() => handleCategoryChange("dance-party")}
+              />
+              <span className="checkbox-text">💃 Dance & Party</span>
+            </label>
           </div>
+          <label style={{ marginTop: "15px" }}>
+            Or select single category:
+          </label>
           <select
             value={
               eventData.category.find(
@@ -441,40 +471,59 @@ function RequestEvent({ userId }) {
               e.target.value && handleCategoryChange(e.target.value)
             }
           >
-            <option value="">-- Or select a specific category --</option>
-            <option value="sports-live">Sports & Live</option>
-            <option value="arts-theater">Arts & Theater</option>
-            <option value="comedy-standup">Comedy & Standup</option>
-            <option value="movies-premieres">Movies & Premieres</option>
-            <option value="concerts-music">Concerts & Music</option>
+            <option value="">-- Select --</option>
+            <option value="concerts-music">🎵 Concerts & Music Fest</option>
+            <option value="sports-live">⚽ Sports & Live Matches</option>
+            <option value="arts-theater">🎭 Arts & Theater</option>
+            <option value="comedy-standup">😂 Comedy & Stand-up</option>
+            <option value="movies-premieres">🎬 Movies & Premieres</option>
           </select>
         </div>
 
-        {/* Ticket Price */}
         <div className="form-group">
-          <label>Ticket Price (₹)</label>
+          <label>Total Seats:</label>
+          <input
+            type="number"
+            name="totalSeats"
+            value={eventData.totalSeats}
+            onChange={handleChange}
+            required
+            min="1"
+          />
+        </div>
+
+        <div className="form-group">
+          <label>Ticket Price (₹):</label>
           <input
             type="number"
             name="amount"
             value={eventData.amount}
             onChange={handleChange}
+            required
             min="0"
-            placeholder="0 for free event"
+            step="0.01"
+            placeholder="e.g., 500 (0 for free event)"
           />
+          <small>Price per ticket in Indian Rupees (INR)</small>
         </div>
 
-        {/* Event Image */}
         <div className="form-group">
-          <label>Event Image</label>
-          <input type="file" accept="image/*" onChange={handleImageChange} />
+          <label>Event Image:</label>
+          <input
+            type="file"
+            accept="image/*"
+            onChange={handleImageChange}
+            className="file-input"
+          />
+          <small>Upload an image for your event (max 5MB, JPG/PNG)</small>
           {eventData.image && (
-            <div style={{ marginTop: "10px" }}>
+            <div className="image-preview">
               <img
                 src={eventData.image}
-                alt="Preview"
+                alt="Event preview"
                 style={{
-                  width: "100%",
-                  maxWidth: "300px",
+                  maxWidth: "200px",
+                  marginTop: "10px",
                   borderRadius: "8px",
                 }}
               />
@@ -482,7 +531,7 @@ function RequestEvent({ userId }) {
                 type="button"
                 onClick={() => setEventData({ ...eventData, image: null })}
                 style={{
-                  marginTop: "5px",
+                  marginLeft: "10px",
                   background: "var(--danger-color)",
                   color: "white",
                   border: "none",
@@ -491,16 +540,34 @@ function RequestEvent({ userId }) {
                   cursor: "pointer",
                 }}
               >
-                Remove Image
+                Remove
               </button>
             </div>
           )}
         </div>
 
-        {/* Platform Fee Info */}
+        <div className="form-group">
+          <label>Event Type:</label>
+          <select
+            name="type"
+            value={eventData.type}
+            onChange={handleChange}
+            required
+          >
+            <option value="public">🌍 Public (Visible to everyone)</option>
+            <option value="private">🔒 Private (Only accessible by ID)</option>
+          </select>
+          <small>
+            Public events appear on home page. Private events can only be found
+            by searching their ID.
+          </small>
+        </div>
+
+        {/* Platform Fee Info Box */}
         <div
+          className="platform-fee-info"
           style={{
-            background: "var(--card-bg)",
+            background: "var(--bg-secondary)",
             border: "1px solid var(--border-color)",
             borderRadius: "8px",
             padding: "15px",
@@ -527,70 +594,10 @@ function RequestEvent({ userId }) {
           </p>
         </div>
 
-        {/* Submit Button */}
-        <div style={{ display: "flex", gap: "15px" }}>
-          <button type="submit" className="submit-btn" disabled={loading}>
-            Submit Request for Approval
-          </button>
-          <button
-            type="button"
-            className="cancel-btn"
-            onClick={() => navigate("/")}
-          >
-            Cancel
-          </button>
-        </div>
+        <button type="submit" disabled={loading} className="submit-btn">
+          {loading ? "Processing..." : "✨ Continue to Review"}
+        </button>
       </form>
-
-      {/* Confirmation Modal */}
-      {showConfirmModal && (
-        <div className="modal-overlay">
-          <div className="modal-content">
-            <h3>📋 Confirm Event Request</h3>
-            <p style={{ marginBottom: "15px" }}>
-              You're about to submit a request to create:
-            </p>
-            <div
-              style={{
-                background: "var(--bg-secondary)",
-                padding: "15px",
-                borderRadius: "8px",
-                marginBottom: "20px",
-              }}
-            >
-              <strong>{eventData.name}</strong>
-              <br />
-              <small style={{ color: "var(--text-secondary)" }}>
-                {new Date(eventData.eventDate).toLocaleString()}
-              </small>
-              <br />
-              <small style={{ color: "var(--text-secondary)" }}>
-                {eventData.totalSeats} seats • {eventData.type}
-              </small>
-            </div>
-            <p style={{ color: "var(--warning-color)", marginBottom: "20px" }}>
-              ⚠️ After admin approval, you'll pay ₹{PLATFORM_FEE} platform fee.
-            </p>
-            <div
-              style={{
-                display: "flex",
-                gap: "10px",
-                justifyContent: "flex-end",
-              }}
-            >
-              <button
-                className="cancel-btn"
-                onClick={() => setShowConfirmModal(false)}
-              >
-                Cancel
-              </button>
-              <button className="submit-btn" onClick={submitRequest}>
-                Submit Request
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
     </div>
   );
 }

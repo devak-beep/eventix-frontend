@@ -582,38 +582,62 @@ function MyBookings({ userId }) {
         >
           My Bookings
         </button>
-        {/* Only show "My Event Requests" for regular users - admins can create events directly */}
+        {/* User: My Event Requests & Events Published */}
         {userRole === "user" && (
-          <button
-            className={`tab-btn ${activeTab === "my-requests" ? "active" : ""}`}
-            onClick={() => setActiveTab("my-requests")}
-          >
-            My Event Requests
-          </button>
+          <>
+            <button
+              className={`tab-btn ${activeTab === "my-requests" ? "active" : ""}`}
+              onClick={() => setActiveTab("my-requests")}
+            >
+              My Event Requests
+            </button>
+            <button
+              className={`tab-btn ${activeTab === "events" ? "active" : ""}`}
+              onClick={() => setActiveTab("events")}
+            >
+              Events Published
+            </button>
+          </>
         )}
-        {(userRole === "admin" || userRole === "superAdmin") && (
-          <button
-            className={`tab-btn ${activeTab === "events" ? "active" : ""}`}
-            onClick={() => setActiveTab("events")}
-          >
-            My Events
-          </button>
+        {/* Admin: My Events (created/approved) */}
+        {userRole === "admin" && (
+          <>
+            <button
+              className={`tab-btn ${activeTab === "events" ? "active" : ""}`}
+              onClick={() => setActiveTab("events")}
+            >
+              My Events
+            </button>
+            <button
+              className={`tab-btn ${activeTab === "event-requests" ? "active" : ""}`}
+              onClick={() => setActiveTab("event-requests")}
+            >
+              Event Requests
+            </button>
+          </>
         )}
-        {(userRole === "admin" || userRole === "superAdmin") && (
-          <button
-            className={`tab-btn ${activeTab === "event-requests" ? "active" : ""}`}
-            onClick={() => setActiveTab("event-requests")}
-          >
-            Event Requests
-          </button>
-        )}
+        {/* SuperAdmin: All Events */}
         {userRole === "superAdmin" && (
-          <button
-            className={`tab-btn ${activeTab === "admin-requests" ? "active" : ""}`}
-            onClick={() => setActiveTab("admin-requests")}
-          >
-            Admin Requests
-          </button>
+          <>
+            <button
+              className={`tab-btn ${activeTab === "events" ? "active" : ""}`}
+              onClick={() => setActiveTab("events")}
+            >
+              All Events
+            </button>
+            <button
+              className={`tab-btn ${activeTab === "event-requests" ? "active" : ""}`}
+              onClick={() => setActiveTab("event-requests")}
+            >
+              Event Requests
+            </button>
+            <button
+              className={`tab-btn ${activeTab === "admin-requests" ? "active" : ""}`}
+              onClick={() => setActiveTab("admin-requests")}
+            >
+              Admin Requests
+            </button>
+          </>
         )}
       </div>
 
@@ -862,10 +886,49 @@ function MyBookings({ userId }) {
           {/* Display all created events */}
           <div className="bookings-list">
             {myEvents.map((event) => {
-              // Check if user can update this event's image
+              // Check if user can update this event's image (superadmin: any, admin: created/approved, user: own)
               const isCreator = event.createdBy === userId;
+              const isApprover = event.approvedBy && event.approvedBy._id === userId;
               const isSuperAdmin = userRole === "superAdmin";
-              const canUpdateImage = isSuperAdmin || isCreator;
+              const isAdmin = userRole === "admin";
+              let canUpdateImage = false;
+              if (isSuperAdmin) {
+                canUpdateImage = true;
+              } else if (isAdmin && (isCreator || isApprover)) {
+                canUpdateImage = true;
+              } else if (userRole === "user" && isCreator) {
+                canUpdateImage = true;
+              }
+
+              // Inline edit state for name/description
+              const [editMode, setEditMode] = useState(false);
+              const [editName, setEditName] = useState(event.name);
+              const [editDescription, setEditDescription] = useState(event.description);
+              const [savingEdit, setSavingEdit] = useState(false);
+
+              // Save handler
+              const handleSaveEdit = async () => {
+                setSavingEdit(true);
+                try {
+                  await axios.patch(
+                    `${API_BASE_URL}/events/${event._id}/details`,
+                    {
+                      userId,
+                      userRole,
+                      name: editName,
+                      description: editDescription,
+                    },
+                  );
+                  setSuccess("Event details updated successfully!");
+                  setTimeout(() => setSuccess(""), 3000);
+                  setEditMode(false);
+                  fetchMyEvents();
+                } catch (err) {
+                  setError(err.response?.data?.message || "Failed to update event details");
+                } finally {
+                  setSavingEdit(false);
+                }
+              };
 
               return (
                 <div key={event._id} className="booking-card event-card">
@@ -960,8 +1023,74 @@ function MyBookings({ userId }) {
                     )}
                   </div>
 
-                  <div className="booking-header">
-                    <h3>{event.name}</h3>
+                  <div className="booking-header" style={{ display: "flex", alignItems: "center", gap: "10px" }}>
+                    {editMode ? (
+                      <input
+                        type="text"
+                        value={editName}
+                        onChange={e => setEditName(e.target.value)}
+                        maxLength={100}
+                        style={{ fontSize: "1.2em", fontWeight: 600, flex: 1 }}
+                        autoFocus
+                      />
+                    ) : (
+                      <h3 style={{ flex: 1 }}>{event.name}</h3>
+                    )}
+                    {canUpdateImage && !editMode && (
+                      <button
+                        onClick={() => {
+                          setEditMode(true);
+                          setEditName(event.name);
+                          setEditDescription(event.description);
+                        }}
+                        title="Edit event details"
+                        style={{
+                          background: "none",
+                          border: "none",
+                          cursor: "pointer",
+                          padding: 0,
+                          marginLeft: "4px",
+                        }}
+                      >
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 1 1 3 3L7 19l-4 1 1-4 12.5-12.5z"/></svg>
+                      </button>
+                    )}
+                    {editMode && (
+                      <>
+                        <button
+                          onClick={handleSaveEdit}
+                          disabled={savingEdit}
+                          style={{
+                            background: "#10b981",
+                            color: "white",
+                            border: "none",
+                            borderRadius: "4px",
+                            padding: "6px 14px",
+                            marginLeft: "6px",
+                            fontWeight: 600,
+                            cursor: savingEdit ? "not-allowed" : "pointer",
+                          }}
+                        >
+                          {savingEdit ? "Saving..." : "Save"}
+                        </button>
+                        <button
+                          onClick={() => setEditMode(false)}
+                          disabled={savingEdit}
+                          style={{
+                            background: "#ef4444",
+                            color: "white",
+                            border: "none",
+                            borderRadius: "4px",
+                            padding: "6px 14px",
+                            marginLeft: "6px",
+                            fontWeight: 600,
+                            cursor: savingEdit ? "not-allowed" : "pointer",
+                          }}
+                        >
+                          Cancel
+                        </button>
+                      </>
+                    )}
                     <span
                       className="status-badge"
                       style={{
@@ -976,9 +1105,19 @@ function MyBookings({ userId }) {
                   <div className="booking-details">
                     <div className="event-description">
                       <strong>Description:</strong>
-                      <div className="description-text">
-                        {event.description}
-                      </div>
+                      {editMode ? (
+                        <textarea
+                          value={editDescription}
+                          onChange={e => setEditDescription(e.target.value)}
+                          maxLength={1500}
+                          rows={3}
+                          style={{ width: "100%", fontSize: "1em", marginTop: "4px" }}
+                        />
+                      ) : (
+                        <div className="description-text">
+                          {event.description}
+                        </div>
+                      )}
                     </div>
                     <p>
                       <strong>Event Date:</strong>{" "}
@@ -1306,7 +1445,7 @@ function MyBookings({ userId }) {
                             color: isCompleted ? "#0c5460" : isRejected ? "#721c24" : isExpired ? "#383d41" : canPay ? "#155724" : "#856404",
                           }}
                         >
-                          {isCompleted ? "🎉 Event Created" : isRejected ? "❌ Rejected" : isExpired ? "⌛ Expired" : canPay ? "✅ Approved - Pay Now" : "⏳ Pending Approval"}
+                          {isCompleted ? "🎉 Event Published" : isRejected ? "❌ Rejected" : isExpired ? "⌛ Expired" : canPay ? "✅ Approved - Pay Now" : "⏳ Pending Approval"}
                         </span>
 
                         {/* Pay Now Button */}

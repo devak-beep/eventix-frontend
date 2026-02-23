@@ -159,7 +159,11 @@ function EventRequests() {
         color: "#004085",
         text: "💳 Payment Pending",
       },
-      COMPLETED: { bg: "#d1ecf1", color: "#0c5460", text: "🎉 Completed" },
+      COMPLETED: {
+        bg: "#d1ecf1",
+        color: "#0c5460",
+        text: "🎉 Event Published",
+      },
       EXPIRED: { bg: "#e2e3e5", color: "#383d41", text: "⌛ Expired" },
     };
     const style = styles[status] || styles.PENDING;

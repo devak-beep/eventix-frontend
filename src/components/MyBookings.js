@@ -142,10 +142,32 @@ function MyBookings({ userId }) {
   const [editEventId, setEditEventId] = useState(null); // event._id being edited
   const [editName, setEditName] = useState("");
   const [editDescription, setEditDescription] = useState("");
-  const [editCategory, setEditCategory] = useState("");
+  const [editCategory, setEditCategory] = useState([]);
   const [editTotalSeats, setEditTotalSeats] = useState("");
   const [editAvailableSeats, setEditAvailableSeats] = useState("");
   const [savingEdit, setSavingEdit] = useState(false);
+
+  // Handle category checkbox changes (same logic as CreateEvent)
+  const handleEditCategoryChange = (categoryValue) => {
+    const multiSelectCategories = [
+      "food-drink",
+      "festivals-cultural",
+      "dance-party",
+    ];
+
+    if (multiSelectCategories.includes(categoryValue)) {
+      setEditCategory((prev) => {
+        const filteredCategories = prev.filter((c) =>
+          multiSelectCategories.includes(c),
+        );
+        return filteredCategories.includes(categoryValue)
+          ? filteredCategories.filter((c) => c !== categoryValue)
+          : [...filteredCategories, categoryValue];
+      });
+    } else {
+      setEditCategory([categoryValue]);
+    }
+  };
 
   // Save handler for event details
   const handleSaveEdit = async (event) => {
@@ -1109,8 +1131,10 @@ function MyBookings({ userId }) {
                           setEditDescription(event.description);
                           setEditCategory(
                             Array.isArray(event.category)
-                              ? event.category.join(", ")
-                              : event.category || ""
+                              ? event.category
+                              : event.category
+                              ? [event.category]
+                              : []
                           );
                           setEditTotalSeats(event.totalSeats || "");
                           setEditAvailableSeats(event.availableSeats || "");
@@ -1241,20 +1265,130 @@ function MyBookings({ userId }) {
                     <p>
                       <strong>Category:</strong>{" "}
                       {editEventId === event._id ? (
-                        <input
-                          type="text"
-                          value={editCategory}
-                          onChange={(e) => setEditCategory(e.target.value)}
-                          placeholder="e.g., Music, Sports, Tech"
-                          style={{
-                            width: "100%",
-                            padding: "6px 10px",
-                            border: "1px solid #cbd5e1",
-                            borderRadius: "4px",
-                            fontSize: "14px",
-                            marginTop: "4px",
-                          }}
-                        />
+                        <div style={{ marginTop: "8px" }}>
+                          <div
+                            style={{
+                              display: "flex",
+                              flexDirection: "column",
+                              gap: "8px",
+                              marginBottom: "12px",
+                            }}
+                          >
+                            <label
+                              style={{
+                                display: "flex",
+                                alignItems: "center",
+                                gap: "8px",
+                                cursor: "pointer",
+                              }}
+                            >
+                              <input
+                                type="checkbox"
+                                checked={editCategory.includes("food-drink")}
+                                onChange={() =>
+                                  handleEditCategoryChange("food-drink")
+                                }
+                              />
+                              <span>🍔 Food & Drink</span>
+                            </label>
+                            <label
+                              style={{
+                                display: "flex",
+                                alignItems: "center",
+                                gap: "8px",
+                                cursor: "pointer",
+                              }}
+                            >
+                              <input
+                                type="checkbox"
+                                checked={editCategory.includes(
+                                  "festivals-cultural"
+                                )}
+                                onChange={() =>
+                                  handleEditCategoryChange("festivals-cultural")
+                                }
+                              />
+                              <span>🎊 Festivals & Cultural</span>
+                            </label>
+                            <label
+                              style={{
+                                display: "flex",
+                                alignItems: "center",
+                                gap: "8px",
+                                cursor: "pointer",
+                              }}
+                            >
+                              <input
+                                type="checkbox"
+                                checked={editCategory.includes("dance-party")}
+                                onChange={() =>
+                                  handleEditCategoryChange("dance-party")
+                                }
+                              />
+                              <span>💃 Dance & Party</span>
+                            </label>
+                          </div>
+                          <label
+                            style={{
+                              display: "block",
+                              marginBottom: "4px",
+                              fontSize: "13px",
+                              color: "var(--text-secondary)",
+                            }}
+                          >
+                            Or select single category:
+                          </label>
+                          <select
+                            value={
+                              editCategory.find(
+                                (c) =>
+                                  ![
+                                    "food-drink",
+                                    "festivals-cultural",
+                                    "dance-party",
+                                  ].includes(c)
+                              ) || ""
+                            }
+                            onChange={(e) =>
+                              e.target.value &&
+                              handleEditCategoryChange(e.target.value)
+                            }
+                            style={{
+                              width: "100%",
+                              padding: "6px 10px",
+                              border: "1px solid #cbd5e1",
+                              borderRadius: "4px",
+                              fontSize: "14px",
+                            }}
+                          >
+                            <option value="">-- Select Category --</option>
+                            <option value="music-live">🎵 Music (Live)</option>
+                            <option value="sports-live">⚽ Sports (Live)</option>
+                            <option value="tech-conference">
+                              💻 Tech Conference
+                            </option>
+                            <option value="business-networking">
+                              💼 Business & Networking
+                            </option>
+                            <option value="education-workshop">
+                              📚 Education & Workshop
+                            </option>
+                            <option value="health-wellness">
+                              🧘 Health & Wellness
+                            </option>
+                            <option value="arts-theater">
+                              🎭 Arts & Theater
+                            </option>
+                            <option value="comedy-show">🎤 Comedy Show</option>
+                            <option value="charity-fundraiser">
+                              ❤️ Charity & Fundraiser
+                            </option>
+                            <option value="kids-family">
+                              👨‍👩‍👧‍👦 Kids & Family
+                            </option>
+                            <option value="other">🔖 Other</option>
+                          </select>
+                        </div>
                       ) : (
                         Array.isArray(event.category)
                           ? event.category.join(", ")

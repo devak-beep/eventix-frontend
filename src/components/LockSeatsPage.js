@@ -1,5 +1,5 @@
 // Lock Seats Page - Step 1 of booking
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { getEventById, lockSeats, cancelLock } from "../api";
 import { LockSeatsPageSkeleton } from "./SkeletonLoader";
@@ -15,6 +15,9 @@ function LockSeatsPage({ userId }) {
   const [error, setError] = useState("");
   const [lockCreated, setLockCreated] = useState(false);
   const [currentLockId, setCurrentLockId] = useState(null);
+
+  // Prevent double-clicks
+  const isProcessingRef = useRef(false);
 
   useEffect(() => {
     fetchEventDetails();
@@ -79,11 +82,18 @@ function LockSeatsPage({ userId }) {
   };
 
   const handleLockSeats = async () => {
+    // Prevent double-clicks
+    if (isProcessingRef.current) {
+      console.log("Already processing, ignoring duplicate click");
+      return;
+    }
+
     if (!userId) {
       setError("User ID is missing. Please logout and login again.");
       return;
     }
 
+    isProcessingRef.current = true;
     setError("");
     setLoading(true);
 
@@ -108,6 +118,7 @@ function LockSeatsPage({ userId }) {
       setError(
         err.response?.data?.message || err.message || "Failed to lock seats",
       );
+      isProcessingRef.current = false; // Reset on error so user can retry
     } finally {
       setLoading(false);
     }

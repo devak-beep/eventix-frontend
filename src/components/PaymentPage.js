@@ -19,6 +19,9 @@ function PaymentPage() {
   // This ensures cleanup effect sees the correct value immediately
   const paymentCompletedRef = useRef(false);
 
+  // Prevent double-clicks on Pay button
+  const isProcessingRef = useRef(false);
+
   useEffect(() => {
     // Load Razorpay script
     const script = document.createElement("script");
@@ -60,6 +63,13 @@ function PaymentPage() {
   }, [bookingId]);
 
   const handlePayment = async () => {
+    // Prevent double-clicks
+    if (isProcessingRef.current) {
+      console.log("Payment already processing, ignoring duplicate click");
+      return;
+    }
+
+    isProcessingRef.current = true;
     setLoading(true);
     setError("");
 
@@ -164,9 +174,11 @@ function PaymentPage() {
 
       razorpay.open();
       setLoading(false);
+      isProcessingRef.current = false; // Reset after Razorpay opens (user can close and retry)
     } catch (err) {
       setError(err.response?.data?.message || "Failed to initiate payment");
       setLoading(false);
+      isProcessingRef.current = false; // Reset on error so user can retry
     }
   };
 

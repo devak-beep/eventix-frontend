@@ -118,6 +118,9 @@ function MyBookings({ userId }) {
   const [deleteModalOpen, setDeleteModalOpen] = useState(false);
   const [eventToDelete, setEventToDelete] = useState(null);
   const [deleting, setDeleting] = useState(false);
+  
+  // Track which booking is being processed (prevents double-clicks)
+  const [processingBookingId, setProcessingBookingId] = useState(null);
 
   // Fetch user role on mount
   useEffect(() => {
@@ -536,7 +539,7 @@ function MyBookings({ userId }) {
                                 : booking.seats,
                               eventName: booking.event?.name || "Event",
                               amount: booking.event?.amount || 100,
-                              lockId: booking.seatLockId,
+                              lockId: booking.seatLockId?._id || booking.seatLockId,
                             },
                           });
                         }}
@@ -556,6 +559,10 @@ function MyBookings({ userId }) {
                       </button>
                       <button
                         onClick={async () => {
+                          // Prevent double-clicks
+                          if (processingBookingId === booking._id) return;
+                          setProcessingBookingId(booking._id);
+                          
                           try {
                             // Cancel the pending booking and release seats
                             await axios.post(
@@ -569,19 +576,22 @@ function MyBookings({ userId }) {
                             fetchBookings();
                           } catch (err) {
                             setError("Failed to cancel booking");
+                          } finally {
+                            setProcessingBookingId(null);
                           }
                         }}
+                        disabled={processingBookingId === booking._id}
                         className="cancel-pending-btn"
                         style={{
-                          background: "#666",
+                          background: processingBookingId === booking._id ? "#999" : "#666",
                           color: "white",
                           border: "none",
                           padding: "10px 20px",
                           borderRadius: "8px",
-                          cursor: "pointer",
+                          cursor: processingBookingId === booking._id ? "not-allowed" : "pointer",
                         }}
                       >
-                        Cancel
+                        {processingBookingId === booking._id ? "Cancelling..." : "Cancel"}
                       </button>
                     </div>
                   )}

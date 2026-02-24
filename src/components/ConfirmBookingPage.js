@@ -69,12 +69,19 @@ function ConfirmBookingPage() {
   }, [lockId]);
 
   useEffect(() => {
-    if (!expiresAt) return;
+    if (!expiresAt) {
+      console.log("⚠️ No expiresAt provided");
+      return;
+    }
+
+    console.log("⏱️ Setting up timer. Expires at:", expiresAt);
 
     const interval = setInterval(() => {
       const now = new Date().getTime();
       const expiry = new Date(expiresAt).getTime();
       const remaining = Math.floor((expiry - now) / 1000);
+
+      console.log("⏱️ Time remaining:", remaining, "seconds");
 
       if (remaining <= 0) {
         setTimeRemaining(0);
@@ -89,11 +96,16 @@ function ConfirmBookingPage() {
   }, [expiresAt]);
 
   const handleConfirmBooking = async () => {
+    console.log("🔘 Confirm button clicked");
+    console.log("📊 State:", { loading, timeRemaining, lockId });
+    
     setError("");
     setLoading(true);
 
     try {
+      console.log("📤 Calling confirmBooking API with lockId:", lockId);
       const response = await confirmBooking(lockId);
+      console.log("✅ Booking confirmed:", response);
 
       // BUGFIX: Mark booking as confirmed BEFORE navigating
       // This prevents cleanup effect from cancelling the lock
@@ -104,6 +116,7 @@ function ConfirmBookingPage() {
         state: { eventId, seats, eventName, amount, lockId },
       });
     } catch (err) {
+      console.error("❌ Confirm booking error:", err);
       setError(
         err.response?.data?.message ||
           err.message ||

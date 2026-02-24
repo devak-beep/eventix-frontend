@@ -1001,7 +1001,8 @@ function MyBookings({ userId }) {
                 (event.createdBy._id === userId || event.createdBy === userId);
               const isApprover =
                 event.approvedBy &&
-                (event.approvedBy._id === userId || event.approvedBy === userId);
+                (event.approvedBy._id === userId ||
+                  event.approvedBy === userId);
               const isSuperAdmin = userRole === "superAdmin";
               const isAdmin = userRole === "admin";
               let canUpdateImage = false;
@@ -1136,8 +1137,8 @@ function MyBookings({ userId }) {
                             Array.isArray(event.category)
                               ? event.category
                               : event.category
-                              ? [event.category]
-                              : []
+                                ? [event.category]
+                                : [],
                           );
                           setEditTotalSeats(event.totalSeats || "");
                           setEditAvailableSeats(event.availableSeats || "");
@@ -1247,9 +1248,8 @@ function MyBookings({ userId }) {
                       <>
                         {event.createdBy && (
                           <p>
-                            <strong>Created By:</strong>{" "}
-                            {event.createdBy.name} (
-                            <code>{event.createdBy._id}</code>)
+                            <strong>Created By:</strong> {event.createdBy.name}{" "}
+                            (<code>{event.createdBy._id}</code>)
                           </p>
                         )}
                         {event.approvedBy && (
@@ -1280,19 +1280,23 @@ function MyBookings({ userId }) {
                                   handleEditCategoryChange("food-drink")
                                 }
                               />
-                              <span className="checkbox-text">🍔 Food & Drink</span>
+                              <span className="checkbox-text">
+                                🍔 Food & Drink
+                              </span>
                             </label>
                             <label className="checkbox-label">
                               <input
                                 type="checkbox"
                                 checked={editCategory.includes(
-                                  "festivals-cultural"
+                                  "festivals-cultural",
                                 )}
                                 onChange={() =>
                                   handleEditCategoryChange("festivals-cultural")
                                 }
                               />
-                              <span className="checkbox-text">🎊 Festivals & Cultural</span>
+                              <span className="checkbox-text">
+                                🎊 Festivals & Cultural
+                              </span>
                             </label>
                             <label className="checkbox-label">
                               <input
@@ -1302,7 +1306,9 @@ function MyBookings({ userId }) {
                                   handleEditCategoryChange("dance-party")
                                 }
                               />
-                              <span className="checkbox-text">💃 Dance & Party</span>
+                              <span className="checkbox-text">
+                                💃 Dance & Party
+                              </span>
                             </label>
                           </div>
                           <label
@@ -1323,7 +1329,7 @@ function MyBookings({ userId }) {
                                     "food-drink",
                                     "festivals-cultural",
                                     "dance-party",
-                                  ].includes(c)
+                                  ].includes(c),
                               ) || ""
                             }
                             onChange={(e) =>
@@ -1340,8 +1346,12 @@ function MyBookings({ userId }) {
                           >
                             <option value="">-- Select Category --</option>
                             <option value="music-live">🎵 Concerts</option>
-                            <option value="sports-live">⚽ Sports & Live</option>
-                            <option value="arts-theater">🎭 Arts & Theater</option>
+                            <option value="sports-live">
+                              ⚽ Sports & Live
+                            </option>
+                            <option value="arts-theater">
+                              🎭 Arts & Theater
+                            </option>
                             <option value="comedy-show">😂 Comedy</option>
                             <option value="movies">🎬 Movies</option>
                           </select>
@@ -1360,7 +1370,8 @@ function MyBookings({ userId }) {
                     </p>
                     <p>
                       <strong>Total Seats:</strong>{" "}
-                      {editEventId === event._id && userRole === "superAdmin" ? (
+                      {editEventId === event._id &&
+                      userRole === "superAdmin" ? (
                         <input
                           type="number"
                           value={editTotalSeats}
@@ -1381,11 +1392,14 @@ function MyBookings({ userId }) {
                     </p>
                     <p>
                       <strong>Available Seats:</strong>{" "}
-                      {editEventId === event._id && userRole === "superAdmin" ? (
+                      {editEventId === event._id &&
+                      userRole === "superAdmin" ? (
                         <input
                           type="number"
                           value={editAvailableSeats}
-                          onChange={(e) => setEditAvailableSeats(e.target.value)}
+                          onChange={(e) =>
+                            setEditAvailableSeats(e.target.value)
+                          }
                           min="0"
                           max={editTotalSeats}
                           style={{
@@ -1414,7 +1428,8 @@ function MyBookings({ userId }) {
                               marginLeft: "8px",
                             }}
                           >
-                            ⚠️ (Actual confirmed: {eventBookings[event._id].length})
+                            ⚠️ (Actual confirmed:{" "}
+                            {eventBookings[event._id].length})
                           </span>
                         )}
                     </p>

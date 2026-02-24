@@ -4165,3 +4165,63 @@ html.dark .otp-input {
     padding: 20px;
   }
 }
+
+
+/* Timer styles for booking confirmation */
+.timer-container {
+  margin: 20px 0;
+  padding: 15px;
+  background: linear-gradient(135deg, #fff5e6 0%, #ffe6cc 100%);
+  border-radius: 12px;
+  border-left: 4px solid #ff9800;
+}
+
+.timer {
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: #e65100;
+  margin-bottom: 10px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.timer-value {
+  font-size: 1.3rem;
+  font-weight: 800;
+  color: #ff6f00;
+  font-family: 'Courier New', monospace;
+}
+
+.timer-bar {
+  width: 100%;
+  height: 8px;
+  background: rgba(255, 152, 0, 0.2);
+  border-radius: 10px;
+  overflow: hidden;
+}
+
+.timer-progress {
+  height: 100%;
+  background: linear-gradient(90deg, #ff9800, #ff6f00);
+  border-radius: 10px;
+  transition: width 1s linear;
+}
+
+/* Dark mode timer */
+html.dark .timer-container {
+  background: linear-gradient(135deg, rgba(255, 152, 0, 0.15) 0%, rgba(255, 152, 0, 0.25) 100%);
+  border-left-color: #ff9800;
+}
+
+html.dark .timer {
+  color: #ffb74d;
+}
+
+html.dark .timer-value {
+  color: #ffa726;
+}
+
+html.dark .timer-bar {
+  background: rgba(255, 152, 0, 0.1);
+}

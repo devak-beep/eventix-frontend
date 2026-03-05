@@ -4405,6 +4405,138 @@ html.dark .timer-bar {
     font-size: 1.3rem !important;
   }
 
+  /* Create Event Page */
+  .create-event {
+    padding: 12px !important;
+  }
+
+  .back-btn {
+    padding: 8px 16px !important;
+    font-size: 0.9rem !important;
+    margin-bottom: 12px !important;
+  }
+
+  .create-event h2 {
+    font-size: 1.3rem !important;
+    margin-bottom: 16px !important;
+  }
+
+  .create-event form {
+    padding: 16px !important;
+  }
+
+  .create-event .form-group {
+    margin-bottom: 16px !important;
+  }
+
+  .create-event label {
+    font-size: 0.9rem !important;
+    margin-bottom: 6px !important;
+  }
+
+  .create-event input,
+  .create-event select,
+  .create-event textarea {
+    padding: 10px 12px !important;
+    font-size: 0.9rem !important;
+  }
+
+  .create-event textarea {
+    min-height: 100px !important;
+  }
+
+  .create-event button[type="submit"] {
+    padding: 12px 20px !important;
+    font-size: 0.95rem !important;
+    width: 100% !important;
+  }
+
+  /* Payment Modal */
+  .payment-modal-content {
+    width: 95% !important;
+    max-width: 400px !important;
+    padding: 20px !important;
+  }
+
+  .payment-modal h3 {
+    font-size: 1.2rem !important;
+  }
+
+  /* Event Details Page */
+  .event-details-container {
+    padding: 12px !important;
+  }
+
+  .event-details-header {
+    padding: 12px !important;
+  }
+
+  .event-details-header h1 {
+    font-size: 1.4rem !important;
+  }
+
+  .event-details-content {
+    flex-direction: column !important;
+    gap: 16px !important;
+  }
+
+  .event-details-image {
+    width: 100% !important;
+    height: 220px !important;
+  }
+
+  .event-details-info {
+    width: 100% !important;
+    padding: 14px !important;
+  }
+
+  .event-details-info h3 {
+    font-size: 1.1rem !important;
+  }
+
+  .event-details-info p {
+    font-size: 0.9rem !important;
+  }
+
+  /* Booking Page */
+  .booking-container {
+    padding: 12px !important;
+  }
+
+  .booking-form {
+    padding: 16px !important;
+  }
+
+  .booking-form h2 {
+    font-size: 1.3rem !important;
+  }
+
+  .booking-summary {
+    padding: 14px !important;
+  }
+
+  /* My Bookings */
+  .my-bookings-container {
+    padding: 12px !important;
+  }
+
+  .booking-card {
+    padding: 14px !important;
+  }
+
+  .booking-card h3 {
+    font-size: 1.1rem !important;
+  }
+
+  /* Settings Page */
+  .settings-container {
+    padding: 12px !important;
+  }
+
+  .settings-section {
+    padding: 14px !important;
+  }
+
   /* Event Grid */
   .event-grid {
     grid-template-columns: 1fr;
@@ -4584,6 +4716,45 @@ html.dark .timer-bar {
 
   h2 {
     font-size: 1.2rem !important;
+  }
+
+  /* Create Event - smaller on small mobile */
+  .create-event {
+    padding: 10px !important;
+  }
+
+  .back-btn {
+    padding: 7px 14px !important;
+    font-size: 0.85rem !important;
+  }
+
+  .create-event h2 {
+    font-size: 1.2rem !important;
+  }
+
+  .create-event form {
+    padding: 14px !important;
+  }
+
+  .create-event label {
+    font-size: 0.85rem !important;
+  }
+
+  .create-event input,
+  .create-event select,
+  .create-event textarea {
+    padding: 9px 11px !important;
+    font-size: 0.85rem !important;
+  }
+
+  .create-event button[type="submit"] {
+    padding: 11px 18px !important;
+    font-size: 0.9rem !important;
+  }
+
+  .payment-modal-content {
+    width: 98% !important;
+    padding: 16px !important;
   }
 
   .event-card h3 {

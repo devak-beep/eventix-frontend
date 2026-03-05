@@ -4408,17 +4408,23 @@ html.dark .timer-bar {
   /* Create Event Page */
   .create-event {
     padding: 12px !important;
+    position: relative !important;
   }
 
   .back-btn {
-    padding: 8px 16px !important;
-    font-size: 0.9rem !important;
-    margin-bottom: 12px !important;
+    position: absolute !important;
+    top: 12px !important;
+    right: 12px !important;
+    padding: 6px 12px !important;
+    font-size: 0.85rem !important;
+    margin-bottom: 0 !important;
+    z-index: 10 !important;
   }
 
   .create-event h2 {
     font-size: 1.3rem !important;
     margin-bottom: 16px !important;
+    padding-right: 120px !important; /* Space for back button */
   }
 
   .create-event form {
@@ -4724,12 +4730,15 @@ html.dark .timer-bar {
   }
 
   .back-btn {
-    padding: 7px 14px !important;
-    font-size: 0.85rem !important;
+    top: 10px !important;
+    right: 10px !important;
+    padding: 5px 10px !important;
+    font-size: 0.8rem !important;
   }
 
   .create-event h2 {
     font-size: 1.2rem !important;
+    padding-right: 100px !important;
   }
 
   .create-event form {

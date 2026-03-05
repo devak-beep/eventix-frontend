@@ -4276,23 +4276,19 @@ html.dark .timer-bar {
     padding: 10px;
   }
 
-  /* Navigation - horizontal layout: Logo left, controls right */
+  /* Navigation - use grid for clean left/right layout */
   .navbar {
-    display: flex !important;
-    flex-direction: row !important;
-    justify-content: flex-start !important;
+    display: grid !important;
+    grid-template-columns: auto 1fr auto !important;
     align-items: center !important;
     padding: 10px 12px !important;
-    flex-wrap: nowrap !important;
-    position: relative !important;
-    width: 100% !important;
+    gap: 16px !important;
   }
 
-  /* Logo - left side */
+  /* Logo - stays in first column (left) */
   .navbar > div:first-child {
+    grid-column: 1 !important;
     font-size: 1.1rem !important;
-    flex-shrink: 0 !important;
-    flex-grow: 0 !important;
   }
 
   .navbar > div:first-child h1 {
@@ -4300,17 +4296,14 @@ html.dark .timer-bar {
     margin: 0 !important;
   }
 
-  /* Nav links - absolute right corner */
+  /* Nav links - goes to third column (right) */
   .nav-links {
+    grid-column: 3 !important;
     display: flex !important;
     flex-direction: row !important;
     gap: 8px !important;
     align-items: center !important;
-    flex-shrink: 0 !important;
-    position: absolute !important;
-    right: 12px !important;
-    top: 50% !important;
-    transform: translateY(-50%) !important;
+    justify-self: end !important;
   }
 
   .theme-toggle-btn {

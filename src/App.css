@@ -4362,6 +4362,42 @@ html.dark .timer-bar {
     white-space: nowrap !important;
   }
 
+  /* Search and Filter Controls */
+  .search-controls {
+    flex-direction: column !important;
+    gap: 12px !important;
+    padding: 12px !important;
+  }
+
+  .search-mode-selector {
+    gap: 8px !important;
+  }
+
+  .mode-btn {
+    padding: 8px 16px !important;
+    font-size: 0.85rem !important;
+    flex: 1 !important;
+  }
+
+  .search-input-group {
+    width: 100% !important;
+  }
+
+  .search-input-group input {
+    padding: 10px 12px !important;
+    font-size: 0.9rem !important;
+  }
+
+  .search-input-group button {
+    padding: 10px 16px !important;
+    font-size: 0.85rem !important;
+  }
+
+  /* Page title */
+  h2 {
+    font-size: 1.3rem !important;
+  }
+
   /* Event Grid */
   .event-grid {
     grid-template-columns: 1fr;
@@ -4507,6 +4543,30 @@ html.dark .timer-bar {
     max-width: 150px !important;
     padding: 8px 12px !important;
     font-size: 0.8rem !important;
+  }
+
+  /* Search controls - smaller */
+  .search-controls {
+    padding: 10px !important;
+  }
+
+  .mode-btn {
+    padding: 7px 12px !important;
+    font-size: 0.8rem !important;
+  }
+
+  .search-input-group input {
+    padding: 8px 10px !important;
+    font-size: 0.85rem !important;
+  }
+
+  .search-input-group button {
+    padding: 8px 12px !important;
+    font-size: 0.8rem !important;
+  }
+
+  h2 {
+    font-size: 1.2rem !important;
   }
 
   .event-card h3 {

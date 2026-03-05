@@ -4582,6 +4582,8 @@ html.dark .timer-bar {
   .booking-card {
     padding: 14px !important;
     margin-bottom: 12px !important;
+    display: flex !important;
+    flex-direction: column !important;
   }
 
   .booking-card h3 {
@@ -4594,10 +4596,19 @@ html.dark .timer-bar {
     margin-bottom: 6px !important;
   }
 
+  .booking-card img {
+    width: 100% !important;
+    height: 160px !important;
+    object-fit: cover !important;
+    border-radius: 8px !important;
+    margin-bottom: 10px !important;
+  }
+
   .booking-card button {
     padding: 8px 14px !important;
     font-size: 0.85rem !important;
     margin-top: 10px !important;
+    width: 100% !important;
   }
 
   /* Event Cards in Dashboard */
@@ -4901,6 +4912,10 @@ html.dark .timer-bar {
 
   .booking-card p {
     font-size: 0.8rem !important;
+  }
+
+  .booking-card img {
+    height: 140px !important;
   }
 
   .booking-card button {

@@ -4624,6 +4624,43 @@ html.dark .timer-bar {
     font-size: 0.85rem !important;
   }
 
+  /* Change Image Button - smaller on mobile */
+  .change-image-btn {
+    padding: 6px 8px !important;
+    font-size: 10px !important;
+    gap: 4px !important;
+  }
+
+  .change-image-btn svg {
+    width: 12px !important;
+    height: 12px !important;
+  }
+
+  /* Edit button in booking-header - smaller on mobile */
+  .booking-header button {
+    padding: 5px !important;
+    margin-left: 4px !important;
+  }
+
+  .booking-header button svg {
+    width: 14px !important;
+    height: 14px !important;
+  }
+
+  /* Save/Cancel buttons in edit mode */
+  .booking-header button[style*="10b981"],
+  .booking-header button[style*="ef4444"] {
+    padding: 5px 10px !important;
+    font-size: 0.8rem !important;
+    margin-left: 4px !important;
+  }
+
+  /* Status badge - smaller on mobile */
+  .booking-header .status-badge {
+    font-size: 0.75rem !important;
+    padding: 4px 8px !important;
+  }
+
   /* Stats/Summary Cards */
   .stats-card,
   .summary-card {
@@ -4919,6 +4956,56 @@ html.dark .timer-bar {
 
   .booking-card p {
     font-size: 0.8rem !important;
+  }
+
+  /* Change Image Button - even smaller on small mobile */
+  .change-image-btn {
+    padding: 5px 6px !important;
+    font-size: 9px !important;
+    gap: 3px !important;
+    top: 8px !important;
+    right: 8px !important;
+  }
+
+  .change-image-btn svg {
+    width: 10px !important;
+    height: 10px !important;
+  }
+
+  /* Edit button - even smaller */
+  .booking-header button {
+    padding: 4px !important;
+    margin-left: 3px !important;
+  }
+
+  .booking-header button svg {
+    width: 12px !important;
+    height: 12px !important;
+  }
+
+  /* Save/Cancel buttons - smaller */
+  .booking-header button[style*="10b981"],
+  .booking-header button[style*="ef4444"] {
+    padding: 4px 8px !important;
+    font-size: 0.75rem !important;
+    margin-left: 3px !important;
+  }
+
+  /* Status badge - even smaller */
+  .booking-header .status-badge {
+    font-size: 0.7rem !important;
+    padding: 3px 6px !important;
+  }
+
+  /* Booking header - better wrapping */
+  .booking-header {
+    flex-wrap: wrap !important;
+    gap: 6px !important;
+  }
+
+  .booking-header h3 {
+    flex: 1 1 100% !important;
+    margin-bottom: 4px !important;
   }
 
   .booking-card img {

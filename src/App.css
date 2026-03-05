@@ -4276,37 +4276,91 @@ html.dark .timer-bar {
     padding: 10px;
   }
 
-  /* Navigation */
+  /* Navigation - Keep horizontal but compact */
   .nav-container {
-    flex-direction: column;
-    align-items: stretch;
-    padding: 12px;
-  }
-
-  .nav-logo {
-    font-size: 1.3rem;
-    text-align: center;
-  }
-
-  .nav-links {
-    flex-direction: column;
-    width: 100%;
-  }
-
-  .nav-links button {
-    width: 100%;
-    justify-content: center;
-    padding: 12px;
-  }
-
-  .user-info {
-    flex-direction: column;
-    align-items: stretch;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 12px;
+    flex-wrap: wrap;
     gap: 8px;
   }
 
+  .nav-logo {
+    font-size: 1.2rem;
+    margin-right: auto;
+  }
+
+  .nav-links {
+    flex-direction: row;
+    flex-wrap: wrap;
+    gap: 6px;
+    flex: 1;
+    justify-content: center;
+  }
+
+  .nav-links button {
+    padding: 6px 12px;
+    font-size: 0.85rem;
+    white-space: nowrap;
+  }
+
+  .user-info {
+    flex-direction: row;
+    align-items: center;
+    gap: 8px;
+    flex-wrap: wrap;
+  }
+
   .user-info button {
-    width: 100%;
+    padding: 6px 12px;
+    font-size: 0.85rem;
+  }
+
+  /* Theme toggle button - smaller */
+  .theme-toggle {
+    width: 36px !important;
+    height: 36px !important;
+    min-width: 36px !important;
+    padding: 6px !important;
+    font-size: 1.2rem !important;
+  }
+
+  /* Category buttons - show 2-3 at once */
+  .category-scroll-container {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: thin;
+  }
+
+  .category-buttons {
+    display: flex;
+    gap: 8px;
+    padding: 8px 0;
+    overflow-x: visible;
+  }
+
+  .category-btn {
+    flex: 0 0 auto;
+    min-width: 140px;
+    max-width: 160px;
+    padding: 10px 14px;
+    font-size: 0.85rem;
+    white-space: nowrap;
+  }
+
+  /* Show scroll hint */
+  .category-scroll-container::after {
+    content: '→';
+    position: absolute;
+    right: 0;
+    top: 50%;
+    transform: translateY(-50%);
+    background: linear-gradient(to right, transparent, var(--bg-primary));
+    padding: 10px 15px;
+    pointer-events: none;
+    font-size: 1.2rem;
+    color: var(--text-secondary);
   }
 
   /* Event Grid */
@@ -4419,8 +4473,36 @@ html.dark .timer-bar {
     padding: 8px;
   }
 
+  .nav-container {
+    padding: 8px 10px;
+  }
+
   .nav-logo {
     font-size: 1.1rem;
+  }
+
+  .nav-links button {
+    padding: 5px 10px;
+    font-size: 0.8rem;
+  }
+
+  .user-info button {
+    padding: 5px 10px;
+    font-size: 0.8rem;
+  }
+
+  .theme-toggle {
+    width: 32px !important;
+    height: 32px !important;
+    min-width: 32px !important;
+    font-size: 1.1rem !important;
+  }
+
+  .category-btn {
+    min-width: 130px;
+    max-width: 150px;
+    padding: 8px 12px;
+    font-size: 0.8rem;
   }
 
   .event-card h3 {

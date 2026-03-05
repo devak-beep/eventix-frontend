@@ -4276,49 +4276,32 @@ html.dark .timer-bar {
     padding: 10px;
   }
 
-  /* Navigation - Keep horizontal but compact */
-  .nav-container {
-    flex-direction: row;
-    justify-content: space-between;
-    align-items: center;
-    padding: 10px 12px;
-    flex-wrap: wrap;
-    gap: 8px;
+  /* Navigation - actual classes from App.js */
+  .navbar {
+    flex-direction: row !important;
+    justify-content: space-between !important;
+    align-items: center !important;
+    padding: 10px 12px !important;
+    flex-wrap: wrap !important;
+    gap: 8px !important;
   }
 
-  .nav-logo {
-    font-size: 1.2rem;
+  .navbar > div:first-child {
+    font-size: 1.1rem !important;
     margin-right: auto;
   }
 
+  .navbar > div:first-child h1 {
+    font-size: 1.1rem !important;
+  }
+
   .nav-links {
-    flex-direction: row;
-    flex-wrap: wrap;
-    gap: 6px;
-    flex: 1;
-    justify-content: center;
+    flex-direction: row !important;
+    gap: 8px !important;
+    align-items: center !important;
   }
 
-  .nav-links button {
-    padding: 6px 12px;
-    font-size: 0.85rem;
-    white-space: nowrap;
-  }
-
-  .user-info {
-    flex-direction: row;
-    align-items: center;
-    gap: 8px;
-    flex-wrap: wrap;
-  }
-
-  .user-info button {
-    padding: 6px 12px;
-    font-size: 0.85rem;
-  }
-
-  /* Theme toggle button - smaller */
-  .theme-toggle {
+  .theme-toggle-btn {
     width: 36px !important;
     height: 36px !important;
     min-width: 36px !important;
@@ -4326,41 +4309,46 @@ html.dark .timer-bar {
     font-size: 1.2rem !important;
   }
 
+  .user-avatar-btn {
+    padding: 6px 10px !important;
+    font-size: 0.85rem !important;
+  }
+
+  .avatar-circle {
+    width: 28px !important;
+    height: 28px !important;
+    font-size: 0.75rem !important;
+  }
+
+  .avatar-name {
+    font-size: 0.85rem !important;
+  }
+
+  .dropdown-arrow {
+    font-size: 0.7rem !important;
+  }
+
   /* Category buttons - show 2-3 at once */
   .category-scroll-container {
-    overflow-x: auto;
+    overflow-x: auto !important;
     -webkit-overflow-scrolling: touch;
     scrollbar-width: thin;
   }
 
   .category-buttons {
-    display: flex;
-    gap: 8px;
-    padding: 8px 0;
-    overflow-x: visible;
+    display: flex !important;
+    gap: 8px !important;
+    padding: 8px 0 !important;
+    overflow-x: visible !important;
   }
 
   .category-btn {
-    flex: 0 0 auto;
-    min-width: 140px;
-    max-width: 160px;
-    padding: 10px 14px;
-    font-size: 0.85rem;
-    white-space: nowrap;
-  }
-
-  /* Show scroll hint */
-  .category-scroll-container::after {
-    content: '→';
-    position: absolute;
-    right: 0;
-    top: 50%;
-    transform: translateY(-50%);
-    background: linear-gradient(to right, transparent, var(--bg-primary));
-    padding: 10px 15px;
-    pointer-events: none;
-    font-size: 1.2rem;
-    color: var(--text-secondary);
+    flex: 0 0 auto !important;
+    min-width: 140px !important;
+    max-width: 160px !important;
+    padding: 10px 14px !important;
+    font-size: 0.85rem !important;
+    white-space: nowrap !important;
   }
 
   /* Event Grid */
@@ -4473,36 +4461,41 @@ html.dark .timer-bar {
     padding: 8px;
   }
 
-  .nav-container {
-    padding: 8px 10px;
+  .navbar {
+    padding: 8px 10px !important;
   }
 
-  .nav-logo {
-    font-size: 1.1rem;
+  .navbar > div:first-child h1 {
+    font-size: 1rem !important;
   }
 
-  .nav-links button {
-    padding: 5px 10px;
-    font-size: 0.8rem;
-  }
-
-  .user-info button {
-    padding: 5px 10px;
-    font-size: 0.8rem;
-  }
-
-  .theme-toggle {
+  .theme-toggle-btn {
     width: 32px !important;
     height: 32px !important;
     min-width: 32px !important;
     font-size: 1.1rem !important;
   }
 
+  .user-avatar-btn {
+    padding: 5px 8px !important;
+    font-size: 0.8rem !important;
+  }
+
+  .avatar-circle {
+    width: 26px !important;
+    height: 26px !important;
+    font-size: 0.7rem !important;
+  }
+
+  .avatar-name {
+    font-size: 0.8rem !important;
+  }
+
   .category-btn {
-    min-width: 130px;
-    max-width: 150px;
-    padding: 8px 12px;
-    font-size: 0.8rem;
+    min-width: 130px !important;
+    max-width: 150px !important;
+    padding: 8px 12px !important;
+    font-size: 0.8rem !important;
   }
 
   .event-card h3 {

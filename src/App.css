@@ -4276,29 +4276,37 @@ html.dark .timer-bar {
     padding: 10px;
   }
 
-  /* Navigation - actual classes from App.js */
+  /* Navigation - horizontal layout: Logo left, controls right */
   .navbar {
+    display: flex !important;
     flex-direction: row !important;
     justify-content: space-between !important;
     align-items: center !important;
     padding: 10px 12px !important;
-    flex-wrap: wrap !important;
+    flex-wrap: nowrap !important;
     gap: 8px !important;
   }
 
+  /* Logo - left side */
   .navbar > div:first-child {
     font-size: 1.1rem !important;
-    margin-right: auto;
+    margin-right: auto !important;
+    flex-shrink: 0 !important;
   }
 
   .navbar > div:first-child h1 {
     font-size: 1.1rem !important;
+    margin: 0 !important;
   }
 
+  /* Nav links - right side, horizontal */
   .nav-links {
+    display: flex !important;
     flex-direction: row !important;
     gap: 8px !important;
     align-items: center !important;
+    flex-shrink: 0 !important;
+    margin-left: auto !important;
   }
 
   .theme-toggle-btn {
@@ -4307,11 +4315,17 @@ html.dark .timer-bar {
     min-width: 36px !important;
     padding: 6px !important;
     font-size: 1.2rem !important;
+    flex-shrink: 0 !important;
+  }
+
+  .user-menu-wrapper {
+    flex-shrink: 0 !important;
   }
 
   .user-avatar-btn {
     padding: 6px 10px !important;
     font-size: 0.85rem !important;
+    white-space: nowrap !important;
   }
 
   .avatar-circle {

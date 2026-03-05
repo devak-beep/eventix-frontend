@@ -4661,6 +4661,59 @@ html.dark .timer-bar {
     padding: 4px 8px !important;
   }
 
+  /* Admin Requests - responsive */
+  .admin-requests-container {
+    padding: 16px !important;
+  }
+
+  .admin-requests-header {
+    flex-direction: row !important;
+    flex-wrap: wrap !important;
+    gap: 12px !important;
+  }
+
+  .admin-requests-header h2 {
+    font-size: 1.2rem !important;
+  }
+
+  .request-count {
+    font-size: 0.8rem !important;
+    padding: 5px 10px !important;
+  }
+
+  .request-card {
+    padding: 16px !important;
+  }
+
+  .request-header {
+    flex-wrap: wrap !important;
+    gap: 10px !important;
+  }
+
+  .user-info h3 {
+    font-size: 1rem !important;
+  }
+
+  .user-email {
+    font-size: 0.8rem !important;
+  }
+
+  .request-actions {
+    gap: 10px !important;
+  }
+
+  .btn-approve,
+  .btn-reject {
+    padding: 9px 14px !important;
+    font-size: 0.85rem !important;
+  }
+
+  /* Event Creation Requests - filter tabs */
+  div[style*="flexWrap"] button {
+    padding: 7px 14px !important;
+    font-size: 0.8rem !important;
+  }
+
   /* Stats/Summary Cards */
   .stats-card,
   .summary-card {
@@ -5006,6 +5059,66 @@ html.dark .timer-bar {
   .booking-header h3 {
     flex: 1 1 100% !important;
     margin-bottom: 4px !important;
+  }
+
+  /* Admin Requests - responsive */
+  .admin-requests-container {
+    padding: 14px !important;
+  }
+
+  .admin-requests-header {
+    flex-direction: column !important;
+    align-items: flex-start !important;
+    gap: 10px !important;
+  }
+
+  .admin-requests-header h2 {
+    font-size: 1.1rem !important;
+  }
+
+  .request-count {
+    font-size: 0.75rem !important;
+    padding: 4px 10px !important;
+  }
+
+  .request-card {
+    padding: 14px !important;
+  }
+
+  .request-header {
+    flex-direction: column !important;
+    gap: 8px !important;
+  }
+
+  .user-info h3 {
+    font-size: 0.95rem !important;
+  }
+
+  .user-email {
+    font-size: 0.75rem !important;
+  }
+
+  .request-actions {
+    flex-direction: column !important;
+    gap: 8px !important;
+  }
+
+  .btn-approve,
+  .btn-reject {
+    padding: 8px 12px !important;
+    font-size: 0.8rem !important;
+  }
+
+  /* Event Creation Requests - filter tabs */
+  .my-bookings-container h2 {
+    font-size: 1.1rem !important;
+  }
+
+  /* Filter buttons for event requests */
+  div[style*="flexWrap"] button {
+    padding: 6px 12px !important;
+    font-size: 0.75rem !important;
+    border-radius: 16px !important;
   }
 
   .booking-card img {

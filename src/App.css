@@ -4284,14 +4284,15 @@ html.dark .timer-bar {
     align-items: center !important;
     padding: 10px 12px !important;
     flex-wrap: nowrap !important;
-    gap: 8px !important;
+    gap: 20px !important;
+    width: 100% !important;
   }
 
   /* Logo - left side */
   .navbar > div:first-child {
     font-size: 1.1rem !important;
-    margin-right: auto !important;
     flex-shrink: 0 !important;
+    flex-grow: 0 !important;
   }
 
   .navbar > div:first-child h1 {
@@ -4306,6 +4307,7 @@ html.dark .timer-bar {
     gap: 8px !important;
     align-items: center !important;
     flex-shrink: 0 !important;
+    flex-grow: 0 !important;
     margin-left: auto !important;
   }
 

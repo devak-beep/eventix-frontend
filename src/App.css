@@ -4340,26 +4340,33 @@ html.dark .timer-bar {
   }
 
   /* Category buttons - show 2-3 at once */
-  .category-scroll-container {
-    overflow-x: auto !important;
-    -webkit-overflow-scrolling: touch;
-    scrollbar-width: thin;
+  .category-container {
+    padding: 8px 0 !important;
   }
 
-  .category-buttons {
-    display: flex !important;
+  .category-tabs {
     gap: 8px !important;
     padding: 8px 0 !important;
-    overflow-x: visible !important;
   }
 
-  .category-btn {
+  .category-tab {
     flex: 0 0 auto !important;
     min-width: 140px !important;
     max-width: 160px !important;
     padding: 10px 14px !important;
     font-size: 0.85rem !important;
     white-space: nowrap !important;
+  }
+
+  .category-icon {
+    font-size: 1.1rem !important;
+  }
+
+  .scroll-arrow {
+    width: 32px !important;
+    height: 32px !important;
+    font-size: 1.2rem !important;
+    padding: 4px !important;
   }
 
   /* Search and Filter Controls */
@@ -4538,11 +4545,21 @@ html.dark .timer-bar {
     font-size: 0.8rem !important;
   }
 
-  .category-btn {
+  .category-tab {
     min-width: 130px !important;
     max-width: 150px !important;
     padding: 8px 12px !important;
     font-size: 0.8rem !important;
+  }
+
+  .category-icon {
+    font-size: 1rem !important;
+  }
+
+  .scroll-arrow {
+    width: 28px !important;
+    height: 28px !important;
+    font-size: 1.1rem !important;
   }
 
   /* Search controls - smaller */

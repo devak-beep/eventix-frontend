@@ -766,7 +766,7 @@ function MyBookings({ userId }) {
               >
                 <div style={{ flex: 1 }}>
                   <div className="booking-header">
-                    <h3>Booking #{booking._id.slice(-6)}</h3>
+                    <h3>{booking.event?.name || booking.event || "Event"}</h3>
                     <span
                       className="status-badge"
                       style={{
@@ -778,6 +778,9 @@ function MyBookings({ userId }) {
                   </div>
 
                   <div className="booking-details">
+                    <p>
+                      <strong>Transaction ID:</strong> <code>#{booking._id.slice(-6)}</code>
+                    </p>
                     <p>
                       <strong>Booking ID:</strong> <code>{booking._id}</code>
                     </p>

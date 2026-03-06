@@ -286,7 +286,11 @@ function EventList() {
             const eventDate = new Date(event.eventDate);
             const now = new Date();
             const isExpired = eventDate <= now;
-            const isSoldOut = event.availableSeats === 0;
+            const isMultiDay = event.eventType === "multi-day";
+            const isSoldOut = isMultiDay
+              ? event.dailySeats &&
+                Object.values(event.dailySeats).every((d) => d.available === 0)
+              : event.availableSeats === 0;
 
             // Get user role to show visibility tag only to admin
             const user = JSON.parse(localStorage.getItem("user"));
@@ -320,6 +324,9 @@ function EventList() {
                       <span className="event-badge sold-out">🎫 Sold Out</span>
                     )}
                     {/* Visibility badge for admin only - at top-right */}
+                    {isMultiDay && !isExpired && (
+                      <span className="event-badge multi-day">📅 Multi-Day</span>
+                    )}
                     {isAdmin && !isExpired && !isSoldOut && (
                       <span className={`event-badge visibility ${event.type}`}>
                         {event.type === "public" ? "🌍 Public" : "🔒 Private"}
@@ -356,6 +363,48 @@ function EventList() {
                       ✅ Approved by {event.approvedBy.name}
                     </p>
                   )}
+
+                  {/* Date / date-range */}
+                  {event.eventDate && (
+                    <p className="event-date">
+                      📅{" "}
+                      {isMultiDay && event.endDate
+                        ? `${new Date(event.eventDate).toLocaleDateString(
+                            "en-GB",
+                            { day: "numeric", month: "short" },
+                          )} – ${new Date(event.endDate).toLocaleDateString(
+                            "en-GB",
+                            { day: "numeric", month: "short", year: "numeric" },
+                          )}`
+                        : new Date(event.eventDate).toLocaleDateString("en-GB", {
+                            day: "numeric",
+                            month: "short",
+                            year: "numeric",
+                          })}
+                    </p>
+                  )}
+
+                  {/* Ticket / pass price chips */}
+                  <div className="event-price-tag">
+                    {isMultiDay ? (
+                      <>
+                        {event.passOptions?.dailyPass?.enabled && (
+                          <span className="price-chip">
+                            🎟️ Day ₹{event.passOptions.dailyPass.price}
+                          </span>
+                        )}
+                        {event.passOptions?.seasonPass?.enabled && (
+                          <span className="price-chip season">
+                            🌟 Season ₹{event.passOptions.seasonPass.price}
+                          </span>
+                        )}
+                      </>
+                    ) : (
+                      <span className="price-chip">
+                        {event.amount > 0 ? `🎫 ₹${event.amount}` : "🎫 Free"}
+                      </span>
+                    )}
+                  </div>
                 </div>
               </div>
             );

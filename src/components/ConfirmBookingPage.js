@@ -14,23 +14,19 @@ function ConfirmBookingPage() {
   const [error, setError] = useState("");
   const [timeRemaining, setTimeRemaining] = useState(0);
 
-  // Modal state for back navigation
   const [showBackModal, setShowBackModal] = useState(false);
   const [backModalPending, setBackModalPending] = useState(false);
 
-  // Track if booking was confirmed (to prevent cleanup from cancelling)
   const bookingConfirmedRef = useRef(false);
 
-  const { eventId, seats, expiresAt, eventName, amount } = location.state || {};
+  const { eventId, seats, expiresAt, eventName, passType, selectedDate, passPrice, amount } =
+    location.state || {};
 
-  // BUGFIX: Cancel lock when component unmounts (user navigates away via any link)
+  // ── Cleanup: cancel lock when navigating away (before confirm) ─────────────
   useEffect(() => {
     return () => {
-      // Only cancel if booking was NOT confirmed
       if (!bookingConfirmedRef.current && lockId) {
-        // Use sendBeacon for reliable cleanup
-        const API_BASE_URL =
-          process.env.REACT_APP_API_URL || "http://localhost:3000/api";
+        const API_BASE_URL = process.env.REACT_APP_API_URL || "http://localhost:3000/api";
         navigator.sendBeacon?.(
           `${API_BASE_URL}/locks/${lockId}/cancel`,
           new Blob([JSON.stringify({})], { type: "application/json" }),
@@ -39,160 +35,134 @@ function ConfirmBookingPage() {
     };
   }, [lockId]);
 
-  // Handle browser back button and page close
+  // ── Browser back / reload prevention ───────────────────────────────────────
   useEffect(() => {
-    const handlePopState = (e) => {
+    const handlePopState = () => {
       if (lockId) {
-        // Push state back to prevent immediate navigation
         window.history.pushState(null, "", window.location.href);
-        // Show custom modal instead of window.confirm
         setShowBackModal(true);
       }
     };
-
     const handleBeforeUnload = (e) => {
       e.preventDefault();
       e.returnValue = "Your seat lock will be cancelled if you leave.";
-      return e.returnValue;
     };
-
-    // Push current state to enable popstate detection
     window.history.pushState(null, "", window.location.href);
-
     window.addEventListener("popstate", handlePopState);
     window.addEventListener("beforeunload", handleBeforeUnload);
-
     return () => {
       window.removeEventListener("popstate", handlePopState);
       window.removeEventListener("beforeunload", handleBeforeUnload);
     };
   }, [lockId]);
 
+  // ── Countdown timer ─────────────────────────────────────────────────────────
   useEffect(() => {
-    if (!expiresAt) {
-      console.log("⚠️ No expiresAt provided");
-      return;
-    }
-
-    console.log("⏱️ Setting up timer. Expires at:", expiresAt);
-
+    if (!expiresAt) return;
     const interval = setInterval(() => {
-      const now = new Date().getTime();
-      const expiry = new Date(expiresAt).getTime();
-      const remaining = Math.floor((expiry - now) / 1000);
-
-      console.log("⏱️ Time remaining:", remaining, "seconds");
-
+      const remaining = Math.floor((new Date(expiresAt).getTime() - Date.now()) / 1000);
       if (remaining <= 0) {
         setTimeRemaining(0);
-        setError("Lock expired! Please lock seats again.");
+        setError("Lock expired! Please start a new booking.");
         clearInterval(interval);
       } else {
         setTimeRemaining(remaining);
       }
     }, 1000);
-
     return () => clearInterval(interval);
   }, [expiresAt]);
 
   const handleConfirmBooking = async () => {
-    console.log("🔘 Confirm button clicked");
-    console.log("📊 State:", { loading, timeRemaining, lockId });
-    
     setError("");
     setLoading(true);
-
     try {
-      console.log("📤 Calling confirmBooking API with lockId:", lockId);
       const response = await confirmBooking(lockId);
-      console.log("✅ Booking confirmed:", response);
-
-      // BUGFIX: Mark booking as confirmed BEFORE navigating
-      // This prevents cleanup effect from cancelling the lock
       bookingConfirmedRef.current = true;
 
-      // Navigate to payment page
+      // Effective price per seat (from state passed by LockSeatsPage)
+      const effectivePrice = passPrice ?? amount ?? 0;
+
       navigate(`/booking/payment/${response.booking._id}`, {
-        state: { eventId, seats, eventName, amount, lockId },
+        state: {
+          eventId,
+          seats,
+          eventName,
+          passType:     passType || "regular",
+          selectedDate: selectedDate || null,
+          passPrice:    effectivePrice,
+          // Legacy amount field — PaymentPage will get real amount from createOrder API
+          amount:       effectivePrice,
+          lockId,
+        },
       });
     } catch (err) {
-      console.error("❌ Confirm booking error:", err);
-      setError(
-        err.response?.data?.message ||
-          err.message ||
-          "Failed to confirm booking",
-      );
+      setError(err.response?.data?.message || err.message || "Failed to confirm booking");
     } finally {
       setLoading(false);
     }
   };
 
-  const handleBackClick = () => {
-    // Show custom modal instead of window.confirm
-    setShowBackModal(true);
-  };
-
-  // Handle confirmed back navigation
   const handleConfirmBack = async () => {
     setBackModalPending(true);
-    try {
-      await cancelLock(lockId);
-    } catch (err) {
-      console.error("Failed to cancel lock:", err);
-    }
+    try { await cancelLock(lockId); } catch {}
     setShowBackModal(false);
     setBackModalPending(false);
     navigate("/");
   };
 
-  // Show loading skeleton if no data
-  if (!eventName || !seats) {
-    return <ConfirmBookingSkeleton />;
+  if (!eventName || !seats) return <ConfirmBookingSkeleton />;
+
+  // ── Helpers ─────────────────────────────────────────────────────────────────
+  const effectivePrice = passPrice ?? amount ?? 0;
+  const totalAmount    = effectivePrice * (seats || 0);
+
+  const passLabel = () => {
+    if (!passType || passType === "regular") return null;
+    if (passType === "daily") return `Day Pass — ${selectedDate ? formatDate(selectedDate) : ""}`;
+    if (passType === "season") return "Season Pass (all days)";
+    return null;
+  };
+
+  function formatDate(key) {
+    return new Date(`${key}T00:00:00Z`).toLocaleDateString("en-GB", {
+      weekday: "long", day: "numeric", month: "long", year: "numeric", timeZone: "UTC",
+    });
   }
 
   return (
     <div className="event-details">
-      <button onClick={handleBackClick} className="back-btn">
-        ← Back to Events
-      </button>
+      <button onClick={() => setShowBackModal(true)} className="back-btn">← Back</button>
 
       <div className="booking-section">
         <h3>Confirm Your Booking</h3>
-
         {error && <div className="error">{error}</div>}
 
         <div className="booking-step">
-          <p>
-            ✅ Seats locked! Lock ID: <code>{lockId}</code>
-          </p>
-          {eventName && (
-            <p>
-              <strong>Event:</strong> {eventName}
-            </p>
+          <p>✅ Seats locked!</p>
+
+          {eventName && <p><strong>Event:</strong> {eventName}</p>}
+
+          {passLabel() && (
+            <p><strong>Pass Type:</strong> {passLabel()}</p>
           )}
-          <p>
-            <strong>Seats:</strong> {seats}
-          </p>
-          {amount !== undefined && (
-            <p>
-              <strong>Total Amount:</strong> ₹{amount * seats}
-            </p>
-          )}
+
+          <p><strong>Tickets:</strong> {seats}</p>
+
+          <p><strong>Total Amount:</strong> ₹{totalAmount}</p>
 
           {timeRemaining > 0 && (
             <div className="timer-container">
               <div className="timer">
                 ⏱️ Time remaining:{" "}
                 <span className="timer-value">
-                  {Math.floor(timeRemaining / 60)}:
-                  {String(timeRemaining % 60).padStart(2, "0")}
+                  {Math.floor(timeRemaining / 60)}:{String(timeRemaining % 60).padStart(2, "0")}
                 </span>
               </div>
               <div className="timer-bar">
                 <div
                   className="timer-progress"
-                  style={{ width: `${(timeRemaining / 300) * 100}%` }}
-                ></div>
+                  style={{ width: `${(timeRemaining / 600) * 100}%` }}
+                />
               </div>
             </div>
           )}
@@ -206,13 +176,12 @@ function ConfirmBookingPage() {
         </div>
       </div>
 
-      {/* Confirm Back Modal */}
       <ConfirmModal
         isOpen={showBackModal}
         onClose={() => setShowBackModal(false)}
         onConfirm={handleConfirmBack}
         title="Cancel Seat Lock?"
-        message="Going back will cancel your seat lock and restore the seats. Are you sure you want to continue?"
+        message="Going back will cancel your seat lock and restore the seats. Are you sure?"
         confirmText="Yes, Go Back"
         cancelText="Stay Here"
         type="warning"

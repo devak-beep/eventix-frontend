@@ -820,6 +820,32 @@ function MyBookings({ userId }) {
                       ? booking.seats.length
                       : booking.seats}
                   </p>
+
+                  {/* Pass type badge for multi-day events */}
+                  {booking.passType && booking.passType !== "regular" && (
+                    <p>
+                      <strong>Pass:</strong>{" "}
+                      <span
+                        style={{
+                          display: "inline-block",
+                          padding: "2px 10px",
+                          borderRadius: "20px",
+                          background:
+                            booking.passType === "season"
+                              ? "linear-gradient(135deg, #a78bfa, #7c3aed)"
+                              : "linear-gradient(135deg, #34d399, #059669)",
+                          color: "#fff",
+                          fontWeight: "600",
+                          fontSize: "12px",
+                        }}
+                      >
+                        {booking.passType === "daily" && booking.selectedDate
+                          ? `🎟️ Day Pass — ${new Date(booking.selectedDate).toLocaleDateString("en-GB", { day: "numeric", month: "short", year: "numeric" })}`
+                          : "🌟 Season Pass (all days)"}
+                      </span>
+                    </p>
+                  )}
+
                   {booking.amount && (
                     <p>
                       <strong>Amount Paid:</strong> ₹{booking.amount}
@@ -889,6 +915,8 @@ function MyBookings({ userId }) {
                             amount: booking.event?.amount || 100,
                             lockId:
                               booking.seatLockId?._id || booking.seatLockId,
+                            passType: booking.passType || "regular",
+                            selectedDate: booking.selectedDate || null,
                           },
                         });
                       }}

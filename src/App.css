@@ -4470,8 +4470,34 @@ html.dark .timer-bar {
     padding: 20px !important;
   }
 
-  .payment-modal h3 {
+  .payment-modal-content h3 {
     font-size: 1.2rem !important;
+  }
+
+  .payment-modal-content p {
+    font-size: 0.9rem !important;
+  }
+
+  .payment-amount {
+    font-size: 1.2rem !important;
+    margin: 12px 0 !important;
+  }
+
+  .payment-warning {
+    font-size: 0.8rem !important;
+    padding: 8px 10px !important;
+  }
+
+  .payment-modal .payment-buttons {
+    flex-direction: column !important;
+    gap: 10px !important;
+  }
+
+  .payment-modal .success-btn,
+  .payment-modal .cancel-btn {
+    width: 100% !important;
+    padding: 12px 20px !important;
+    font-size: 0.9rem !important;
   }
 
   /* Event Details Page */
@@ -5058,6 +5084,73 @@ html.dark .timer-bar {
     padding: 20px;
   }
 
+  .modal-content h3 {
+    font-size: 1.1rem !important;
+  }
+
+  .modal-content p {
+    font-size: 0.85rem !important;
+  }
+
+  .modal-actions {
+    flex-direction: column !important;
+    gap: 10px !important;
+  }
+
+  .modal-actions .btn {
+    width: 100% !important;
+  }
+
+  /* Confirm Modal */
+  .confirm-modal {
+    width: 95% !important;
+    max-width: 380px !important;
+    padding: 24px !important;
+  }
+
+  .confirm-modal-icon {
+    width: 56px !important;
+    height: 56px !important;
+    margin-bottom: 16px !important;
+  }
+
+  .confirm-modal-title {
+    font-size: 1.1rem !important;
+  }
+
+  .confirm-modal-message {
+    font-size: 0.9rem !important;
+    margin-bottom: 20px !important;
+  }
+
+  .confirm-modal-buttons {
+    flex-direction: column !important;
+    gap: 10px !important;
+  }
+
+  .confirm-modal-btn {
+    width: 100% !important;
+    padding: 12px 20px !important;
+    font-size: 0.9rem !important;
+  }
+
+  /* Success Popup */
+  .success-popup {
+    padding: 16px !important;
+  }
+
+  .success-popup .success-icon {
+    font-size: 48px !important;
+  }
+
+  .success-popup h2 {
+    font-size: 1.3rem !important;
+  }
+
+  .success-popup p {
+    font-size: 0.85rem !important;
+  }
+
   /* Timer */
   .timer-container {
     padding: 12px;
@@ -5165,6 +5258,43 @@ html.dark .timer-bar {
 
   h2 {
     font-size: 1.2rem !important;
+  }
+
+  /* Payment/Confirmation Modal - Small Mobile */
+  .payment-modal-content {
+    width: 98% !important;
+    padding: 16px !important;
+  }
+
+  .payment-modal-content h3 {
+    font-size: 1.1rem !important;
+  }
+
+  .payment-modal-content p {
+    font-size: 0.85rem !important;
+    margin-bottom: 10px !important;
+  }
+
+  .payment-amount {
+    font-size: 1.1rem !important;
+    margin: 10px 0 !important;
+  }
+
+  .payment-warning {
+    font-size: 0.75rem !important;
+    padding: 8px !important;
+  }
+
+  .payment-modal .payment-buttons {
+    flex-direction: column !important;
+    gap: 8px !important;
+  }
+
+  .payment-modal .success-btn,
+  .payment-modal .cancel-btn {
+    width: 100% !important;
+    padding: 10px 16px !important;
+    font-size: 0.85rem !important;
   }
 
   /* Create Event - smaller on small mobile */
@@ -5440,6 +5570,90 @@ html.dark .timer-bar {
     padding: 16px;
   }
 
+  .modal-content h3 {
+    font-size: 1rem !important;
+  }
+
+  .modal-content p {
+    font-size: 0.8rem !important;
+  }
+
+  .modal-actions {
+    flex-direction: column !important;
+    gap: 8px !important;
+    margin-top: 16px !important;
+  }
+
+  .modal-actions .btn {
+    width: 100% !important;
+    padding: 10px 16px !important;
+    font-size: 0.85rem !important;
+  }
+
+  /* Confirm Modal - Small Mobile */
+  .confirm-modal {
+    width: 98% !important;
+    max-width: none !important;
+    padding: 20px !important;
+  }
+
+  .confirm-modal-icon {
+    width: 48px !important;
+    height: 48px !important;
+    margin-bottom: 12px !important;
+  }
+
+  .confirm-modal-icon svg {
+    width: 24px !important;
+    height: 24px !important;
+  }
+
+  .confirm-modal-title {
+    font-size: 1rem !important;
+    margin-bottom: 10px !important;
+  }
+
+  .confirm-modal-message {
+    font-size: 0.85rem !important;
+    margin-bottom: 20px !important;
+  }
+
+  .confirm-modal-buttons {
+    flex-direction: column !important;
+    gap: 8px !important;
+  }
+
+  .confirm-modal-btn {
+    width: 100% !important;
+    padding: 12px 16px !important;
+    font-size: 0.85rem !important;
+  }
+
+  /* Success Popup - Small Mobile */
+  .success-popup {
+    padding: 14px !important;
+  }
+
+  .success-popup .success-icon {
+    font-size: 40px !important;
+    margin-bottom: 12px !important;
+  }
+
+  .success-popup h2 {
+    font-size: 1.2rem !important;
+    margin-bottom: 12px !important;
+  }
+
+  .success-popup p {
+    font-size: 0.8rem !important;
+    margin-bottom: 10px !important;
+  }
+
+  .success-popup .submit-btn {
+    padding: 10px 16px !important;
+    font-size: 0.85rem !important;
+  }
+
   .timer {
     font-size: 0.9rem;
   }
@@ -5490,4 +5704,245 @@ html.dark .timer-bar {
   .btn-secondary:active {
     transform: scale(0.95);
   }
+}
+
+
+/* ============================================================
+   MULTI-DAY EVENT BOOKING STYLES
+   ============================================================ */
+
+/* ── Pass Type Selector ─────────────────────────────────── */
+.pass-type-selector {
+  margin-bottom: 24px;
+}
+
+.pass-type-label {
+  display: block;
+  font-size: 13px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--text-secondary, #888);
+  margin-bottom: 12px;
+}
+
+.pass-type-tabs {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+
+.pass-tab {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  padding: 16px 12px;
+  border-radius: 12px;
+  border: 2px solid var(--border, #333);
+  background: var(--card-bg, #1a1a1a);
+  cursor: pointer;
+  transition: border-color 0.2s, background 0.2s, transform 0.1s;
+  color: var(--text-primary, #fff);
+  font-family: inherit;
+}
+
+.pass-tab:hover:not(:disabled) {
+  border-color: var(--accent, #7c3aed);
+  background: var(--card-bg-hover, #242424);
+  transform: translateY(-1px);
+}
+
+.pass-tab.active {
+  border-color: var(--accent, #7c3aed);
+  background: var(--accent-subtle, rgba(124, 58, 237, 0.12));
+}
+
+.pass-tab.disabled,
+.pass-tab:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+  transform: none;
+}
+
+.pass-tab-icon   { font-size: 24px; }
+.pass-tab-name   { font-size: 15px; font-weight: 700; margin-top: 2px; }
+.pass-tab-price  { font-size: 17px; font-weight: 800; color: var(--accent, #7c3aed); }
+.pass-tab-desc   { font-size: 12px; color: var(--text-secondary, #888); }
+
+/* ── Day Picker ─────────────────────────────────────────── */
+.day-picker {
+  margin-bottom: 24px;
+}
+
+.day-picker-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(170px, 1fr));
+  gap: 10px;
+  margin-top: 10px;
+}
+
+.day-tile {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 6px;
+  padding: 14px 16px;
+  border-radius: 10px;
+  border: 2px solid var(--border, #333);
+  background: var(--card-bg, #1a1a1a);
+  cursor: pointer;
+  transition: border-color 0.2s, background 0.2s, transform 0.1s;
+  text-align: left;
+  width: 100%;
+  font-family: inherit;
+  color: var(--text-primary, #fff);
+}
+
+.day-tile:hover:not(:disabled):not(.sold-out) {
+  border-color: var(--accent, #7c3aed);
+  transform: translateY(-1px);
+}
+
+.day-tile.selected {
+  border-color: var(--accent, #7c3aed);
+  background: var(--accent-subtle, rgba(124, 58, 237, 0.12));
+}
+
+.day-tile.sold-out,
+.day-tile:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+  transform: none;
+}
+
+.day-tile-date {
+  font-size: 13px;
+  font-weight: 600;
+  line-height: 1.3;
+}
+
+.day-tile-seats {
+  font-size: 12px;
+  color: var(--text-secondary, #888);
+}
+.day-tile-seats.low-seats    { color: #f59e0b; font-weight: 600; }
+.day-tile-seats.sold-out-text { color: #ef4444; font-weight: 600; }
+
+/* ── Season Pass Summary ─────────────────────────────────── */
+.season-summary {
+  margin-bottom: 24px;
+}
+
+.season-days-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-top: 10px;
+}
+
+.season-day-chip {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 14px;
+  border-radius: 8px;
+  border: 1px solid var(--border, #333);
+  background: var(--card-bg, #1a1a1a);
+  font-size: 13px;
+}
+
+.season-day-chip.available { border-color: #22c55e44; }
+.season-day-chip.sold-out  { border-color: #ef444444; opacity: 0.7; }
+
+.season-chip-icon  { font-size: 15px; flex-shrink: 0; }
+.season-chip-date  { flex: 1; font-weight: 500; color: var(--text-primary, #fff); }
+.season-chip-seats { font-size: 12px; color: var(--text-secondary, #888); }
+
+.season-sold-out-msg {
+  margin-top: 12px;
+  padding: 10px 14px;
+  border-radius: 8px;
+  background: rgba(239, 68, 68, 0.1);
+  border: 1px solid rgba(239, 68, 68, 0.3);
+  color: #f87171;
+  font-size: 13px;
+}
+
+/* ── Mobile adjustments ─────────────────────────────────── */
+@media (max-width: 480px) {
+  .pass-type-tabs     { grid-template-columns: 1fr 1fr; }
+  .day-picker-grid    { grid-template-columns: 1fr 1fr; }
+  .pass-tab           { padding: 12px 8px; }
+  .pass-tab-icon      { font-size: 20px; }
+  .pass-tab-name      { font-size: 13px; }
+  .pass-tab-price     { font-size: 15px; }
+  .day-tile           { padding: 10px 12px; }
+  .day-tile-date      { font-size: 12px; }
+}
+
+/* ============================================================
+   EVENT LIST — multi-day badge, date, price chips
+   ============================================================ */
+
+/* Multi-Day badge in image overlay */
+.event-badge.multi-day {
+  background: linear-gradient(135deg, #3b82f6, #1d4ed8);
+  color: #fff;
+  font-size: 11px;
+  font-weight: 700;
+  padding: 4px 10px;
+  border-radius: 20px;
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  letter-spacing: 0.3px;
+  box-shadow: 0 2px 6px rgba(29, 78, 216, 0.45);
+}
+
+/* Date line on card */
+.event-date {
+  font-size: 12px;
+  color: var(--text-muted, #94a3b8);
+  margin: 4px 0 6px;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+/* Price chip container */
+.event-price-tag {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-top: 6px;
+}
+
+/* Individual price pill */
+.price-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  padding: 3px 10px;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 600;
+  background: rgba(16, 185, 129, 0.12);
+  color: #059669;
+  border: 1px solid rgba(16, 185, 129, 0.3);
+}
+
+/* Season pass chip — purple tint */
+.price-chip.season {
+  background: rgba(139, 92, 246, 0.12);
+  color: #7c3aed;
+  border-color: rgba(139, 92, 246, 0.3);
+}
+
+/* ============================================================
+   BOOKING SUCCESS PAGE — pass badge
+   ============================================================ */
+.success-message .booking-details p {
+  margin: 8px 0;
+  line-height: 1.5;
 }

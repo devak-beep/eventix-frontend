@@ -82,13 +82,13 @@ export const getEventById = async (eventId) => {
 // ========== BOOKING APIs ==========
 
 // Step 1: Lock seats (reserve them temporarily)
-export const lockSeats = async (eventId, seats, userId, idempotencyKey) => {
-  const response = await api.post(`/events/${eventId}/lock`, {
-    seats,
-    userId,
-    idempotencyKey,
-  });
-  return response.data; // Returns { success, lockId, expiresAt }
+// passType: "regular" (single-day) | "daily" (multi-day, one day) | "season" (multi-day, all days)
+// selectedDate: "YYYY-MM-DD" string, required for daily pass only
+export const lockSeats = async (eventId, seats, userId, idempotencyKey, passType = "regular", selectedDate = null) => {
+  const body = { seats, userId, idempotencyKey, passType };
+  if (selectedDate) body.selectedDate = selectedDate;
+  const response = await api.post(`/events/${eventId}/lock`, body);
+  return response.data; // Returns { success, lock: { _id, expiresAt, ... } }
 };
 
 // Cancel a seat lock

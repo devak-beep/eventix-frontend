@@ -4527,6 +4527,91 @@ html.dark .timer-bar {
     padding: 14px !important;
   }
 
+  /* Event Details Page */
+  .event-details {
+    padding: 0 12px 30px !important;
+  }
+
+  .event-header {
+    padding: 20px !important;
+    margin-bottom: 20px !important;
+  }
+
+  .event-header h2 {
+    font-size: 1.5rem !important;
+  }
+
+  .status-badges {
+    gap: 8px !important;
+  }
+
+  .status-badge {
+    padding: 6px 12px !important;
+    font-size: 0.75rem !important;
+  }
+
+  .event-detail-image {
+    height: 200px !important;
+  }
+
+  /* Booking Section (Confirm & Payment Pages) */
+  .booking-section {
+    padding: 20px !important;
+    margin-bottom: 30px !important;
+  }
+
+  .booking-section h3 {
+    font-size: 1.3rem !important;
+    margin-bottom: 20px !important;
+  }
+
+  .booking-step label {
+    font-size: 0.9rem !important;
+  }
+
+  .timer-container {
+    padding: 16px !important;
+  }
+
+  .timer {
+    font-size: 1.8rem !important;
+  }
+
+  /* Payment Page */
+  .payment-page {
+    padding: 0 12px !important;
+    margin: 20px auto !important;
+  }
+
+  .payment-box {
+    padding: 20px !important;
+  }
+
+  .payment-box h2 {
+    font-size: 1.5rem !important;
+  }
+
+  .payment-buttons {
+    flex-direction: column !important;
+    gap: 10px !important;
+  }
+
+  .success-btn, .failure-btn, .timeout-btn {
+    width: 100% !important;
+    min-width: auto !important;
+    padding: 10px 20px !important;
+    font-size: 0.9rem !important;
+  }
+
+  /* Success Message */
+  .success-message h2 {
+    font-size: 1.5rem !important;
+  }
+
+  .success-message p {
+    font-size: 0.9rem !important;
+  }
+
   /* My Bookings */
   .my-bookings-container {
     padding: 12px !important;
@@ -4626,25 +4711,28 @@ html.dark .timer-bar {
 
   /* Change Image Button - smaller on mobile */
   .change-image-btn {
-    padding: 6px 8px !important;
-    font-size: 10px !important;
-    gap: 4px !important;
+    padding: 4px 6px !important;
+    font-size: 9px !important;
+    gap: 3px !important;
+    border-radius: 4px !important;
   }
 
   .change-image-btn svg {
-    width: 12px !important;
-    height: 12px !important;
+    width: 10px !important;
+    height: 10px !important;
   }
 
   /* Edit button in booking-header - smaller on mobile */
   .booking-header button {
-    padding: 5px !important;
+    padding: 4px !important;
     margin-left: 4px !important;
+    min-width: 28px !important;
+    min-height: 28px !important;
   }
 
   .booking-header button svg {
-    width: 14px !important;
-    height: 14px !important;
+    width: 12px !important;
+    height: 12px !important;
   }
 
   /* Save/Cancel buttons in edit mode */
@@ -4703,15 +4791,24 @@ html.dark .timer-bar {
   }
 
   .btn-approve,
-  .btn-reject {
-    padding: 9px 14px !important;
-    font-size: 0.85rem !important;
+  .btn-reject,
+  .submit-btn,
+  .cancel-btn {
+    padding: 7px 12px !important;
+    font-size: 0.8rem !important;
+  }
+
+  /* View Details button in request cards */
+  .request-card button[style*="transparent"] {
+    padding: 5px 10px !important;
+    font-size: 0.75rem !important;
   }
 
   /* Event Creation Requests - filter tabs */
   div[style*="flexWrap"] button {
-    padding: 7px 14px !important;
-    font-size: 0.8rem !important;
+    padding: 6px 10px !important;
+    font-size: 0.75rem !important;
+    white-space: nowrap !important;
   }
 
   /* Stats/Summary Cards */
@@ -4796,6 +4893,132 @@ html.dark .timer-bar {
 
   .event-details-header h1 {
     font-size: 1.5rem;
+  }
+
+  /* Event Details Page - Small Mobile */
+  .event-details {
+    padding: 0 8px 20px !important;
+    margin: 10px auto 20px !important;
+  }
+
+  .event-header {
+    padding: 14px !important;
+    margin-bottom: 16px !important;
+  }
+
+  .event-header h2 {
+    font-size: 1.3rem !important;
+  }
+
+  .status-badges {
+    gap: 6px !important;
+  }
+
+  .status-badge {
+    padding: 5px 10px !important;
+    font-size: 0.7rem !important;
+  }
+
+  .event-detail-image {
+    height: 180px !important;
+  }
+
+  .event-meta {
+    font-size: 0.85rem !important;
+  }
+
+  /* Booking Section - Small Mobile */
+  .booking-section {
+    padding: 16px !important;
+    margin-bottom: 20px !important;
+  }
+
+  .booking-section h3 {
+    font-size: 1.2rem !important;
+    margin-bottom: 16px !important;
+  }
+
+  .booking-step label {
+    font-size: 0.85rem !important;
+    margin-bottom: 12px !important;
+  }
+
+  .booking-step > button {
+    padding: 12px !important;
+    font-size: 0.9rem !important;
+  }
+
+  /* Seat Selector */
+  .seat-stepper {
+    padding: 4px !important;
+  }
+
+  .stepper-btn {
+    width: 40px !important;
+    height: 40px !important;
+    min-width: 40px !important;
+    min-height: 40px !important;
+    max-width: 40px !important;
+    max-height: 40px !important;
+  }
+
+  .seat-display {
+    min-width: 60px !important;
+    font-size: 1.3rem !important;
+  }
+
+  /* Timer - Small Mobile */
+  .timer-container {
+    padding: 12px !important;
+  }
+
+  .timer {
+    font-size: 1.5rem !important;
+  }
+
+  .timer-value {
+    font-size: 1.5rem !important;
+  }
+
+  /* Payment Page - Small Mobile */
+  .payment-page {
+    padding: 0 8px !important;
+    margin: 10px auto !important;
+  }
+
+  .payment-box {
+    padding: 16px !important;
+  }
+
+  .payment-box h2 {
+    font-size: 1.3rem !important;
+    margin-bottom: 16px !important;
+  }
+
+  .payment-buttons {
+    flex-direction: column !important;
+    gap: 8px !important;
+    margin-top: 20px !important;
+  }
+
+  .success-btn, .failure-btn, .timeout-btn {
+    width: 100% !important;
+    min-width: auto !important;
+    padding: 10px 16px !important;
+    font-size: 0.85rem !important;
+  }
+
+  /* Success Message - Small Mobile */
+  .success-message h2 {
+    font-size: 1.3rem !important;
+  }
+
+  .success-message p {
+    font-size: 0.85rem !important;
+  }
+
+  .booking-details {
+    font-size: 0.85rem !important;
   }
 
   .event-details-content {
@@ -5013,27 +5236,45 @@ html.dark .timer-bar {
 
   /* Change Image Button - even smaller on small mobile */
   .change-image-btn {
-    padding: 5px 6px !important;
-    font-size: 9px !important;
-    gap: 3px !important;
-    top: 8px !important;
-    right: 8px !important;
+    padding: 3px 5px !important;
+    font-size: 8px !important;
+    gap: 2px !important;
+    top: 6px !important;
+    right: 6px !important;
+    border-radius: 3px !important;
   }
 
   .change-image-btn svg {
-    width: 10px !important;
-    height: 10px !important;
+    width: 8px !important;
+    height: 8px !important;
+  }
+
+  /* Hide button text on very small screens, show icon only */
+  .change-image-btn {
+    font-size: 0 !important; /* Hide text */
+    padding: 6px !important; /* Make it square for icon only */
+    min-width: 28px !important;
+    min-height: 28px !important;
+    justify-content: center !important;
+  }
+
+  .change-image-btn svg {
+    width: 14px !important;
+    height: 14px !important;
+    margin: 0 !important;
   }
 
   /* Edit button - even smaller */
   .booking-header button {
-    padding: 4px !important;
-    margin-left: 3px !important;
+    padding: 3px !important;
+    margin-left: 2px !important;
+    min-width: 24px !important;
+    min-height: 24px !important;
   }
 
   .booking-header button svg {
-    width: 12px !important;
-    height: 12px !important;
+    width: 10px !important;
+    height: 10px !important;
   }
 
   /* Save/Cancel buttons - smaller */
@@ -5104,9 +5345,20 @@ html.dark .timer-bar {
   }
 
   .btn-approve,
-  .btn-reject {
-    padding: 8px 12px !important;
-    font-size: 0.8rem !important;
+  .btn-reject,
+  .submit-btn,
+  .cancel-btn {
+    padding: 6px 10px !important;
+    font-size: 0.75rem !important;
+    width: 100% !important;
+  }
+
+  /* View Details button in request cards */
+  .request-card button[style*="transparent"] {
+    padding: 5px 8px !important;
+    font-size: 0.7rem !important;
+    width: 100% !important;
+    margin-top: 8px !important;
   }
 
   /* Event Creation Requests - filter tabs */
@@ -5116,9 +5368,10 @@ html.dark .timer-bar {
 
   /* Filter buttons for event requests */
   div[style*="flexWrap"] button {
-    padding: 6px 12px !important;
-    font-size: 0.75rem !important;
-    border-radius: 16px !important;
+    padding: 5px 8px !important;
+    font-size: 0.7rem !important;
+    border-radius: 14px !important;
+    white-space: nowrap !important;
   }
 
   .booking-card img {

@@ -154,7 +154,7 @@ function Navbar({ user, onLogout, onUserUpdate, isDarkMode, onToggleTheme }) {
                     onClick={() => handleNavClick("/bookings")}
                   >
                     <span className="di-icon">📊</span>
-                    <span>My Dashboard</span>
+                    <span>Dashboard</span>
                   </button>
                   <button
                     className="dropdown-item"

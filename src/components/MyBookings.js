@@ -646,7 +646,7 @@ function MyBookings({ userId }) {
 
   return (
     <div className="my-bookings">
-      <h2>My Dashboard</h2>
+      <h2>Dashboard</h2>
 
       {/* Toggle between bookings and events */}
       <div className="tab-toggle">

@@ -5732,6 +5732,11 @@ html.dark .timer-bar {
   gap: 12px;
 }
 
+/* Single pass option - full width */
+.pass-type-tabs:has(.pass-tab:only-child) {
+  grid-template-columns: 1fr;
+}
+
 .pass-tab {
   display: flex;
   flex-direction: column;

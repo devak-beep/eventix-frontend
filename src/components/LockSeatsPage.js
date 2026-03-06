@@ -93,6 +93,7 @@ function LockSeatsPage({ userId }) {
         const dailyEnabled  = ev.passOptions?.dailyPass?.enabled;
         const seasonEnabled = ev.passOptions?.seasonPass?.enabled;
 
+        // Set default pass type based on what's enabled
         if (dailyEnabled && !seasonEnabled) {
           setPassType("daily");
           // Pre-select first available date
@@ -100,7 +101,7 @@ function LockSeatsPage({ userId }) {
           if (first) setSelectedDate(first);
         } else if (seasonEnabled && !dailyEnabled) {
           setPassType("season");
-        } else {
+        } else if (dailyEnabled && seasonEnabled) {
           // Both available → default to daily
           setPassType("daily");
           const first = range.find((k) => getDaySeats(ev.dailySeats, k)?.available > 0);
@@ -311,32 +312,38 @@ function LockSeatsPage({ userId }) {
             <h3>Book Your Tickets</h3>
             {error && <div className="error">{error}</div>}
 
-            {/* ── Pass Type Selector (multi-day + both options) ── */}
-            {isMultiDay && bothEnabled && (
+            {/* ── Pass Type Selector (multi-day with pass options) ── */}
+            {isMultiDay && (dailyEnabled || seasonEnabled) && (
               <div className="pass-type-selector">
-                <label className="pass-type-label">Select Pass Type</label>
+                <label className="pass-type-label">
+                  {bothEnabled ? "Select Pass Type" : dailyEnabled ? "Day Pass" : "Season Pass"}
+                </label>
                 <div className="pass-type-tabs">
-                  <button
-                    className={`pass-tab ${passType === "daily" ? "active" : ""}`}
-                    onClick={() => { setPassType("daily"); setSeats(1); }}
-                  >
-                    <span className="pass-tab-icon">🎟️</span>
-                    <span className="pass-tab-name">Day Pass</span>
-                    <span className="pass-tab-price">₹{dailyPrice}</span>
-                    <span className="pass-tab-desc">Attend one day</span>
-                  </button>
-                  <button
-                    className={`pass-tab ${passType === "season" ? "active" : ""} ${isSeasonSoldOut ? "disabled" : ""}`}
-                    onClick={() => { if (!isSeasonSoldOut) { setPassType("season"); setSeats(1); } }}
-                    disabled={isSeasonSoldOut}
-                  >
-                    <span className="pass-tab-icon">🌟</span>
-                    <span className="pass-tab-name">Season Pass</span>
-                    <span className="pass-tab-price">₹{seasonPrice}</span>
-                    <span className="pass-tab-desc">
-                      {isSeasonSoldOut ? "Sold out" : `All ${dateRange.length} days`}
-                    </span>
-                  </button>
+                  {dailyEnabled && (
+                    <button
+                      className={`pass-tab ${passType === "daily" ? "active" : ""}`}
+                      onClick={() => { setPassType("daily"); setSeats(1); }}
+                    >
+                      <span className="pass-tab-icon">🎟️</span>
+                      <span className="pass-tab-name">Day Pass</span>
+                      <span className="pass-tab-price">₹{dailyPrice}</span>
+                      <span className="pass-tab-desc">Attend one day</span>
+                    </button>
+                  )}
+                  {seasonEnabled && (
+                    <button
+                      className={`pass-tab ${passType === "season" ? "active" : ""} ${isSeasonSoldOut ? "disabled" : ""}`}
+                      onClick={() => { if (!isSeasonSoldOut) { setPassType("season"); setSeats(1); } }}
+                      disabled={isSeasonSoldOut}
+                    >
+                      <span className="pass-tab-icon">🌟</span>
+                      <span className="pass-tab-name">Season Pass</span>
+                      <span className="pass-tab-price">₹{seasonPrice}</span>
+                      <span className="pass-tab-desc">
+                        {isSeasonSoldOut ? "Sold out" : `All ${dateRange.length} days`}
+                      </span>
+                    </button>
+                  )}
                 </div>
               </div>
             )}

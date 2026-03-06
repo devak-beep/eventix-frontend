@@ -388,16 +388,18 @@ function EventList() {
                   <div className="event-price-tag">
                     {isMultiDay ? (
                       <>
-                        {event.passOptions?.dailyPass?.enabled && (
-                          <span className="price-chip">
-                            🎟️ Day ₹{event.passOptions.dailyPass.price}
-                          </span>
-                        )}
-                        {event.passOptions?.seasonPass?.enabled && (
-                          <span className="price-chip season">
-                            🌟 Season ₹{event.passOptions.seasonPass.price}
-                          </span>
-                        )}
+                        <span className="price-chip">
+                          🎟️ Day{" "}
+                          {(event.passOptions?.dailyPass?.price ?? 0) > 0
+                            ? `₹${event.passOptions.dailyPass.price}`
+                            : "Free"}
+                        </span>
+                        <span className="price-chip season">
+                          🌟 Season{" "}
+                          {(event.passOptions?.seasonPass?.price ?? 0) > 0
+                            ? `₹${event.passOptions.seasonPass.price}`
+                            : "Free"}
+                        </span>
                       </>
                     ) : (
                       <span className="price-chip">

@@ -1460,19 +1460,25 @@ function MyBookings({ userId }) {
                     <p>
                       <strong>Ticket Price:</strong>{" "}
                       {event.eventType === "multi-day" ? (
-                        <>
-                          {event.passOptions?.dailyPass?.enabled && (
-                            <span>🎫 Day Pass: ₹{event.passOptions.dailyPass.price}</span>
-                          )}
-                          {event.passOptions?.dailyPass?.enabled && event.passOptions?.seasonPass?.enabled && (
-                            <span> | </span>
-                          )}
-                          {event.passOptions?.seasonPass?.enabled && (
-                            <span>🌟 Season Pass: ₹{event.passOptions.seasonPass.price}</span>
-                          )}
-                        </>
+                        <span style={{ display: "inline-flex", gap: "8px", flexWrap: "wrap", alignItems: "center" }}>
+                          <span>
+                            🎟️ Day Pass:{" "}
+                            {(event.passOptions?.dailyPass?.price ?? 0) > 0
+                              ? `₹${event.passOptions.dailyPass.price}`
+                              : "Free"}
+                          </span>
+                          <span style={{ opacity: 0.4 }}>|</span>
+                          <span>
+                            🌟 Season Pass:{" "}
+                            {(event.passOptions?.seasonPass?.price ?? 0) > 0
+                              ? `₹${event.passOptions.seasonPass.price}`
+                              : "Free"}
+                          </span>
+                        </span>
+                      ) : (event.amount || 0) > 0 ? (
+                        `₹${event.amount}`
                       ) : (
-                        `₹${event.amount || 0}`
+                        "Free"
                       )}
                     </p>
                     <p className="total-collection">

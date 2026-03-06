@@ -1458,12 +1458,28 @@ function MyBookings({ userId }) {
                         )}
                     </p>
                     <p>
-                      <strong>Ticket Price:</strong> ₹{event.amount || 0}
+                      <strong>Ticket Price:</strong>{" "}
+                      {event.eventType === "multi-day" ? (
+                        <>
+                          {event.passOptions?.dailyPass?.enabled && (
+                            <span>🎫 Day Pass: ₹{event.passOptions.dailyPass.price}</span>
+                          )}
+                          {event.passOptions?.dailyPass?.enabled && event.passOptions?.seasonPass?.enabled && (
+                            <span> | </span>
+                          )}
+                          {event.passOptions?.seasonPass?.enabled && (
+                            <span>🌟 Season Pass: ₹{event.passOptions.seasonPass.price}</span>
+                          )}
+                        </>
+                      ) : (
+                        `₹${event.amount || 0}`
+                      )}
                     </p>
                     <p className="total-collection">
                       <strong>Total Collection:</strong> ₹
-                      {(event.totalSeats - event.availableSeats) *
-                        (event.amount || 0)}
+                      {event.eventType === "multi-day"
+                        ? "N/A (varies by pass type)"
+                        : (event.totalSeats - event.availableSeats) * (event.amount || 0)}
                     </p>
 
                     {/* Show who created and approved for events created via request */}

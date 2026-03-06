@@ -8,11 +8,6 @@ import { v4 as uuidv4 } from "uuid";
 
 // ─── Helpers ─────────────────────────────────────────────────────────────────
 
-/** Convert a Date or ISO string → "YYYY-MM-DD" (UTC) */
-function toDateKey(date) {
-  return new Date(date).toISOString().split("T")[0];
-}
-
 /** Build array of ISO date strings ["YYYY-MM-DD", ...] from start to end (inclusive). */
 function buildDateRange(startDate, endDate) {
   const dates = [];

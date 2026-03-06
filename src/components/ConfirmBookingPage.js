@@ -79,6 +79,10 @@ function ConfirmBookingPage() {
       const response = await confirmBooking(lockId);
       bookingConfirmedRef.current = true;
 
+      if (!response.booking || !response.booking._id) {
+        throw new Error(response.message || "Booking confirmation failed — please try again");
+      }
+
       // Effective price per seat (from state passed by LockSeatsPage)
       const effectivePrice = passPrice ?? amount ?? 0;
 

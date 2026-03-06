@@ -800,7 +800,7 @@ function MyBookings({ userId }) {
                     booking.event?._id && (
                       <p>
                         <strong>Event ID:</strong>{" "}
-                        <code>{booking.event._id}</code>
+                        <code>{booking.event?._id}</code>
                       </p>
                     )}
                   <p>
@@ -811,7 +811,7 @@ function MyBookings({ userId }) {
                     booking.user?._id && (
                       <p>
                         <strong>User ID:</strong>{" "}
-                        <code>{booking.user._id}</code>
+                        <code>{booking.user?._id}</code>
                       </p>
                     )}
                   <p>
@@ -1022,10 +1022,10 @@ function MyBookings({ userId }) {
               // Check if user can update this event's image (superadmin: any, admin: created/approved, user: own)
               const isCreator =
                 event.createdBy &&
-                (event.createdBy._id === userId || event.createdBy === userId);
+                (event.createdBy?._id === userId || event.createdBy === userId);
               const isApprover =
                 event.approvedBy &&
-                (event.approvedBy._id === userId ||
+                (event.approvedBy?._id === userId ||
                   event.approvedBy === userId);
               const isSuperAdmin = userRole === "superAdmin";
               const isAdmin = userRole === "admin";
@@ -1273,14 +1273,14 @@ function MyBookings({ userId }) {
                         {event.createdBy && (
                           <p>
                             <strong>Created By:</strong> {event.createdBy.name}{" "}
-                            (<code>{event.createdBy._id}</code>)
+                            (<code>{event.createdBy?._id}</code>)
                           </p>
                         )}
                         {event.approvedBy && (
                           <p>
                             <strong>Approved By:</strong>{" "}
                             {event.approvedBy.name} (
-                            <code>{event.approvedBy._id}</code>)
+                            <code>{event.approvedBy?._id}</code>)
                           </p>
                         )}
                       </>

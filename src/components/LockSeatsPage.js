@@ -207,6 +207,7 @@ function LockSeatsPage({ userId }) {
       );
 
       const lock = response.lock;
+      if (!lock || !lock._id) throw new Error(response.message || "Seat lock failed — please try again");
       setLockCreated(true);
       setCurrentLockId(lock._id);
 

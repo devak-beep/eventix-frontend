@@ -762,213 +762,206 @@ function MyBookings({ userId }) {
               <div
                 key={booking._id}
                 className="booking-card"
-                style={{ display: "flex", gap: "20px", alignItems: "center" }}
               >
-                <div style={{ flex: 1 }}>
-                  <div className="booking-header">
-                    <h3>{booking.event?.name || booking.event || "Event"}</h3>
-                    <span
-                      className="status-badge"
-                      style={{
-                        backgroundColor: getStatusColor(booking.status),
-                      }}
-                    >
-                      {booking.status}
-                    </span>
-                  </div>
-
-                  <div className="booking-details">
-                    <p>
-                      <strong>Transaction ID:</strong> <code>#{booking._id.slice(-6)}</code>
-                    </p>
-                    <p>
-                      <strong>Booking ID:</strong> <code>{booking._id}</code>
-                    </p>
-                    <p>
-                      <strong>Event:</strong>{" "}
-                      {booking.event?.name || booking.event || "N/A"}
-                    </p>
-                    {(userRole === "admin" || userRole === "superAdmin") &&
-                      booking.event?._id && (
-                        <p>
-                          <strong>Event ID:</strong>{" "}
-                          <code>{booking.event._id}</code>
-                        </p>
-                      )}
-                    <p>
-                      <strong>User:</strong>{" "}
-                      {booking.user?.name || booking.user || "N/A"}
-                    </p>
-                    {(userRole === "admin" || userRole === "superAdmin") &&
-                      booking.user?._id && (
-                        <p>
-                          <strong>User ID:</strong>{" "}
-                          <code>{booking.user._id}</code>
-                        </p>
-                      )}
-                    <p>
-                      <strong>Seats:</strong>{" "}
-                      {Array.isArray(booking.seats)
-                        ? booking.seats.length
-                        : booking.seats}
-                    </p>
-                    {booking.amount && (
-                      <p>
-                        <strong>Amount Paid:</strong> ₹{booking.amount}
-                      </p>
-                    )}
-                    <p>
-                      <strong>Created:</strong>{" "}
-                      {new Date(booking.createdAt).toLocaleString("en-GB")}
-                    </p>
-
-                    {/* Show payment expiry warning for pending bookings */}
-                    {booking.status === "PAYMENT_PENDING" &&
-                      booking.paymentExpiresAt && (
-                        <p
-                          style={{
-                            color:
-                              new Date(booking.paymentExpiresAt) < new Date()
-                                ? "#ef4444"
-                                : "#f59e0b",
-                            fontWeight: "bold",
-                            padding: "8px",
-                            background:
-                              new Date(booking.paymentExpiresAt) < new Date()
-                                ? "rgba(239, 68, 68, 0.1)"
-                                : "rgba(245, 158, 11, 0.1)",
-                            borderRadius: "6px",
-                            marginTop: "8px",
-                          }}
-                        >
-                          {new Date(booking.paymentExpiresAt) < new Date()
-                            ? "⚠️ Payment window expired! Seats will be released."
-                            : `⏰ Complete payment before: ${new Date(booking.paymentExpiresAt).toLocaleString("en-GB")}`}
-                        </p>
-                      )}
-
-                    {/* Show payment expiry for other statuses */}
-                    {booking.status !== "PAYMENT_PENDING" &&
-                      booking.paymentExpiresAt && (
-                        <p>
-                          <strong>Payment Expires:</strong>{" "}
-                          {new Date(booking.paymentExpiresAt).toLocaleString(
-                            "en-GB",
-                          )}
-                        </p>
-                      )}
-                  </div>
-
-                  {/* Show Pay Now button for PAYMENT_PENDING bookings */}
-                  {booking.status === "PAYMENT_PENDING" && (
-                    <div
-                      style={{
-                        display: "flex",
-                        gap: "10px",
-                        marginTop: "10px",
-                      }}
-                    >
-                      <button
-                        onClick={() => {
-                          // Navigate to payment page with booking details
-                          navigate(`/booking/payment/${booking._id}`, {
-                            state: {
-                              eventId: booking.event?._id || booking.event,
-                              seats: Array.isArray(booking.seats)
-                                ? booking.seats.length
-                                : booking.seats,
-                              eventName: booking.event?.name || "Event",
-                              amount: booking.event?.amount || 100,
-                              lockId:
-                                booking.seatLockId?._id || booking.seatLockId,
-                            },
-                          });
-                        }}
-                        className="pay-now-btn"
-                        style={{
-                          background:
-                            "linear-gradient(135deg, #10b981, #059669)",
-                          color: "white",
-                          border: "none",
-                          padding: "10px 20px",
-                          borderRadius: "8px",
-                          cursor: "pointer",
-                          fontWeight: "600",
-                        }}
-                      >
-                        💳 Pay Now
-                      </button>
-                      <button
-                        onClick={async () => {
-                          // Prevent double-clicks
-                          if (processingBookingId === booking._id) return;
-                          setProcessingBookingId(booking._id);
-
-                          try {
-                            // Cancel the pending booking and release seats
-                            await axios.post(
-                              `${API_BASE_URL}/razorpay/payment-failed`,
-                              {
-                                bookingId: booking._id,
-                                error: "Cancelled by user from dashboard",
-                              },
-                            );
-                            setSuccess("Booking cancelled, seats released.");
-                            fetchBookings();
-                          } catch (err) {
-                            setError("Failed to cancel booking");
-                          } finally {
-                            setProcessingBookingId(null);
-                          }
-                        }}
-                        disabled={processingBookingId === booking._id}
-                        className="cancel-pending-btn"
-                        style={{
-                          background:
-                            processingBookingId === booking._id
-                              ? "#999"
-                              : "#666",
-                          color: "white",
-                          border: "none",
-                          padding: "10px 20px",
-                          borderRadius: "8px",
-                          cursor:
-                            processingBookingId === booking._id
-                              ? "not-allowed"
-                              : "pointer",
-                        }}
-                      >
-                        {processingBookingId === booking._id
-                          ? "Cancelling..."
-                          : "Cancel"}
-                      </button>
-                    </div>
-                  )}
-
-                  {/* Show cancel button only for confirmed bookings */}
-                  {booking.status === "CONFIRMED" && (
-                    <button
-                      onClick={() => openCancelModal(booking)}
-                      disabled={cancelling}
-                      className="cancel-btn"
-                    >
-                      Cancel Booking (50% refund)
-                    </button>
-                  )}
+                <div className="booking-header">
+                  <h3>{booking.event?.name || booking.event || "Event"}</h3>
+                  <span
+                    className="status-badge"
+                    style={{
+                      backgroundColor: getStatusColor(booking.status),
+                    }}
+                  >
+                    {booking.status}
+                  </span>
                 </div>
 
                 {booking.event?.image && (
-                  <div
+                  <img
+                    src={booking.event.image}
+                    alt={booking.event?.name || "Event"}
                     style={{
-                      width: "200px",
-                      height: "280px",
-                      backgroundImage: `url(${booking.event.image})`,
-                      backgroundSize: "cover",
-                      backgroundPosition: "center",
+                      width: "100%",
+                      height: "200px",
+                      objectFit: "cover",
                       borderRadius: "8px",
-                      flexShrink: 0,
+                      marginBottom: "15px",
                     }}
                   />
+                )}
+
+                <div className="booking-details">
+                  <p>
+                    <strong>Transaction ID:</strong> <code>#{booking._id.slice(-6)}</code>
+                  </p>
+                  <p>
+                    <strong>Booking ID:</strong> <code>{booking._id}</code>
+                  </p>
+                  {(userRole === "admin" || userRole === "superAdmin") &&
+                    booking.event?._id && (
+                      <p>
+                        <strong>Event ID:</strong>{" "}
+                        <code>{booking.event._id}</code>
+                      </p>
+                    )}
+                  <p>
+                    <strong>User:</strong>{" "}
+                    {booking.user?.name || booking.user || "N/A"}
+                  </p>
+                  {(userRole === "admin" || userRole === "superAdmin") &&
+                    booking.user?._id && (
+                      <p>
+                        <strong>User ID:</strong>{" "}
+                        <code>{booking.user._id}</code>
+                      </p>
+                    )}
+                  <p>
+                    <strong>Seats:</strong>{" "}
+                    {Array.isArray(booking.seats)
+                      ? booking.seats.length
+                      : booking.seats}
+                  </p>
+                  {booking.amount && (
+                    <p>
+                      <strong>Amount Paid:</strong> ₹{booking.amount}
+                    </p>
+                  )}
+                  <p>
+                    <strong>Created:</strong>{" "}
+                    {new Date(booking.createdAt).toLocaleString("en-GB")}
+                  </p>
+
+                  {/* Show payment expiry warning for pending bookings */}
+                  {booking.status === "PAYMENT_PENDING" &&
+                    booking.paymentExpiresAt && (
+                      <p
+                        style={{
+                          color:
+                            new Date(booking.paymentExpiresAt) < new Date()
+                              ? "#ef4444"
+                              : "#f59e0b",
+                          fontWeight: "bold",
+                          padding: "8px",
+                          background:
+                            new Date(booking.paymentExpiresAt) < new Date()
+                              ? "rgba(239, 68, 68, 0.1)"
+                              : "rgba(245, 158, 11, 0.1)",
+                          borderRadius: "6px",
+                          marginTop: "8px",
+                        }}
+                      >
+                        {new Date(booking.paymentExpiresAt) < new Date()
+                          ? "⚠️ Payment window expired! Seats will be released."
+                          : `⏰ Complete payment before: ${new Date(booking.paymentExpiresAt).toLocaleString("en-GB")}`}
+                      </p>
+                    )}
+
+                  {/* Show payment expiry for other statuses */}
+                  {booking.status !== "PAYMENT_PENDING" &&
+                    booking.paymentExpiresAt && (
+                      <p>
+                        <strong>Payment Expires:</strong>{" "}
+                        {new Date(booking.paymentExpiresAt).toLocaleString(
+                          "en-GB",
+                        )}
+                      </p>
+                    )}
+                </div>
+
+                {/* Show Pay Now button for PAYMENT_PENDING bookings */}
+                {booking.status === "PAYMENT_PENDING" && (
+                  <div
+                    style={{
+                      display: "flex",
+                      gap: "10px",
+                      marginTop: "10px",
+                    }}
+                  >
+                    <button
+                      onClick={() => {
+                        // Navigate to payment page with booking details
+                        navigate(`/booking/payment/${booking._id}`, {
+                          state: {
+                            eventId: booking.event?._id || booking.event,
+                            seats: Array.isArray(booking.seats)
+                              ? booking.seats.length
+                              : booking.seats,
+                            eventName: booking.event?.name || "Event",
+                            amount: booking.event?.amount || 100,
+                            lockId:
+                              booking.seatLockId?._id || booking.seatLockId,
+                          },
+                        });
+                      }}
+                      className="pay-now-btn"
+                      style={{
+                        background:
+                          "linear-gradient(135deg, #10b981, #059669)",
+                        color: "white",
+                        border: "none",
+                        padding: "10px 20px",
+                        borderRadius: "8px",
+                        cursor: "pointer",
+                        fontWeight: "600",
+                      }}
+                    >
+                      💳 Pay Now
+                    </button>
+                    <button
+                      onClick={async () => {
+                        // Prevent double-clicks
+                        if (processingBookingId === booking._id) return;
+                        setProcessingBookingId(booking._id);
+
+                        try {
+                          // Cancel the pending booking and release seats
+                          await axios.post(
+                            `${API_BASE_URL}/razorpay/payment-failed`,
+                            {
+                              bookingId: booking._id,
+                              error: "Cancelled by user from dashboard",
+                            },
+                          );
+                          setSuccess("Booking cancelled, seats released.");
+                          fetchBookings();
+                        } catch (err) {
+                          setError("Failed to cancel booking");
+                        } finally {
+                          setProcessingBookingId(null);
+                        }
+                      }}
+                      disabled={processingBookingId === booking._id}
+                      className="cancel-pending-btn"
+                      style={{
+                        background:
+                          processingBookingId === booking._id
+                            ? "#999"
+                            : "#666",
+                        color: "white",
+                        border: "none",
+                        padding: "10px 20px",
+                        borderRadius: "8px",
+                        cursor:
+                          processingBookingId === booking._id
+                            ? "not-allowed"
+                            : "pointer",
+                      }}
+                    >
+                      {processingBookingId === booking._id
+                        ? "Cancelling..."
+                        : "Cancel"}
+                    </button>
+                  </div>
+                )}
+
+                {/* Show cancel button only for confirmed bookings */}
+                {booking.status === "CONFIRMED" && (
+                  <button
+                    onClick={() => openCancelModal(booking)}
+                    disabled={cancelling}
+                    className="cancel-btn"
+                  >
+                    Cancel Booking (50% refund)
+                  </button>
                 )}
               </div>
             ))}

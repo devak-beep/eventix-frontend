@@ -5890,15 +5890,73 @@ html.dark .timer-bar {
 }
 
 /* ── Mobile adjustments ─────────────────────────────────── */
+@media (max-width: 768px) {
+  .pass-type-tabs {
+    gap: 10px;
+  }
+  
+  .pass-tab {
+    padding: 16px 12px;
+  }
+  
+  .pass-tab-icon { font-size: 24px; }
+  .pass-tab-name { font-size: 14px; }
+  .pass-tab-price { font-size: 16px; }
+  .pass-tab-desc { font-size: 11px; }
+  
+  .day-picker-grid {
+    grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+    gap: 10px;
+  }
+  
+  .day-tile {
+    padding: 12px 14px;
+  }
+  
+  .day-tile-date { font-size: 13px; }
+  .day-tile-seats { font-size: 11px; }
+  
+  .season-day-chip {
+    padding: 10px 14px;
+    font-size: 12px;
+  }
+  
+  .season-chip-icon { font-size: 14px; }
+  .season-chip-date { font-size: 13px; }
+  .season-chip-seats { font-size: 11px; }
+}
+
 @media (max-width: 480px) {
-  .pass-type-tabs     { grid-template-columns: 1fr 1fr; }
-  .day-picker-grid    { grid-template-columns: 1fr 1fr; }
-  .pass-tab           { padding: 12px 8px; }
-  .pass-tab-icon      { font-size: 20px; }
-  .pass-tab-name      { font-size: 13px; }
-  .pass-tab-price     { font-size: 15px; }
-  .day-tile           { padding: 10px 12px; }
-  .day-tile-date      { font-size: 12px; }
+  .pass-type-tabs {
+    grid-template-columns: 1fr;
+    gap: 10px;
+  }
+  
+  .pass-tab {
+    padding: 14px 12px;
+  }
+  
+  .pass-tab-icon { font-size: 22px; }
+  .pass-tab-name { font-size: 13px; }
+  .pass-tab-price { font-size: 15px; }
+  
+  .day-picker-grid {
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+  }
+  
+  .day-tile {
+    padding: 10px 12px;
+  }
+  
+  .day-tile-date { font-size: 12px; }
+  .day-tile-seats { font-size: 10px; }
+  
+  .season-day-chip {
+    padding: 10px 12px;
+  }
+  
+  .season-chip-date { font-size: 12px; }
 }
 
 /* ============================================================

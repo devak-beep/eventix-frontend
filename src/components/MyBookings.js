@@ -1078,7 +1078,7 @@ function MyBookings({ userId }) {
                         style={{
                           position: "absolute",
                           top: "10px",
-                          right: "10px",
+                          left: "10px",
                           padding: "8px 12px",
                           backgroundColor: "rgba(0, 0, 0, 0.7)",
                           color: "white",
@@ -1091,6 +1091,7 @@ function MyBookings({ userId }) {
                           alignItems: "center",
                           gap: "6px",
                           transition: "all 0.2s ease",
+                          width: "auto",
                         }}
                         onMouseEnter={(e) => {
                           e.target.style.backgroundColor =

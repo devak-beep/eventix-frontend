@@ -363,6 +363,7 @@ function EventRequests() {
 
                 {/* Right: Status & Actions */}
                 <div
+                  className="event-request-actions"
                   style={{
                     display:       "flex",
                     flexDirection: "column",
@@ -374,7 +375,7 @@ function EventRequests() {
                   {getStatusBadge(request.status)}
 
                   {request.status === "PENDING" && (
-                    <div style={{ display: "flex", gap: "8px", flexWrap: "wrap", justifyContent: "flex-end" }}>
+                    <div className="approve-reject-buttons" style={{ display: "flex", gap: "8px", flexWrap: "wrap", justifyContent: "flex-end" }}>
                       <button
                         className="submit-btn"
                         onClick={() => {

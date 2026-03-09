@@ -4738,6 +4738,12 @@ html.dark .timer-bar {
     width: 100% !important;
   }
 
+  /* Change Image button - keep compact on mobile */
+  .booking-card .change-image-btn {
+    width: auto !important;
+    position: absolute !important;
+  }
+
   /* Event Cards in Dashboard */
   .event-card-dashboard {
     padding: 12px !important;
@@ -5500,21 +5506,37 @@ html.dark .timer-bar {
     gap: 8px !important;
   }
 
+  /* Approve/Reject buttons side by side on mobile */
+  .approve-reject-buttons {
+    width: 100% !important;
+    justify-content: center !important;
+  }
+
+  .approve-reject-buttons button {
+    flex: 1 !important;
+  }
+
   .btn-approve,
   .btn-reject,
   .submit-btn,
   .cancel-btn {
-    padding: 6px 10px !important;
-    font-size: 0.75rem !important;
+    padding: 8px 12px !important;
+    font-size: 0.8rem !important;
+  }
+
+  /* View Details button - full width below */
+  .event-request-actions > button[style*="transparent"] {
     width: 100% !important;
+    padding: 8px !important;
+    font-size: 0.8rem !important;
   }
 
   /* View Details button in request cards */
   .request-card button[style*="transparent"] {
-    padding: 5px 8px !important;
-    font-size: 0.7rem !important;
+    padding: 8px !important;
+    font-size: 0.8rem !important;
     width: 100% !important;
-    margin-top: 8px !important;
+    margin-top: 0 !important;
   }
 
   /* Event request card - better mobile layout */

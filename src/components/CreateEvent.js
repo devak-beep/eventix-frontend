@@ -401,20 +401,7 @@ function CreateEvent({ userId }) {
                     key={value}
                     type="button"
                     onClick={() => handleEventTypeChange(value)}
-                    style={{
-                      flex:         "1",
-                      minWidth:     "120px",
-                      padding:      "12px 16px",
-                      borderRadius: "10px",
-                      border:       active ? "2px solid #6366f1" : "1px solid #e2e8f0",
-                      background:   active ? "#eef2ff" : "#f8fafc",
-                      color:        active ? "#6366f1" : "#64748b",
-                      cursor:       "pointer",
-                      fontWeight:   active ? "700" : "500",
-                      fontSize:     "15px",
-                      transition:   "all 0.2s",
-                      textAlign:    "center",
-                    }}
+                    className={`event-duration-btn ${active ? "active" : ""}`}
                   >
                     {icon} {label}
                   </button>

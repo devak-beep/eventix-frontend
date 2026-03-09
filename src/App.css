@@ -1780,6 +1780,7 @@ html.dark .logo-circle-large.logo-circle-3 {
   backdrop-filter: blur(8px);
   -webkit-backdrop-filter: blur(8px);
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+  width: auto;
 }
 
 .change-image-btn:hover {
@@ -2660,6 +2661,25 @@ html.dark .stepper-btn:hover:not(:disabled) {
   margin-bottom: 20px;
   font-size: 24px;
   font-weight: 700;
+}
+
+/* Booking event image - mobile/tablet default */
+.booking-event-image {
+  width: 100%;
+  height: 200px;
+  object-fit: cover;
+  border-radius: 8px;
+  margin-bottom: 15px;
+}
+
+/* Desktop/laptop - show full image without cropping */
+@media (min-width: 1024px) {
+  .booking-event-image {
+    height: auto;
+    max-height: 350px;
+    object-fit: contain;
+    background-color: #f8fafc;
+  }
 }
 
 .booking-card p {
@@ -4737,6 +4757,9 @@ html.dark .timer-bar {
     font-size: 9px !important;
     gap: 3px !important;
     border-radius: 4px !important;
+    width: auto !important;
+    left: 10px !important;
+    right: auto !important;
   }
 
   .change-image-btn svg {
@@ -5494,6 +5517,35 @@ html.dark .timer-bar {
     margin-top: 8px !important;
   }
 
+  /* Event request card - better mobile layout */
+  .request-card img[style*="56px"] {
+    width: 100% !important;
+    height: 120px !important;
+    max-width: 100% !important;
+    object-fit: cover !important;
+    margin-bottom: 10px !important;
+  }
+
+  .event-request-header {
+    flex-direction: column !important;
+    align-items: flex-start !important;
+  }
+
+  .event-request-content {
+    flex-direction: column !important;
+  }
+
+  .request-card h3 {
+    font-size: 1rem !important;
+    line-height: 1.3 !important;
+    word-break: break-word !important;
+  }
+
+  .request-card p {
+    font-size: 0.8rem !important;
+    line-height: 1.4 !important;
+  }
+
   /* Event Creation Requests - filter tabs */
   .my-bookings-container h2 {
     font-size: 1.1rem !important;
@@ -5967,16 +6019,18 @@ html.dark .timer-bar {
 .event-badge.multi-day {
   background: linear-gradient(135deg, #3b82f6, #1d4ed8);
   color: #fff;
-  font-size: 11px;      /* matches .event-badge.visibility */
+  font-size: 11px;
   font-weight: 700;
-  padding: 6px 12px;   /* matches .event-badge.visibility */
+  padding: 6px 12px;
   border-radius: 20px;
   position: absolute;
   top: 10px;
   left: 10px;
-  right: auto;         /* ← prevents inheriting right:15px from base, which was stretching it */
+  right: auto;
+  width: auto;
   letter-spacing: 0.3px;
   box-shadow: 0 2px 6px rgba(29, 78, 216, 0.45);
+  display: inline-block;
 }
 
 /* Date line on card */

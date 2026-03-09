@@ -275,6 +275,7 @@ function EventRequests() {
             >
               {/* ── Card header row ──────────────────────────────────── */}
               <div
+                className="event-request-content"
                 style={{
                   display:        "flex",
                   justifyContent: "space-between",
@@ -286,6 +287,7 @@ function EventRequests() {
                 {/* Left: Event Info */}
                 <div style={{ flex: "1", minWidth: "200px" }}>
                   <div
+                    className="event-request-header"
                     style={{
                       display:     "flex",
                       alignItems:  "center",

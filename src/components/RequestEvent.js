@@ -437,13 +437,9 @@ function RequestEvent({ userId }) {
                     minWidth:     "120px",
                     padding:      "12px 16px",
                     borderRadius: "10px",
-                    border:       active
-                      ? "2px solid var(--accent-primary)"
-                      : "1px solid var(--border-color)",
-                    background:   active
-                      ? "rgba(var(--accent-primary-rgb, 99,102,241),0.12)"
-                      : "var(--bg-secondary)",
-                    color:        active ? "var(--accent-primary)" : "var(--text-secondary)",
+                    border:       active ? "2px solid #6366f1" : "1px solid #e2e8f0",
+                    background:   active ? "#eef2ff" : "#f8fafc",
+                    color:        active ? "#6366f1" : "#64748b",
                     cursor:       "pointer",
                     fontWeight:   active ? "700" : "500",
                     fontSize:     "15px",

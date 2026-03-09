@@ -779,13 +779,7 @@ function MyBookings({ userId }) {
                   <img
                     src={booking.event.image}
                     alt={booking.event?.name || "Event"}
-                    style={{
-                      width: "100%",
-                      height: "200px",
-                      objectFit: "cover",
-                      borderRadius: "8px",
-                      marginBottom: "15px",
-                    }}
+                    className="booking-event-image"
                   />
                 )}
 

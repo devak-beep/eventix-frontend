@@ -4396,23 +4396,27 @@ html.dark .timer-bar {
     font-size: 0.7rem !important;
   }
 
-  /* Category buttons - show 2-3 at once */
+  /* Category buttons - show 1 at a time on mobile */
   .category-container {
     padding: 8px 0 !important;
+    gap: 8px !important;
   }
 
   .category-tabs {
-    gap: 8px !important;
-    padding: 8px 0 !important;
+    gap: 0 !important;
+    padding: 8px 4px !important;
+    scroll-snap-type: x mandatory !important;
   }
 
   .category-tab {
-    flex: 0 0 auto !important;
-    min-width: 140px !important;
-    max-width: 160px !important;
+    flex: 0 0 100% !important;
+    min-width: 0 !important;
+    max-width: 100% !important;
     padding: 10px 14px !important;
     font-size: 0.85rem !important;
     white-space: nowrap !important;
+    scroll-snap-align: center !important;
+    justify-content: center !important;
   }
 
   .category-icon {
@@ -4424,6 +4428,7 @@ html.dark .timer-bar {
     height: 32px !important;
     font-size: 1.2rem !important;
     padding: 4px !important;
+    flex-shrink: 0 !important;
   }
 
   /* Search and Filter Controls */
@@ -5290,10 +5295,12 @@ html.dark .timer-bar {
   }
 
   .category-tab {
-    min-width: 130px !important;
-    max-width: 150px !important;
+    flex: 0 0 100% !important;
+    min-width: 0 !important;
+    max-width: 100% !important;
     padding: 8px 12px !important;
     font-size: 0.8rem !important;
+    justify-content: center !important;
   }
 
   .category-icon {

@@ -2008,7 +2008,7 @@ html.dark .logo-circle-large.logo-circle-3 {
 }
 
 .status-message-section p {
-  color: var(--text-secondary);
+  color: var(--text-primary);
   font-size: 16px;
   line-height: 1.8;
   margin-bottom: 32px;

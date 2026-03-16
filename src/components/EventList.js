@@ -283,10 +283,12 @@ function EventList() {
       {!loading && (
         <div className="events-grid">
           {filteredEvents.map((event) => {
-            const eventDate = new Date(event.eventDate);
             const now = new Date();
-            const isExpired = eventDate <= now;
             const isMultiDay = event.eventType === "multi-day";
+            const expiryDate = isMultiDay && event.endDate
+              ? new Date(event.endDate)
+              : new Date(event.eventDate);
+            const isExpired = expiryDate <= now;
             const isSoldOut = isMultiDay
               ? event.dailySeats &&
                 Object.values(event.dailySeats).every((d) => d.available === 0)

@@ -4403,15 +4403,15 @@ html.dark .timer-bar {
   }
 
   .category-tabs {
-    gap: 0 !important;
+    gap: 10px !important;
     padding: 8px 4px !important;
     scroll-snap-type: x mandatory !important;
   }
 
   .category-tab {
-    flex: 0 0 100% !important;
+    flex: 0 0 calc(100% - 20px) !important;
     min-width: 0 !important;
-    max-width: 100% !important;
+    max-width: calc(100% - 20px) !important;
     padding: 10px 14px !important;
     font-size: 0.85rem !important;
     white-space: nowrap !important;
@@ -5295,9 +5295,9 @@ html.dark .timer-bar {
   }
 
   .category-tab {
-    flex: 0 0 100% !important;
+    flex: 0 0 calc(100% - 20px) !important;
     min-width: 0 !important;
-    max-width: 100% !important;
+    max-width: calc(100% - 20px) !important;
     padding: 8px 12px !important;
     font-size: 0.8rem !important;
     justify-content: center !important;

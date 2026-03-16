@@ -286,7 +286,7 @@ function EventList() {
             const now = new Date();
             const isMultiDay = event.eventType === "multi-day";
             const expiryDate = isMultiDay && event.endDate
-              ? new Date(event.endDate)
+              ? new Date(new Date(event.endDate).setHours(23, 59, 59, 999))
               : new Date(event.eventDate);
             const isExpired = expiryDate <= now;
             const isSoldOut = isMultiDay

@@ -251,7 +251,7 @@ function LockSeatsPage({ userId }) {
   if (!event) return <div className="error">Event not found</div>;
 
   const expiryDate = event.eventType === "multi-day" && event.endDate
-    ? new Date(event.endDate)
+    ? new Date(new Date(event.endDate).setHours(23, 59, 59, 999))
     : new Date(event.eventDate);
   const isExpired  = expiryDate <= new Date();
   const isSoldOut  = !isMultiDay && event.availableSeats === 0;

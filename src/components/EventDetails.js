@@ -211,7 +211,7 @@ function EventDetails({ userId }) {
   // Check if event has expired or sold out
   const now = new Date();
   const expiryDate = event.eventType === "multi-day" && event.endDate
-    ? new Date(event.endDate)
+    ? new Date(new Date(event.endDate).setHours(23, 59, 59, 999))
     : new Date(event.eventDate);
   const isExpired = expiryDate <= now;
   const isSoldOut = event.availableSeats === 0;

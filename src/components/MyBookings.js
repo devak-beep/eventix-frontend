@@ -706,7 +706,7 @@ function MyBookings({ userId }) {
               className={`tab-btn ${activeTab === "expired-events" ? "active" : ""}`}
               onClick={() => setActiveTab("expired-events")}
             >
-              ⏰ Expired Events
+              Expired Events
             </button>
             <button
               className={`tab-btn ${activeTab === "event-requests" ? "active" : ""}`}
@@ -729,7 +729,7 @@ function MyBookings({ userId }) {
               className={`tab-btn ${activeTab === "expired-events" ? "active" : ""}`}
               onClick={() => setActiveTab("expired-events")}
             >
-              ⏰ Expired Events
+              Expired Events
             </button>
             <button
               className={`tab-btn ${activeTab === "event-requests" ? "active" : ""}`}

@@ -65,9 +65,17 @@ export const createEvent = async (eventData) => {
   return response.data;
 };
 
-// Get all public events (or all events for admin)
+// Get all public events (or all events for admin) - excludes expired
 export const getAllPublicEvents = async (userRole = "user") => {
   const response = await api.get("/events", {
+    params: { userRole },
+  });
+  return response.data;
+};
+
+// Get expired events (admin/superAdmin only)
+export const getExpiredEvents = async (userRole) => {
+  const response = await api.get("/events/expired", {
     params: { userRole },
   });
   return response.data;

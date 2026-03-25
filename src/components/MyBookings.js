@@ -1,7 +1,7 @@
 // This component shows all bookings made by users
 import React, { useState, useEffect, useRef } from "react";
 import { useNavigate } from "react-router-dom";
-import { getAllBookings, cancelBooking, getUserById } from "../api";
+import { getAllBookings, cancelBooking, getUserById, getExpiredEvents } from "../api";
 import { MyBookingsSkeleton } from "./SkeletonLoader";
 import AdminRequests from "./AdminRequests";
 import EventRequests from "./EventRequests";
@@ -138,6 +138,10 @@ function MyBookings({ userId }) {
   const [loadingRequests, setLoadingRequests] = useState(false);
   const [payingForRequest, setPayingForRequest] = useState(null); // Request ID being paid
 
+  // Expired events state (admin/superAdmin only)
+  const [expiredEvents, setExpiredEvents] = useState([]);
+  const [loadingExpired, setLoadingExpired] = useState(false);
+
   // --- Inline edit state for event name/description/category/seats (per event) ---
   const [editEventId, setEditEventId] = useState(null); // event._id being edited
   const [editName, setEditName] = useState("");
@@ -230,6 +234,8 @@ function MyBookings({ userId }) {
       fetchMyEvents();
     } else if (activeTab === "my-requests") {
       fetchMyEventRequests();
+    } else if (activeTab === "expired-events") {
+      fetchExpiredEvents();
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [activeTab]);
@@ -342,8 +348,7 @@ function MyBookings({ userId }) {
   };
 
   // Function to fetch user's event creation requests
-  const fetchMyEventRequests = async () => {
-    setLoadingRequests(true);
+  const fetchMyEventRequests = async () => {    setLoadingRequests(true);
     try {
       const user = JSON.parse(localStorage.getItem("user") || "{}");
       const response = await axios.get(
@@ -363,6 +368,21 @@ function MyBookings({ userId }) {
       setError("Failed to load event requests");
     } finally {
       setLoadingRequests(false);
+    }
+  };
+
+  // Function to fetch expired events (admin/superAdmin only)
+  const fetchExpiredEvents = async () => {
+    setLoadingExpired(true);
+    setError("");
+    try {
+      const response = await getExpiredEvents(userRole);
+      setExpiredEvents(response.data || []);
+    } catch (err) {
+      setError("Failed to load expired events");
+      console.error("Error fetching expired events:", err);
+    } finally {
+      setLoadingExpired(false);
     }
   };
 
@@ -683,6 +703,12 @@ function MyBookings({ userId }) {
               My Events
             </button>
             <button
+              className={`tab-btn ${activeTab === "expired-events" ? "active" : ""}`}
+              onClick={() => setActiveTab("expired-events")}
+            >
+              ⏰ Expired Events
+            </button>
+            <button
               className={`tab-btn ${activeTab === "event-requests" ? "active" : ""}`}
               onClick={() => setActiveTab("event-requests")}
             >
@@ -700,6 +726,12 @@ function MyBookings({ userId }) {
               All Events
             </button>
             <button
+              className={`tab-btn ${activeTab === "expired-events" ? "active" : ""}`}
+              onClick={() => setActiveTab("expired-events")}
+            >
+              ⏰ Expired Events
+            </button>
+            <button
               className={`tab-btn ${activeTab === "event-requests" ? "active" : ""}`}
               onClick={() => setActiveTab("event-requests")}
             >
@@ -715,26 +747,30 @@ function MyBookings({ userId }) {
         )}
       </div>
 
-      {/* Refresh button - only show for bookings, events, and my-requests tabs */}
+      {/* Refresh button - only show for bookings, events, my-requests, and expired-events tabs */}
       {(activeTab === "bookings" ||
         activeTab === "events" ||
-        activeTab === "my-requests") && (
+        activeTab === "my-requests" ||
+        activeTab === "expired-events") && (
         <button
           onClick={() => {
             if (activeTab === "bookings") fetchBookings();
             else if (activeTab === "events") fetchMyEvents();
             else if (activeTab === "my-requests") fetchMyEventRequests();
+            else if (activeTab === "expired-events") fetchExpiredEvents();
           }}
-          disabled={loading || loadingRequests}
+          disabled={loading || loadingRequests || loadingExpired}
           className="refresh-btn"
         >
-          {loading || loadingRequests
+          {loading || loadingRequests || loadingExpired
             ? "Loading..."
             : activeTab === "bookings"
               ? "Refresh Bookings"
               : activeTab === "events"
                 ? "Refresh Events"
-                : "Refresh Requests"}
+                : activeTab === "expired-events"
+                  ? "Refresh Expired Events"
+                  : "Refresh Requests"}
         </button>
       )}
 
@@ -1782,6 +1818,148 @@ function MyBookings({ userId }) {
           </div>
         </>
       )}
+
+      {/* Expired Events Tab - For admin/superAdmin to review past events */}
+      {activeTab === "expired-events" &&
+        (userRole === "admin" || userRole === "superAdmin") && (
+          <div className="expired-events-section">
+            {loadingExpired ? (
+              <MyBookingsSkeleton />
+            ) : expiredEvents.length === 0 ? (
+              <p className="info">No expired events found.</p>
+            ) : (
+              <div className="bookings-list">
+                {expiredEvents.map((event) => {
+                  const isMultiDay = event.eventType === "multi-day";
+                  const bookedSeats = event.totalSeats - event.availableSeats;
+                  const totalRevenue = isMultiDay ? null : bookedSeats * (event.amount || 0);
+
+                  return (
+                    <div
+                      key={event._id}
+                      className="booking-card"
+                      style={{ opacity: 0.85, borderLeft: "4px solid #6b7280" }}
+                    >
+                      {event.image && (
+                        <div
+                          style={{
+                            height: "160px",
+                            backgroundImage: `url(${event.image})`,
+                            backgroundSize: "cover",
+                            backgroundPosition: "center",
+                            borderRadius: "8px 8px 0 0",
+                            marginBottom: "15px",
+                            filter: "grayscale(40%)",
+                            position: "relative",
+                          }}
+                        >
+                          <span
+                            style={{
+                              position: "absolute",
+                              top: "10px",
+                              right: "10px",
+                              background: "rgba(107,114,128,0.9)",
+                              color: "#fff",
+                              padding: "4px 10px",
+                              borderRadius: "12px",
+                              fontSize: "12px",
+                              fontWeight: "600",
+                            }}
+                          >
+                            ⏰ Expired
+                          </span>
+                        </div>
+                      )}
+                      {!event.image && (
+                        <div
+                          style={{
+                            display: "flex",
+                            justifyContent: "flex-end",
+                            marginBottom: "8px",
+                          }}
+                        >
+                          <span
+                            style={{
+                              background: "rgba(107,114,128,0.15)",
+                              color: "#6b7280",
+                              padding: "4px 10px",
+                              borderRadius: "12px",
+                              fontSize: "12px",
+                              fontWeight: "600",
+                            }}
+                          >
+                            ⏰ Expired
+                          </span>
+                        </div>
+                      )}
+
+                      <div className="booking-header">
+                        <h3>{event.name}</h3>
+                        <span
+                          className="status-badge"
+                          style={{ backgroundColor: event.type === "public" ? "#10b981" : "#f59e0b" }}
+                        >
+                          {event.type === "public" ? "🌍 Public" : "🔒 Private"}
+                        </span>
+                      </div>
+
+                      <div className="booking-details">
+                        <p>
+                          <strong>Event ID:</strong> <code>{event._id}</code>
+                        </p>
+                        <p>
+                          <strong>Date:</strong>{" "}
+                          {isMultiDay && event.endDate
+                            ? `${new Date(event.eventDate).toLocaleDateString("en-GB", { day: "numeric", month: "short", year: "numeric" })} – ${new Date(event.endDate).toLocaleDateString("en-GB", { day: "numeric", month: "short", year: "numeric" })}`
+                            : new Date(event.eventDate).toLocaleDateString("en-GB", { day: "numeric", month: "short", year: "numeric" })}
+                        </p>
+                        {event.createdBy && (
+                          <p>
+                            <strong>Organizer:</strong> {event.createdBy.name} ({event.createdBy.email})
+                          </p>
+                        )}
+                        {event.approvedBy && (
+                          <p>
+                            <strong>Approved By:</strong> {event.approvedBy.name}
+                          </p>
+                        )}
+                        <p>
+                          <strong>Total Seats:</strong> {event.totalSeats}
+                        </p>
+                        <p>
+                          <strong>Seats Sold:</strong> {bookedSeats} / {event.totalSeats}
+                        </p>
+                        <p>
+                          <strong>Ticket Price:</strong>{" "}
+                          {isMultiDay ? (
+                            <span>
+                              Day ₹{event.passOptions?.dailyPass?.price ?? 0} | Season ₹{event.passOptions?.seasonPass?.price ?? 0}
+                            </span>
+                          ) : (event.amount || 0) > 0 ? (
+                            `₹${event.amount}`
+                          ) : (
+                            "Free"
+                          )}
+                        </p>
+                        {totalRevenue !== null && (
+                          <p>
+                            <strong>Total Revenue:</strong>{" "}
+                            <span style={{ color: "#10b981", fontWeight: "600" }}>
+                              ₹{totalRevenue}
+                            </span>
+                          </p>
+                        )}
+                        <p>
+                          <strong>Platform Fee Paid:</strong> ₹{event.creationCharge || 0}
+                        </p>
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+            )}
+          </div>
+        )}
 
       {/* Admin Requests Tab - Only for superAdmin */}
       {activeTab === "admin-requests" && userRole === "superAdmin" && (

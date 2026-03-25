@@ -90,6 +90,17 @@ function EventList() {
   useEffect(() => {
     let filtered = events;
 
+    // Always exclude expired events from the main listing (safety net on top of backend filter)
+    const now = new Date();
+    filtered = filtered.filter((event) => {
+      const isMultiDay = event.eventType === "multi-day";
+      const expiryDate =
+        isMultiDay && event.endDate
+          ? new Date(new Date(event.endDate).setHours(23, 59, 59, 999))
+          : new Date(event.eventDate);
+      return expiryDate > now;
+    });
+
     // Filter by category
     if (selectedCategory !== "all") {
       filtered = filtered.filter((event) =>

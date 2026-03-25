@@ -1837,19 +1837,17 @@ function MyBookings({ userId }) {
                   return (
                     <div
                       key={event._id}
-                      className="booking-card"
-                      style={{ opacity: 0.85, borderLeft: "4px solid #6b7280" }}
+                      className="booking-card event-card"
                     >
                       {event.image && (
                         <div
                           style={{
-                            height: "160px",
+                            height: "200px",
                             backgroundImage: `url(${event.image})`,
                             backgroundSize: "cover",
                             backgroundPosition: "center",
                             borderRadius: "8px 8px 0 0",
                             marginBottom: "15px",
-                            filter: "grayscale(40%)",
                             position: "relative",
                           }}
                         >

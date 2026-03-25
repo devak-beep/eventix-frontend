@@ -1835,121 +1835,107 @@ function MyBookings({ userId }) {
                   const totalRevenue = isMultiDay ? null : bookedSeats * (event.amount || 0);
 
                   return (
-                    <div
-                      key={event._id}
-                      className="booking-card event-card"
-                    >
-                      {event.image && (
-                        <div
-                          style={{
-                            height: "200px",
-                            backgroundImage: `url(${event.image})`,
-                            backgroundSize: "cover",
-                            backgroundPosition: "center",
-                            borderRadius: "8px 8px 0 0",
-                            marginBottom: "15px",
-                            position: "relative",
-                          }}
-                        >
-                          <span
+                    <div key={event._id} className="booking-card event-card">
+                      {/* Image */}
+                      <div className="event-image-container" style={{ position: "relative" }}>
+                        {event.image ? (
+                          <div
+                            className="event-image"
                             style={{
-                              position: "absolute",
-                              top: "10px",
-                              right: "10px",
-                              background: "rgba(107,114,128,0.9)",
-                              color: "#fff",
-                              padding: "4px 10px",
-                              borderRadius: "12px",
-                              fontSize: "12px",
-                              fontWeight: "600",
+                              backgroundImage: `url(${event.image})`,
+                              height: "200px",
+                              backgroundSize: "cover",
+                              backgroundPosition: "center",
+                              borderRadius: "8px 8px 0 0",
+                              marginBottom: "15px",
+                            }}
+                          />
+                        ) : (
+                          <div
+                            className="event-image-placeholder"
+                            style={{
+                              height: "200px",
+                              backgroundColor: "var(--background-tertiary)",
+                              borderRadius: "8px 8px 0 0",
+                              marginBottom: "15px",
+                              display: "flex",
+                              alignItems: "center",
+                              justifyContent: "center",
+                              color: "var(--text-secondary)",
                             }}
                           >
-                            ⏰ Expired
-                          </span>
-                        </div>
-                      )}
-                      {!event.image && (
-                        <div
-                          style={{
-                            display: "flex",
-                            justifyContent: "flex-end",
-                            marginBottom: "8px",
-                          }}
-                        >
-                          <span
-                            style={{
-                              background: "rgba(107,114,128,0.15)",
-                              color: "#6b7280",
-                              padding: "4px 10px",
-                              borderRadius: "12px",
-                              fontSize: "12px",
-                              fontWeight: "600",
-                            }}
-                          >
-                            ⏰ Expired
-                          </span>
-                        </div>
-                      )}
+                            No Image
+                          </div>
+                        )}
+                      </div>
 
-                      <div className="booking-header">
-                        <h3>{event.name}</h3>
-                        <span
-                          className="status-badge"
-                          style={{ backgroundColor: event.type === "public" ? "#10b981" : "#f59e0b" }}
-                        >
+                      {/* Header */}
+                      <div className="booking-header" style={{ display: "flex", alignItems: "center", gap: "10px" }}>
+                        <h3 style={{ flex: 1 }}>{event.name}</h3>
+                        <span className="status-badge" style={{ backgroundColor: "#6b7280" }}>
+                          ⏰ Expired
+                        </span>
+                        <span className="status-badge" style={{ backgroundColor: event.type === "public" ? "#10b981" : "#f59e0b" }}>
                           {event.type === "public" ? "🌍 Public" : "🔒 Private"}
                         </span>
                       </div>
 
+                      {/* Details */}
                       <div className="booking-details">
+                        {event.description && (
+                          <div className="event-description">
+                            <strong>Description:</strong>
+                            <div className="description-text">{event.description}</div>
+                          </div>
+                        )}
                         <p>
-                          <strong>Event ID:</strong> <code>{event._id}</code>
-                        </p>
-                        <p>
-                          <strong>Date:</strong>{" "}
+                          <strong>Event Date:</strong>{" "}
                           {isMultiDay && event.endDate
                             ? `${new Date(event.eventDate).toLocaleDateString("en-GB", { day: "numeric", month: "short", year: "numeric" })} – ${new Date(event.endDate).toLocaleDateString("en-GB", { day: "numeric", month: "short", year: "numeric" })}`
-                            : new Date(event.eventDate).toLocaleDateString("en-GB", { day: "numeric", month: "short", year: "numeric" })}
+                            : new Date(event.eventDate).toLocaleString("en-GB")}
                         </p>
+                        <p><strong>Event ID:</strong> <code>{event._id}</code></p>
                         {event.createdBy && (
-                          <p>
-                            <strong>Organizer:</strong> {event.createdBy.name} ({event.createdBy.email})
-                          </p>
+                          <p><strong>Created By:</strong> {event.createdBy.name} (<code>{event.createdBy._id}</code>)</p>
                         )}
                         {event.approvedBy && (
-                          <p>
-                            <strong>Approved By:</strong> {event.approvedBy.name}
-                          </p>
+                          <p><strong>Approved By:</strong> {event.approvedBy.name} (<code>{event.approvedBy._id}</code>)</p>
                         )}
+                        <p><strong>Created:</strong> {new Date(event.createdAt).toLocaleString("en-GB")}</p>
                         <p>
-                          <strong>Total Seats:</strong> {event.totalSeats}
+                          <strong>Category:</strong>{" "}
+                          {Array.isArray(event.category) ? event.category.join(", ") : event.category}
                         </p>
-                        <p>
-                          <strong>Seats Sold:</strong> {bookedSeats} / {event.totalSeats}
-                        </p>
+                        <p><strong>Platform Fee Paid:</strong> ₹{event.creationCharge || 0}</p>
+                        <p><strong>Total Seats:</strong> {event.totalSeats}</p>
+                        <p><strong>Available Seats:</strong> {event.availableSeats}</p>
+                        <p><strong>Booked Seats:</strong> {bookedSeats}</p>
                         <p>
                           <strong>Ticket Price:</strong>{" "}
                           {isMultiDay ? (
-                            <span>
-                              Day ₹{event.passOptions?.dailyPass?.price ?? 0} | Season ₹{event.passOptions?.seasonPass?.price ?? 0}
+                            <span style={{ display: "inline-flex", gap: "8px", flexWrap: "wrap", alignItems: "center" }}>
+                              <span>🎟️ Day Pass: {(event.passOptions?.dailyPass?.price ?? 0) > 0 ? `₹${event.passOptions.dailyPass.price}` : "Free"}</span>
+                              <span style={{ opacity: 0.4 }}>|</span>
+                              <span>🌟 Season Pass: {(event.passOptions?.seasonPass?.price ?? 0) > 0 ? `₹${event.passOptions.seasonPass.price}` : "Free"}</span>
                             </span>
-                          ) : (event.amount || 0) > 0 ? (
-                            `₹${event.amount}`
-                          ) : (
-                            "Free"
-                          )}
+                          ) : (event.amount || 0) > 0 ? `₹${event.amount}` : "Free"}
                         </p>
-                        {totalRevenue !== null && (
-                          <p>
-                            <strong>Total Revenue:</strong>{" "}
-                            <span style={{ color: "#10b981", fontWeight: "600" }}>
-                              ₹{totalRevenue}
-                            </span>
-                          </p>
+                        <p className="total-collection">
+                          <strong>Total Collection:</strong>{" "}
+                          {totalRevenue !== null
+                            ? <span style={{ color: "#10b981", fontWeight: "600" }}>₹{totalRevenue}</span>
+                            : "N/A (varies by pass type)"}
+                        </p>
+                        {event.createdViaRequest && (
+                          <div style={{ marginTop: "12px", padding: "10px", background: "var(--bg-secondary)", borderRadius: "8px", borderLeft: "3px solid var(--primary-color)" }}>
+                            <p style={{ margin: "0 0 4px 0", fontSize: "13px" }}><strong>📝 Created via Request</strong></p>
+                            {event.approvedBy && (
+                              <p style={{ margin: "0", fontSize: "13px", color: "var(--text-secondary)" }}>
+                                Approved by: <strong>{event.approvedBy.name}</strong>
+                              </p>
+                            )}
+                          </div>
                         )}
-                        <p>
-                          <strong>Platform Fee Paid:</strong> ₹{event.creationCharge || 0}
-                        </p>
                       </div>
                     </div>
                   );

@@ -2718,6 +2718,15 @@ html.dark .stepper-btn:hover:not(:disabled) {
   }
 }
 
+.booking-image-wrapper {
+  width: calc(100% + 60px);
+  margin: -30px -30px 15px -30px;
+  border-radius: 16px 16px 0 0;
+  overflow: hidden;
+  position: relative;
+  aspect-ratio: 16/9;
+}
+
 .booking-card p {
   color: var(--text-secondary);
   margin: 12px 0;
@@ -4752,6 +4761,12 @@ html.dark .timer-bar {
     margin-bottom: 12px !important;
     display: flex !important;
     flex-direction: column !important;
+  }
+
+  .booking-image-wrapper {
+    width: calc(100% + 28px) !important;
+    margin: -14px -14px 15px -14px !important;
+    border-radius: 16px 16px 0 0 !important;
   }
 
   .booking-card h3 {

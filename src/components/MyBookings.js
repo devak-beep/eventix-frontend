@@ -813,19 +813,28 @@ function MyBookings({ userId }) {
                 className="booking-card"
               >
                 {booking.event?.image && (
-                  <img
-                    src={processedImages[booking._id] || booking.event.image}
-                    alt={booking.event?.name || "Event"}
-                    style={{
-                      width: "calc(100% + 60px)",
-                      display: "block",
-                      margin: "-30px -30px 15px -30px",
-                      borderRadius: "16px 16px 0 0",
-                      maxHeight: "350px",
-                      objectFit: "contain",
-                      backgroundColor: "#000",
-                    }}
-                  />
+                  <div className="booking-image-wrapper">
+                    {/* Blurred background */}
+                    <div style={{
+                      position: "absolute", inset: 0,
+                      backgroundImage: `url(${booking.event.image})`,
+                      backgroundSize: "cover",
+                      backgroundPosition: "center",
+                      filter: "blur(20px) brightness(0.7)",
+                      transform: "scale(1.1)",
+                    }} />
+                    {/* Sharp foreground */}
+                    <img
+                      src={booking.event.image}
+                      alt={booking.event?.name || "Event"}
+                      style={{
+                        position: "relative",
+                        width: "100%",
+                        height: "100%",
+                        objectFit: "contain",
+                      }}
+                    />
+                  </div>
                 )}
 
                 <div className="booking-header">

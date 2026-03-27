@@ -2709,13 +2709,12 @@ html.dark .stepper-btn:hover:not(:disabled) {
   margin-bottom: 15px;
 }
 
-/* Desktop/laptop - show full image without cropping */
+/* Desktop/laptop - cover to avoid white side bars */
 @media (min-width: 1024px) {
   .booking-event-image {
-    height: auto;
-    max-height: 350px;
-    object-fit: contain;
-    background-color: #f8fafc;
+    height: 250px;
+    object-fit: cover;
+    background-color: unset;
   }
 }
 

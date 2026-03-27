@@ -800,14 +800,17 @@ function MyBookings({ userId }) {
                 className="booking-card"
               >
                 {booking.event?.image && (
-                  <div
+                  <img
+                    src={booking.event.image}
+                    alt={booking.event?.name || "Event"}
                     style={{
-                      backgroundImage: `url(${booking.event.image})`,
-                      backgroundSize: "cover",
-                      backgroundPosition: "center",
-                      height: "200px",
-                      borderRadius: "16px 16px 0 0",
+                      width: "calc(100% + 60px)",
+                      display: "block",
                       margin: "-30px -30px 15px -30px",
+                      borderRadius: "16px 16px 0 0",
+                      maxHeight: "350px",
+                      objectFit: "contain",
+                      backgroundColor: "#000",
                     }}
                   />
                 )}

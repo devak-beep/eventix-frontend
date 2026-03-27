@@ -2685,6 +2685,7 @@ html.dark .stepper-btn:hover:not(:disabled) {
   border: 1px solid var(--border-color);
   transition: all 0.3s ease;
   margin-bottom: 20px;
+  overflow: hidden;
 }
 
 .booking-card:hover {
@@ -2721,7 +2722,6 @@ html.dark .stepper-btn:hover:not(:disabled) {
 .booking-image-wrapper {
   width: calc(100% + 60px);
   margin: -30px -30px 15px -30px;
-  border-radius: 16px 16px 0 0;
   overflow: hidden;
   position: relative;
   aspect-ratio: 16/9;
@@ -4766,7 +4766,6 @@ html.dark .timer-bar {
   .booking-image-wrapper {
     width: calc(100% + 28px) !important;
     margin: -14px -14px 15px -14px !important;
-    border-radius: 16px 16px 0 0 !important;
   }
 
   .booking-card h3 {

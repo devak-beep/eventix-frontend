@@ -801,11 +801,13 @@ function MyBookings({ userId }) {
               >
                 {booking.event?.image && (
                   <div
-                    className="event-image"
                     style={{
                       backgroundImage: `url(${booking.event.image})`,
-                      borderRadius: "12px 12px 0 0",
-                      margin: "-30px -30px 20px -30px",
+                      backgroundSize: "cover",
+                      backgroundPosition: "center",
+                      height: "200px",
+                      borderRadius: "16px 16px 0 0",
+                      margin: "-30px -30px 15px -30px",
                     }}
                   />
                 )}

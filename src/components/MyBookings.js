@@ -97,6 +97,9 @@ function MyBookings({ userId }) {
   // State to store list of bookings
   const [bookings, setBookings] = useState([]);
 
+  // Processed (blur-fill) images keyed by booking._id
+  const [processedImages, setProcessedImages] = useState({});
+
   // State for user role
   const [userRole, setUserRole] = useState("user");
 
@@ -279,6 +282,16 @@ function MyBookings({ userId }) {
       console.log("Filtered bookings count:", userBookings.length);
       console.log("Filtered bookings:", userBookings);
       setBookings(userBookings);
+
+      // Process images with blur-fill effect
+      userBookings.forEach(async (booking) => {
+        if (booking.event?.image) {
+          try {
+            const processed = await processImageToCardRatio(booking.event.image);
+            setProcessedImages((prev) => ({ ...prev, [booking._id]: processed }));
+          } catch (_) {}
+        }
+      });
     } catch (err) {
       setError("Failed to load bookings");
       console.error("Error fetching bookings:", err);
@@ -801,7 +814,7 @@ function MyBookings({ userId }) {
               >
                 {booking.event?.image && (
                   <img
-                    src={booking.event.image}
+                    src={processedImages[booking._id] || booking.event.image}
                     alt={booking.event?.name || "Event"}
                     style={{
                       width: "calc(100% + 60px)",

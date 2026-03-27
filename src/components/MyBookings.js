@@ -812,10 +812,15 @@ function MyBookings({ userId }) {
                 </div>
 
                 {booking.event?.image && (
-                  <img
-                    src={booking.event.image}
-                    alt={booking.event?.name || "Event"}
-                    className="booking-event-image"
+                  <div
+                    style={{
+                      backgroundImage: `url(${booking.event.image})`,
+                      height: "200px",
+                      backgroundSize: "cover",
+                      backgroundPosition: "center",
+                      borderRadius: "8px 8px 0 0",
+                      marginBottom: "15px",
+                    }}
                   />
                 )}
 

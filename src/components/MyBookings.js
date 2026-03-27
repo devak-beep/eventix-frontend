@@ -799,6 +799,17 @@ function MyBookings({ userId }) {
                 key={booking._id}
                 className="booking-card"
               >
+                {booking.event?.image && (
+                  <div
+                    className="event-image"
+                    style={{
+                      backgroundImage: `url(${booking.event.image})`,
+                      borderRadius: "12px 12px 0 0",
+                      margin: "-30px -30px 20px -30px",
+                    }}
+                  />
+                )}
+
                 <div className="booking-header">
                   <h3>{booking.event?.name || booking.event || "Event"}</h3>
                   <span
@@ -810,19 +821,6 @@ function MyBookings({ userId }) {
                     {booking.status}
                   </span>
                 </div>
-
-                {booking.event?.image && (
-                  <div
-                    style={{
-                      backgroundImage: `url(${booking.event.image})`,
-                      height: "200px",
-                      backgroundSize: "cover",
-                      backgroundPosition: "center",
-                      borderRadius: "8px 8px 0 0",
-                      marginBottom: "15px",
-                    }}
-                  />
-                )}
 
                 <div className="booking-details">
                   <p>

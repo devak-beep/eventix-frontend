@@ -816,11 +816,9 @@ function MyBookings({ userId }) {
                       alt={booking.event?.name || "Event"}
                       style={{
                         position: "relative",
-                        width: "100%",
-                        height: "100%",
+                        maxWidth: "100%",
+                        maxHeight: "100%",
                         objectFit: "contain",
-                        objectPosition: "center center",
-                        display: "block",
                       }}
                     />
                   </div>
@@ -2083,9 +2081,21 @@ function MyBookings({ userId }) {
                           }}
                         >
                           <strong>Seats:</strong> {request.totalSeats} |{" "}
-                          <strong>Type:</strong> {request.type} |{" "}
-                          <strong>Ticket:</strong> ₹{request.amount || 0}
+                          <strong>Type:</strong> {request.type}
+                          {request.eventType !== "multi-day" && (
+                            <> | <strong>Ticket:</strong> ₹{request.amount || 0}</>
+                          )}
                         </p>
+                        {request.eventType === "multi-day" && request.passOptions && (
+                          <p style={{ color: "var(--text-secondary)", fontSize: "14px", margin: "4px 0" }}>
+                            {request.passOptions.dailyPass?.enabled && (
+                              <span>🎫 <strong>Day Pass:</strong> ₹{request.passOptions.dailyPass.price}/day &nbsp;</span>
+                            )}
+                            {request.passOptions.seasonPass?.enabled && (
+                              <span>🏆 <strong>Season Pass:</strong> ₹{request.passOptions.seasonPass.price}</span>
+                            )}
+                          </p>
+                        )}
                         <p
                           style={{
                             color: "var(--text-secondary)",

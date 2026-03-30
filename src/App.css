@@ -2725,6 +2725,9 @@ html.dark .stepper-btn:hover:not(:disabled) {
   overflow: hidden;
   position: relative;
   aspect-ratio: 16/9;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .booking-card p {

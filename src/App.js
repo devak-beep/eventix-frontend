@@ -20,6 +20,7 @@ import MyBookings from "./components/MyBookings";
 import CreateEvent from "./components/CreateEvent";
 import RequestEvent from "./components/RequestEvent";
 import Settings from "./components/Settings";
+import DownloadApp from "./components/DownloadApp";
 import ConfirmModal from "./components/ConfirmModal";
 import { EventixLogoSimple } from "./components/EventixLogo";
 import { getUserById } from "./api";
@@ -28,7 +29,6 @@ import { getUserById } from "./api";
 function Navbar({ user, onLogout, onUserUpdate, isDarkMode, onToggleTheme }) {
   const navigate = useNavigate();
   const [menuOpen, setMenuOpen] = useState(false);
-  const [downloadOpen, setDownloadOpen] = useState(false);
   const [logoutModalOpen, setLogoutModalOpen] = useState(false);
   const menuRef = useRef(null);
 
@@ -134,22 +134,11 @@ function Navbar({ user, onLogout, onUserUpdate, isDarkMode, onToggleTheme }) {
                   </button>
                   <button
                     className="dropdown-item"
-                    onClick={() => setDownloadOpen(!downloadOpen)}
+                    onClick={() => handleNavClick("/download")}
                   >
                     <span className="di-icon">📱</span>
                     <span>Download App</span>
-                    <span style={{ marginLeft: "auto", fontSize: "10px" }}>{downloadOpen ? "▲" : "▼"}</span>
                   </button>
-                  {downloadOpen && (
-                    <div className="download-submenu-inline">
-                      <a className="download-option" href="/eventix-react-native.apk" download="Eventix.apk">
-                        <span>⚛️</span> React Native APK
-                      </a>
-                      <a className="download-option" href="/eventix-kotlin.apk" download="Eventix-Kotlin.apk">
-                        <span>🤖</span> Kotlin APK
-                      </a>
-                    </div>
-                  )}
                   {(user.role === "admin" || user.role === "superAdmin") && (
                     <button
                       className="dropdown-item"
@@ -362,6 +351,7 @@ function App() {
               path="/settings"
               element={<Settings user={user} onUserUpdate={setUser} />}
             />
+            <Route path="/download" element={<DownloadApp />} />
             <Route
               path="/create"
               element={

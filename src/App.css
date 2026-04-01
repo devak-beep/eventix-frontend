@@ -599,32 +599,6 @@ body {
   flex-shrink: 0;
 }
 
-/* Download App submenu */
-.download-submenu-inline {
-  display: flex;
-  flex-direction: column;
-  gap: 2px;
-  padding: 4px 8px 4px 20px;
-}
-
-.download-option {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  padding: 8px 12px;
-  border-radius: 6px;
-  color: var(--text-secondary);
-  text-decoration: none;
-  font-size: 13px;
-  font-weight: 500;
-  transition: background 0.18s ease, color 0.18s ease;
-}
-
-.download-option:hover {
-  color: var(--text-primary);
-  background: rgba(0,0,0,0.05);
-}
-
 /* Footer (logout) */
 .dropdown-footer {
   padding: 8px;

@@ -1,4 +1,3 @@
-import { setUser } from "../utils/localStorage";
 // This component handles user login
 import React, { useState } from "react";
 import { loginUser, verifyLoginOtp, resendOtp } from "../api";

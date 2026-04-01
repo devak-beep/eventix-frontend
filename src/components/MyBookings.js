@@ -1,7 +1,6 @@
 import { getUser, setUser } from "../utils/localStorage";
 // This component shows all bookings made by users
 import React, { useState, useEffect, useRef } from "react";
-import { useNavigate } from "react-router-dom";
 import { getAllBookings, cancelBooking, getUserById, getExpiredEvents } from "../api";
 import { MyBookingsSkeleton } from "./SkeletonLoader";
 import AdminRequests from "./AdminRequests";
@@ -97,7 +96,6 @@ const processImageToCardRatio = (base64Image) => {
 };
 
 function MyBookings({ userId }) {
-  const navigate = useNavigate();
 
   // State to store list of bookings
   const [bookings, setBookings] = useState([]);

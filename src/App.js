@@ -1,4 +1,4 @@
-import { getUser, setUser, removeUser } from "./utils/localStorage";
+import { removeUser } from "./utils/localStorage";
 // This is the main App component - the starting point of our frontend
 import React, { useState, useEffect, useRef, lazy, Suspense } from "react";
 import {

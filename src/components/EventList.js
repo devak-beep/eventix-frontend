@@ -316,6 +316,10 @@ function EventList() {
                 key={event._id}
                 className={`event-card ${isExpired ? "expired" : ""} ${isSoldOut && !isExpired ? "sold-out" : ""}`}
                 onClick={() => navigate(`/event/${event._id}`)}
+                role="article"
+                aria-label={`Event: ${event.name}`}
+                tabIndex={0}
+                onKeyDown={(e) => e.key === "Enter" && navigate(`/event/${event._id}`)}
               >
                 {/* Event image - use uploaded image if available, otherwise category image */}
                 {(event.image ||

@@ -120,6 +120,9 @@ function Navbar({ user, onLogout, onUserUpdate, isDarkMode, onToggleTheme }) {
             <button
               className={`user-avatar-btn ${menuOpen ? "active" : ""}`}
               onClick={() => setMenuOpen(!menuOpen)}
+              aria-label="Toggle user menu"
+              aria-expanded={menuOpen}
+              aria-controls="user-dropdown-menu"
             >
               <span className="avatar-circle">
                 {getUserInitials(user.name)}
@@ -130,7 +133,7 @@ function Navbar({ user, onLogout, onUserUpdate, isDarkMode, onToggleTheme }) {
               </span>
             </button>
             {menuOpen && (
-              <div className="dropdown-menu">
+              <div id="user-dropdown-menu" className="dropdown-menu" role="menu">
                 <div className="dropdown-header">
                   <div className="dropdown-user-avatar-lg">
                     {getUserInitials(user.name)}
@@ -147,14 +150,14 @@ function Navbar({ user, onLogout, onUserUpdate, isDarkMode, onToggleTheme }) {
                 </div>
                 <div className="dropdown-items-wrapper">
                   <button
-                    className="dropdown-item"
+                    className="dropdown-item" role="menuitem"
                     onClick={() => handleNavClick("/")}
                   >
                     <span className="di-icon">📋</span>
                     <span>All Events</span>
                   </button>
                   <button
-                    className="dropdown-item"
+                    className="dropdown-item" role="menuitem"
                     onClick={() => handleNavClick("/download")}
                   >
                     <span className="di-icon">📱</span>
@@ -162,7 +165,7 @@ function Navbar({ user, onLogout, onUserUpdate, isDarkMode, onToggleTheme }) {
                   </button>
                   {(user.role === "admin" || user.role === "superAdmin") && (
                     <button
-                      className="dropdown-item"
+                      className="dropdown-item" role="menuitem"
                       onClick={() => handleNavClick("/create")}
                     >
                       <span className="di-icon">➕</span>
@@ -171,7 +174,7 @@ function Navbar({ user, onLogout, onUserUpdate, isDarkMode, onToggleTheme }) {
                   )}
                   {user.role === "user" && (
                     <button
-                      className="dropdown-item"
+                      className="dropdown-item" role="menuitem"
                       onClick={() => handleNavClick("/request-event")}
                     >
                       <span className="di-icon">📝</span>
@@ -179,14 +182,14 @@ function Navbar({ user, onLogout, onUserUpdate, isDarkMode, onToggleTheme }) {
                     </button>
                   )}
                   <button
-                    className="dropdown-item"
+                    className="dropdown-item" role="menuitem"
                     onClick={() => handleNavClick("/bookings")}
                   >
                     <span className="di-icon">📊</span>
                     <span>Dashboard</span>
                   </button>
                   <button
-                    className="dropdown-item"
+                    className="dropdown-item" role="menuitem"
                     onClick={() => handleNavClick("/settings")}
                   >
                     <span className="di-icon">⚙️</span>

@@ -106,8 +106,6 @@ export default function DownloadApp() {
             ref={(el) => (cardsRef.current[i] = el)}
             style={{ animationDelay: `${0.15 + i * 0.15}s` }}
           >
-            <div className="da-card-glow" style={{ "--glow-color": app.badgeColor }} />
-
             <div className="da-card-header">
               <div className="da-app-icon">{app.icon}</div>
               <div className="da-app-info">

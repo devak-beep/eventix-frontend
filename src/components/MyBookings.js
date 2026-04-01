@@ -796,6 +796,7 @@ function MyBookings({ userId }) {
           fetchBookings={fetchBookings} setSuccess={setSuccess} setError={setError}
           getStatusColor={getStatusColor}
         />
+      )}
 
       {/* EVENTS TAB */}
       {activeTab === "events" && (

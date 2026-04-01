@@ -16,6 +16,12 @@ src/
     └── CreateEvent.js         # Create new events and users
 ```
 
+## ⚙️ Setup
+
+1. Copy `.env.example` to `.env.local`: `cp .env.example .env.local`
+2. Update `REACT_APP_API_URL` to match your backend URL
+3. Run `npm install` then `npm start`
+
 ## 🚀 How to Run
 
 ### Step 1: Start Your Backend

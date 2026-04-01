@@ -28,6 +28,7 @@ import { getUserById } from "./api";
 function Navbar({ user, onLogout, onUserUpdate, isDarkMode, onToggleTheme }) {
   const navigate = useNavigate();
   const [menuOpen, setMenuOpen] = useState(false);
+  const [downloadOpen, setDownloadOpen] = useState(false);
   const [logoutModalOpen, setLogoutModalOpen] = useState(false);
   const menuRef = useRef(null);
 
@@ -131,26 +132,24 @@ function Navbar({ user, onLogout, onUserUpdate, isDarkMode, onToggleTheme }) {
                     <span className="di-icon">📋</span>
                     <span>All Events</span>
                   </button>
-                  <div className="dropdown-item download-app-item">
+                  <button
+                    className="dropdown-item"
+                    onClick={() => setDownloadOpen(!downloadOpen)}
+                  >
                     <span className="di-icon">📱</span>
                     <span>Download App</span>
-                    <div className="download-submenu">
-                      <a
-                        className="download-option"
-                        href="/eventix-react-native.apk"
-                        download="Eventix.apk"
-                      >
+                    <span style={{ marginLeft: "auto", fontSize: "10px" }}>{downloadOpen ? "▲" : "▼"}</span>
+                  </button>
+                  {downloadOpen && (
+                    <div className="download-submenu-inline">
+                      <a className="download-option" href="/eventix-react-native.apk" download="Eventix.apk">
                         <span>⚛️</span> React Native APK
                       </a>
-                      <a
-                        className="download-option"
-                        href="/eventix-kotlin.apk"
-                        download="Eventix-Kotlin.apk"
-                      >
+                      <a className="download-option" href="/eventix-kotlin.apk" download="Eventix-Kotlin.apk">
                         <span>🤖</span> Kotlin APK
                       </a>
                     </div>
-                  </div>
+                  )}
                   {(user.role === "admin" || user.role === "superAdmin") && (
                     <button
                       className="dropdown-item"

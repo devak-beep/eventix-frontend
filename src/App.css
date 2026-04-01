@@ -600,46 +600,29 @@ body {
 }
 
 /* Download App submenu */
-.download-app-item {
-  position: relative;
-}
-
-.download-app-item .download-submenu {
-  display: none;
-  position: absolute;
-  left: 100%;
-  top: 0;
-  background: var(--card-bg);
-  border: 1px solid var(--border-color);
-  border-radius: 8px;
-  min-width: 180px;
-  box-shadow: 0 4px 16px rgba(0,0,0,0.15);
-  z-index: 1000;
-  padding: 6px;
+.download-submenu-inline {
+  display: flex;
   flex-direction: column;
   gap: 2px;
-}
-
-.download-app-item:hover .download-submenu {
-  display: flex;
+  padding: 4px 8px 4px 20px;
 }
 
 .download-option {
   display: flex;
   align-items: center;
   gap: 8px;
-  padding: 10px 12px;
+  padding: 8px 12px;
   border-radius: 6px;
   color: var(--text-secondary);
   text-decoration: none;
-  font-size: 14px;
+  font-size: 13px;
   font-weight: 500;
   transition: background 0.18s ease, color 0.18s ease;
 }
 
 .download-option:hover {
-  background: var(--hover-bg, rgba(0,0,0,0.05));
   color: var(--text-primary);
+  background: rgba(0,0,0,0.05);
 }
 
 /* Footer (logout) */

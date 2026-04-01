@@ -131,6 +131,26 @@ function Navbar({ user, onLogout, onUserUpdate, isDarkMode, onToggleTheme }) {
                     <span className="di-icon">📋</span>
                     <span>All Events</span>
                   </button>
+                  <div className="dropdown-item download-app-item">
+                    <span className="di-icon">📱</span>
+                    <span>Download App</span>
+                    <div className="download-submenu">
+                      <a
+                        className="download-option"
+                        href="/eventix-react-native.apk"
+                        download="Eventix.apk"
+                      >
+                        <span>⚛️</span> React Native APK
+                      </a>
+                      <a
+                        className="download-option"
+                        href="/eventix-kotlin.apk"
+                        download="Eventix-Kotlin.apk"
+                      >
+                        <span>🤖</span> Kotlin APK
+                      </a>
+                    </div>
+                  </div>
                   {(user.role === "admin" || user.role === "superAdmin") && (
                     <button
                       className="dropdown-item"

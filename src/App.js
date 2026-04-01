@@ -1,5 +1,5 @@
 // This is the main App component - the starting point of our frontend
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect, useRef, lazy, Suspense } from "react";
 import {
   BrowserRouter as Router,
   Routes,
@@ -10,20 +10,22 @@ import {
 import "./App.css";
 import Login from "./components/Login";
 import Register from "./components/Register";
-import EventList from "./components/EventList";
-import LockSeatsPage from "./components/LockSeatsPage";
-import ConfirmBookingPage from "./components/ConfirmBookingPage";
-import BookingResultPage from "./components/BookingResultPage";
-import PaymentPage from "./components/PaymentPage";
-import BookingSuccessPage from "./components/BookingSuccessPage";
-import MyBookings from "./components/MyBookings";
-import CreateEvent from "./components/CreateEvent";
-import RequestEvent from "./components/RequestEvent";
-import Settings from "./components/Settings";
-import DownloadApp from "./components/DownloadApp";
 import ConfirmModal from "./components/ConfirmModal";
 import { EventixLogoSimple } from "./components/EventixLogo";
 import { getUserById } from "./api";
+
+// Lazy-load heavy page components — only downloaded when user navigates to them
+const EventList         = lazy(() => import("./components/EventList"));
+const LockSeatsPage     = lazy(() => import("./components/LockSeatsPage"));
+const ConfirmBookingPage= lazy(() => import("./components/ConfirmBookingPage"));
+const BookingResultPage = lazy(() => import("./components/BookingResultPage"));
+const PaymentPage       = lazy(() => import("./components/PaymentPage"));
+const BookingSuccessPage= lazy(() => import("./components/BookingSuccessPage"));
+const MyBookings        = lazy(() => import("./components/MyBookings"));
+const CreateEvent       = lazy(() => import("./components/CreateEvent"));
+const RequestEvent      = lazy(() => import("./components/RequestEvent"));
+const Settings          = lazy(() => import("./components/Settings"));
+const DownloadApp       = lazy(() => import("./components/DownloadApp"));
 
 // Navigation bar component
 function Navbar({ user, onLogout, onUserUpdate, isDarkMode, onToggleTheme }) {
@@ -324,6 +326,7 @@ function App() {
         />
 
         <div className="container">
+          <Suspense fallback={<div className="lazy-loader"><div className="lazy-spinner" /></div>}>
           <Routes>
             <Route path="/" element={<EventList />} />
             <Route
@@ -368,6 +371,7 @@ function App() {
             />
             <Route path="*" element={<Navigate to="/" replace />} />
           </Routes>
+          </Suspense>
         </div>
       </div>
     </Router>

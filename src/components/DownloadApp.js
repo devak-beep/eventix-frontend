@@ -7,8 +7,6 @@ const apps = [
     icon: "⚛️",
     title: "React Native",
     subtitle: "Cross-platform build",
-    size: "62 MB",
-    version: "v1.0.0",
     badge: "Recommended",
     badgeColor: "#61dafb",
     href: "/eventix-react-native.apk",
@@ -20,8 +18,6 @@ const apps = [
     icon: "🤖",
     title: "Kotlin Native",
     subtitle: "Android native build",
-    size: "5.6 MB",
-    version: "v1.0.0",
     badge: "Lightweight",
     badgeColor: "#a97cff",
     href: "/eventix-kotlin.apk",
@@ -36,13 +32,26 @@ function FloatingParticle({ style }) {
 
 export default function DownloadApp() {
   const [downloaded, setDownloaded] = useState({});
+  const [fileMeta, setFileMeta] = useState({});
   const [visible, setVisible] = useState(false);
   const lastClickRef = useRef({});
   const cardsRef = useRef([]);
 
   useEffect(() => {
-    // Trigger entrance animation
     const t = setTimeout(() => setVisible(true), 50);
+    // Fetch real file sizes via HEAD request
+    apps.forEach((app) => {
+      fetch(app.href, { method: "HEAD" })
+        .then((res) => {
+          const bytes = parseInt(res.headers.get("content-length") || "0");
+          const size = bytes ? `${(bytes / (1024 * 1024)).toFixed(1)} MB` : null;
+          // Extract last-modified as a proxy for "version" date
+          const modified = res.headers.get("last-modified");
+          const date = modified ? new Date(modified).toLocaleDateString("en-GB", { day: "2-digit", month: "short", year: "numeric" }) : null;
+          setFileMeta((prev) => ({ ...prev, [app.id]: { size, date } }));
+        })
+        .catch(() => {});
+    });
     return () => clearTimeout(t);
   }, []);
 
@@ -118,8 +127,8 @@ export default function DownloadApp() {
             </div>
 
             <div className="da-card-meta">
-              <span>📦 {app.size}</span>
-              <span>🏷️ {app.version}</span>
+              <span>📦 {fileMeta[app.id]?.size || "—"}</span>
+              <span>🗓️ {fileMeta[app.id]?.date || "—"}</span>
               <span>🤖 Android</span>
             </div>
 

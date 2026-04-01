@@ -167,22 +167,26 @@
 /* Card header */
 .da-card-header {
   display: flex;
+  flex-direction: column;
   align-items: center;
-  gap: 14px;
+  text-align: center;
+  gap: 10px;
+  padding-bottom: 16px;
+  border-bottom: 1px solid var(--border-color);
 }
 
 .da-app-icon {
-  font-size: 36px;
+  font-size: 52px;
   line-height: 1;
-  filter: drop-shadow(0 2px 8px rgba(0,0,0,0.15));
+  filter: drop-shadow(0 4px 12px rgba(0,0,0,0.2));
 }
 
 .da-app-info {
-  flex: 1;
+  flex: unset;
 }
 
 .da-app-name {
-  font-size: 18px;
+  font-size: 20px;
   font-weight: 700;
   color: var(--text-primary);
 }
@@ -190,13 +194,13 @@
 .da-app-sub {
   font-size: 13px;
   color: var(--text-tertiary);
-  margin-top: 2px;
+  margin-top: 3px;
 }
 
 .da-badge {
-  padding: 4px 10px;
+  padding: 4px 14px;
   border-radius: 999px;
-  font-size: 11px;
+  font-size: 12px;
   font-weight: 600;
   white-space: nowrap;
 }

@@ -1,3 +1,4 @@
+import { getUser, setUser } from "../utils/localStorage";
 // This component shows all bookings made by users
 import React, { useState, useEffect, useRef } from "react";
 import { useNavigate } from "react-router-dom";
@@ -213,10 +214,10 @@ function MyBookings({ userId }) {
 
         // IMPORTANT: Also update localStorage with fresh role
         // This ensures if user was promoted, we get the new role immediately
-        const savedUser = JSON.parse(localStorage.getItem("user") || "{}");
+        const savedUser = getUser() || {};
         if (savedUser.role !== freshRole) {
           savedUser.role = freshRole;
-          localStorage.setItem("user", JSON.stringify(savedUser));
+          setUser(savedUser);
           console.log(`Updated user role in localStorage: ${freshRole}`);
         }
       } catch (err) {
@@ -350,7 +351,7 @@ function MyBookings({ userId }) {
   // Function to fetch user's event creation requests
   const fetchMyEventRequests = async () => {    setLoadingRequests(true);
     try {
-      const user = JSON.parse(localStorage.getItem("user") || "{}");
+      const user = getUser() || {};
       const response = await axios.get(
         `${API_BASE_URL}/event-requests/my-requests`,
         {
@@ -405,7 +406,7 @@ function MyBookings({ userId }) {
     setError("");
 
     try {
-      const user = JSON.parse(localStorage.getItem("user") || "{}");
+      const user = getUser() || {};
 
       // Create payment order
       const orderResponse = await axios.post(

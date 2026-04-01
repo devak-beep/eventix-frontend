@@ -1,3 +1,4 @@
+import { getUser, removeUser } from "./utils/localStorage";
 // This file handles all communication with the backend server
 import axios from "axios";
 
@@ -17,7 +18,7 @@ const api = axios.create({
 
 // Request: attach stored user id/role headers if available
 api.interceptors.request.use((config) => {
-  const user = JSON.parse(localStorage.getItem("user") || "null");
+  const user = getUser();
   if (user) {
     config.headers["x-user-id"] = user._id;
     config.headers["x-user-role"] = user.role;
@@ -33,7 +34,7 @@ api.interceptors.response.use(
 
     // Session expired — clear user and reload to login
     if (status === 401) {
-      localStorage.removeItem("user");
+      removeUser();
       window.location.href = "/";
       return Promise.reject(error);
     }

@@ -1,3 +1,4 @@
+import { getUser, setUser, removeUser } from "./utils/localStorage";
 // This is the main App component - the starting point of our frontend
 import React, { useState, useEffect, useRef, lazy, Suspense } from "react";
 import {
@@ -264,7 +265,7 @@ function App() {
             console.log(
               `User role updated: ${parsedUser.role} → ${freshUser.role}`,
             );
-            localStorage.setItem("user", JSON.stringify(freshUser));
+            setUser(freshUser);
           }
         })
         .catch((err) => {
@@ -291,7 +292,7 @@ function App() {
 
   // Handle logout
   const handleLogout = () => {
-    localStorage.removeItem("user");
+    removeUser();
     setUser(null);
   };
 

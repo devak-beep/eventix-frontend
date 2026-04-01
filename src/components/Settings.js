@@ -1,3 +1,4 @@
+import { setUser } from "../utils/localStorage";
 // Settings Page — allows user to configure their account preferences
 import React, { useState } from "react";
 import { updateOtpPreference } from "../api";
@@ -22,7 +23,7 @@ function Settings({ user, onUserUpdate }) {
 
       // Update localStorage and notify parent
       const updatedUser = { ...user, otpEnabled: newValue };
-      localStorage.setItem("user", JSON.stringify(updatedUser));
+      setUser(updatedUser);
       onUserUpdate(updatedUser);
 
       setMessage(response.message);

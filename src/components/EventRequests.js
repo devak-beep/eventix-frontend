@@ -1,3 +1,4 @@
+import { getUser } from "../utils/localStorage";
 // This component shows pending event creation requests for admin/superAdmin
 // They can approve or reject requests
 import React, { useState, useEffect } from "react";
@@ -58,7 +59,7 @@ function EventRequests() {
     setLoading(true);
     setError("");
     try {
-      const user     = JSON.parse(localStorage.getItem("user") || "{}");
+      const user     = getUser() || {};
       const endpoint =
         filter === "PENDING"
           ? "/event-requests/admin/pending"
@@ -93,7 +94,7 @@ function EventRequests() {
     setError("");
 
     try {
-      const user = JSON.parse(localStorage.getItem("user") || "{}");
+      const user = getUser() || {};
       const response = await fetch(
         `${API_BASE_URL}/event-requests/${selectedRequest._id}/approve`,
         {
@@ -139,7 +140,7 @@ function EventRequests() {
     setError("");
 
     try {
-      const user = JSON.parse(localStorage.getItem("user") || "{}");
+      const user = getUser() || {};
       const response = await fetch(
         `${API_BASE_URL}/event-requests/${selectedRequest._id}/reject`,
         {

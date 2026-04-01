@@ -1,3 +1,4 @@
+import { getUser } from "../utils/localStorage";
 // Lock Seats Page — single-day and multi-day (daily/season pass) booking
 import React, { useState, useEffect, useRef } from "react";
 import { useParams, useNavigate } from "react-router-dom";
@@ -69,7 +70,7 @@ function LockSeatsPage({ userId }) {
 
   const isProcessingRef = useRef(false);
 
-  const user   = JSON.parse(localStorage.getItem("user") || "{}");
+  const user   = getUser() || {};
   const isAdmin = user?.role === "admin" || user?.role === "superAdmin";
 
   // ── Load event ──────────────────────────────────────────────────────────────

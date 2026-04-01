@@ -1,3 +1,4 @@
+import { getUser } from "../utils/localStorage";
 // This component allows creating new events (admin/superAdmin only)
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
@@ -203,7 +204,7 @@ function CreateEvent({ userId }) {
 
     try {
       const idempotencyKey = uuidv4();
-      const user = JSON.parse(localStorage.getItem("user"));
+      const user = getUser();
       const API_BASE_URL = process.env.REACT_APP_API_URL || "http://localhost:3000/api";
 
       // Build eventData payload

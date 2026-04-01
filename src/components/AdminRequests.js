@@ -1,3 +1,4 @@
+import { getUser } from "../utils/localStorage";
 // This component shows pending admin requests for superAdmin to approve/reject
 import React, { useState, useEffect } from "react";
 import axios from "axios";
@@ -23,7 +24,7 @@ function AdminRequests() {
     setLoading(true);
     setError("");
     try {
-      const user = JSON.parse(localStorage.getItem("user") || "{}");
+      const user = getUser() || {};
       const response = await axios.get(
         `${API_BASE_URL}/users/admin-requests/pending`,
         {
@@ -52,7 +53,7 @@ function AdminRequests() {
     if (!selectedRequest) return;
 
     try {
-      const user = JSON.parse(localStorage.getItem("user") || "{}");
+      const user = getUser() || {};
       await axios.post(
         `${API_BASE_URL}/users/admin-requests/${selectedRequest._id}/approve`,
         {},
@@ -86,7 +87,7 @@ function AdminRequests() {
     if (!selectedRequest) return;
 
     try {
-      const user = JSON.parse(localStorage.getItem("user") || "{}");
+      const user = getUser() || {};
       await axios.post(
         `${API_BASE_URL}/users/admin-requests/${selectedRequest._id}/reject`,
         { rejectionReason: rejectionReason || "No reason provided" },

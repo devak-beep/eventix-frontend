@@ -1,3 +1,4 @@
+import { getUser } from "../utils/localStorage";
 // This component allows USERS to request event creation
 // Unlike CreateEvent (admin only), this submits for approval
 import React, { useState, useRef } from "react";
@@ -233,7 +234,7 @@ function RequestEvent({ userId }) {
     setShowConfirmModal(false);
 
     try {
-      const user = JSON.parse(localStorage.getItem("user") || "{}");
+      const user = getUser() || {};
 
       // Build payload - strip irrelevant fields per eventType
       const payload = {

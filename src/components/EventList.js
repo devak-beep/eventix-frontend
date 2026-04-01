@@ -1,3 +1,4 @@
+import { getUser } from "../utils/localStorage";
 // This component shows a list of all available events
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
@@ -133,7 +134,7 @@ function EventList() {
 
     try {
       // Get user role from localStorage
-      const user = JSON.parse(localStorage.getItem("user"));
+      const user = getUser();
       const userRole = user?.role || "user";
 
       // Call API to get events (admin sees all, users see only public)
@@ -306,7 +307,7 @@ function EventList() {
               : event.availableSeats === 0;
 
             // Get user role to show visibility tag only to admin
-            const user = JSON.parse(localStorage.getItem("user"));
+            const user = getUser();
             const isAdmin =
               user?.role === "admin" || user?.role === "superAdmin";
 

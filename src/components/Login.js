@@ -1,3 +1,4 @@
+import { setUser } from "../utils/localStorage";
 // This component handles user login
 import React, { useState } from "react";
 import { loginUser, verifyLoginOtp, resendOtp } from "../api";
@@ -46,7 +47,7 @@ function Login({
       } else {
         // Fallback (shouldn't happen with OTP enabled)
         const userData = response.data;
-        localStorage.setItem("user", JSON.stringify(userData));
+        setUser(userData);
         setUser(userData);
         setShowAnimation(true);
       }
@@ -66,7 +67,7 @@ function Login({
       });
       if (response.success) {
         const userData = response.data;
-        localStorage.setItem("user", JSON.stringify(userData));
+        setUser(userData);
         console.log("Login successful:", userData);
         setUser(userData);
         setShowOtp(false);

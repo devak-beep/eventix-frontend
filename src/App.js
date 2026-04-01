@@ -1,6 +1,24 @@
 import { removeUser } from "./utils/localStorage";
 // This is the main App component - the starting point of our frontend
 import React, { useState, useEffect, useRef, lazy, Suspense } from "react";
+
+class ErrorBoundary extends React.Component {
+  state = { hasError: false };
+  static getDerivedStateFromError() { return { hasError: true }; }
+  render() {
+    if (this.state.hasError) return (
+      <div style={{ padding: "40px", textAlign: "center" }}>
+        <h2>Something went wrong</h2>
+        <p style={{ color: "var(--text-secondary)", marginBottom: "20px" }}>An unexpected error occurred.</p>
+        <button onClick={() => { this.setState({ hasError: false }); window.location.href = "/"; }}
+          style={{ padding: "10px 24px", borderRadius: "8px", background: "var(--gradient-accent)", color: "#fff", border: "none", cursor: "pointer", fontWeight: 600 }}>
+          Go Home
+        </button>
+      </div>
+    );
+    return this.props.children;
+  }
+}
 import {
   BrowserRouter as Router,
   Routes,
@@ -316,6 +334,7 @@ function App() {
 
   // If user is logged in, show main app with routing
   return (
+    <ErrorBoundary>
     <Router>
       <div className="App">
         <Navbar
@@ -376,6 +395,7 @@ function App() {
         </div>
       </div>
     </Router>
+    </ErrorBoundary>
   );
 }
 

@@ -13,6 +13,62 @@ const api = axios.create({
   },
 });
 
+// ========== INTERCEPTORS ==========
+
+// Request: attach stored user id/role headers if available
+api.interceptors.request.use((config) => {
+  const user = JSON.parse(localStorage.getItem("user") || "null");
+  if (user) {
+    config.headers["x-user-id"] = user._id;
+    config.headers["x-user-role"] = user.role;
+  }
+  return config;
+});
+
+// Response: centralized error handling
+api.interceptors.response.use(
+  (response) => response,
+  async (error) => {
+    const status = error.response?.status;
+
+    // Session expired — clear user and reload to login
+    if (status === 401) {
+      localStorage.removeItem("user");
+      window.location.href = "/";
+      return Promise.reject(error);
+    }
+
+    // Network error — retry GET requests up to 3 times with exponential backoff
+    if (!error.response && error.config?.method === "get") {
+      error.config._retryCount = (error.config._retryCount || 0) + 1;
+      if (error.config._retryCount <= 3) {
+        await new Promise((r) =>
+          setTimeout(r, 1000 * error.config._retryCount)
+        );
+        return api(error.config);
+      }
+    }
+
+    // Attach a user-friendly message for components to use
+    const serverMsg = error.response?.data?.message;
+    const friendlyMessages = {
+      400: serverMsg || "Invalid request. Please check your input.",
+      403: "You don't have permission to do that.",
+      404: "The requested resource was not found.",
+      409: serverMsg || "A conflict occurred. Please try again.",
+      500: "Server error. Please try again later.",
+    };
+    error.friendlyMessage =
+      friendlyMessages[status] ||
+      serverMsg ||
+      (error.message === "Network Error"
+        ? "Network error. Check your connection."
+        : "Something went wrong. Please try again.");
+
+    return Promise.reject(error);
+  }
+);
+
 // ========== USER APIs ==========
 
 // Create a new user (registration)

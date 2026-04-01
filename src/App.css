@@ -2704,14 +2704,33 @@ html.dark .stepper-btn:hover:not(:disabled) {
   padding: 30px;
   border-radius: 16px;
   border: 1px solid var(--border-color);
-  transition: all 0.3s ease;
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.3);
+  transition: all 0.4s ease;
   margin-bottom: 20px;
   overflow: hidden;
+  position: relative;
+}
+
+.booking-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 4px;
+  background: linear-gradient(90deg, #00d4ff 0%, #0099ff 100%);
+  transform: scaleX(0);
+  transition: transform 0.4s ease;
+  z-index: 10;
+}
+
+.booking-card:hover::before {
+  transform: scaleX(1);
 }
 
 .booking-card:hover {
-  transform: translateY(-4px);
-  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.3);
+  transform: translateY(-8px);
+  box-shadow: 0 20px 50px rgba(0, 153, 255, 0.3);
   border-color: rgba(0, 212, 255, 0.2);
 }
 

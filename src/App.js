@@ -156,13 +156,6 @@ function Navbar({ user, onLogout, onUserUpdate, isDarkMode, onToggleTheme }) {
                     <span className="di-icon">📋</span>
                     <span>All Events</span>
                   </button>
-                  <button
-                    className="dropdown-item" role="menuitem"
-                    onClick={() => handleNavClick("/download")}
-                  >
-                    <span className="di-icon">📱</span>
-                    <span>Download App</span>
-                  </button>
                   {(user.role === "admin" || user.role === "superAdmin") && (
                     <button
                       className="dropdown-item" role="menuitem"
@@ -172,6 +165,20 @@ function Navbar({ user, onLogout, onUserUpdate, isDarkMode, onToggleTheme }) {
                       <span>Create Event</span>
                     </button>
                   )}
+                  <button
+                    className="dropdown-item" role="menuitem"
+                    onClick={() => handleNavClick("/bookings")}
+                  >
+                    <span className="di-icon">📊</span>
+                    <span>Dashboard</span>
+                  </button>
+                  <button
+                    className="dropdown-item" role="menuitem"
+                    onClick={() => handleNavClick("/download")}
+                  >
+                    <span className="di-icon">📱</span>
+                    <span>Download App</span>
+                  </button>
                   {user.role === "user" && (
                     <button
                       className="dropdown-item" role="menuitem"
@@ -181,13 +188,6 @@ function Navbar({ user, onLogout, onUserUpdate, isDarkMode, onToggleTheme }) {
                       <span>Request Event</span>
                     </button>
                   )}
-                  <button
-                    className="dropdown-item" role="menuitem"
-                    onClick={() => handleNavClick("/bookings")}
-                  >
-                    <span className="di-icon">📊</span>
-                    <span>Dashboard</span>
-                  </button>
                   <button
                     className="dropdown-item" role="menuitem"
                     onClick={() => handleNavClick("/settings")}

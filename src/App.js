@@ -266,6 +266,21 @@ function App() {
 
   // Check if user is already logged in (on page load)
   useEffect(() => {
+    // Handle Google OAuth redirect
+    const params = new URLSearchParams(window.location.search);
+    const googleAuth = params.get("googleAuth");
+    if (googleAuth) {
+      const userData = Object.fromEntries(new URLSearchParams(decodeURIComponent(googleAuth)));
+      localStorage.setItem("user", JSON.stringify(userData));
+      setUser(userData);
+      window.history.replaceState({}, "", "/");
+      return;
+    }
+    const errorParam = params.get("error");
+    if (errorParam === "google_auth_failed") {
+      window.history.replaceState({}, "", "/");
+    }
+
     const savedUser = localStorage.getItem("user");
     if (savedUser) {
       const parsedUser = JSON.parse(savedUser);

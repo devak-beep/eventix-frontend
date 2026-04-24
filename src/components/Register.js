@@ -339,6 +339,25 @@ function Register({ onRegisterSuccess, isDarkMode, onToggleTheme }) {
                     Login here
                   </button>
                 </p>
+
+                <div style={{ display: "flex", alignItems: "center", margin: "16px 0", gap: "10px" }}>
+                  <div style={{ flex: 1, height: "1px", background: "var(--border-color, #e2e8f0)" }} />
+                  <span style={{ color: "var(--text-secondary)", fontSize: "13px" }}>or</span>
+                  <div style={{ flex: 1, height: "1px", background: "var(--border-color, #e2e8f0)" }} />
+                </div>
+
+                <a
+                  href={`${process.env.REACT_APP_API_URL?.replace("/api", "")}/api/auth/google`}
+                  style={{
+                    display: "flex", alignItems: "center", justifyContent: "center", gap: "10px",
+                    width: "100%", padding: "10px", borderRadius: "8px", border: "1px solid var(--border-color, #e2e8f0)",
+                    background: "var(--card-bg, #fff)", color: "var(--text-primary)", fontWeight: 600,
+                    fontSize: "14px", textDecoration: "none", cursor: "pointer",
+                  }}
+                >
+                  <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" alt="Google" width="20" height="20" />
+                  Continue with Google
+                </a>
               </>
             )}
           </div>

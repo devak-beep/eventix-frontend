@@ -1,4 +1,4 @@
-import { removeUser } from "./utils/localStorage";
+import { removeUser, setUser as saveUser } from "./utils/localStorage";
 // This is the main App component - the starting point of our frontend
 import React, { useState, useEffect, useRef, lazy, Suspense } from "react";
 import {
@@ -271,7 +271,7 @@ function App() {
     const googleAuth = params.get("googleAuth");
     if (googleAuth) {
       const userData = Object.fromEntries(new URLSearchParams(decodeURIComponent(googleAuth)));
-      localStorage.setItem("user", JSON.stringify(userData));
+      saveUser(userData);
       setUser(userData);
       window.history.replaceState({}, "", "/");
       return;

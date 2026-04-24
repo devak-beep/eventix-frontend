@@ -313,12 +313,14 @@ function App() {
 
   // Handle successful login
   const handleLoginSuccess = (userData) => {
+    saveUser(userData);
     setUser(userData);
   };
 
   // Handle successful registration
   const handleRegisterSuccess = (userData) => {
     if (userData) {
+      saveUser(userData);
       setUser(userData);
     } else {
       // Switch to login

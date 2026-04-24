@@ -42,7 +42,15 @@ function ForgotPassword({ onBack, onSuccess }) {
     e.preventDefault();
     setError("");
     if (newPassword.length < 6) {
-      setError("Password must be at least 6 characters.");
+      setError("Password must be at least 6 characters long.");
+      return;
+    }
+    if (!/\d/.test(newPassword)) {
+      setError("Password must contain at least one number.");
+      return;
+    }
+    if (!/[!@#$%^&*(),.?":{}|<>]/.test(newPassword)) {
+      setError("Password must contain at least one special character (!@#$%^&* etc.).");
       return;
     }
     if (newPassword !== confirmPassword) {

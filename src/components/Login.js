@@ -192,8 +192,8 @@ function Login({
               href={`${process.env.REACT_APP_API_URL?.replace("/api", "")}/api/auth/google`}
               style={{
                 display: "flex", alignItems: "center", justifyContent: "center", gap: "10px",
-                width: "100%", padding: "10px", borderRadius: "8px", border: "1px solid var(--border-color, #e2e8f0)",
-                background: "var(--card-bg, #fff)", color: "var(--text-primary)", fontWeight: 600,
+                width: "100%", padding: "10px", borderRadius: "8px", border: "1px solid #dadce0",
+                background: "#fff", color: "#3c4043", fontWeight: 600,
                 fontSize: "14px", textDecoration: "none", cursor: "pointer",
               }}
             >

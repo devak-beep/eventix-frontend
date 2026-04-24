@@ -114,6 +114,18 @@ export const updateOtpPreference = async (userId, otpEnabled) => {
   });
   return response.data;
 };
+
+// Send OTP to email for password reset
+export const forgotPassword = async (email) => {
+  const response = await api.post("/users/forgot-password", { email });
+  return response.data;
+};
+
+// Verify OTP and set new password
+export const resetPassword = async ({ email, otp, newPassword }) => {
+  const response = await api.post("/users/reset-password", { email, otp, newPassword });
+  return response.data;
+};
 // ========== EVENT APIs ==========
 
 // Create a new event

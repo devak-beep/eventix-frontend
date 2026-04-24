@@ -4,6 +4,7 @@ import { loginUser, verifyLoginOtp, resendOtp } from "../api";
 import { EventixLogo } from "./EventixLogo";
 import { FullScreenLogoSequence } from "./FullScreenLogoSequence";
 import OtpVerification from "./OtpVerification";
+import ForgotPassword from "./ForgotPassword";
 
 function Login({
   onLoginSuccess,
@@ -24,6 +25,10 @@ function Login({
   // OTP states
   const [showOtp, setShowOtp] = useState(false);
   const [pendingEmail, setPendingEmail] = useState("");
+
+  // Forgot password state
+  const [showForgotPassword, setShowForgotPassword] = useState(false);
+  const [successMessage, setSuccessMessage] = useState("");
 
   // Handle login
   const handleLogin = async (e) => {
@@ -102,8 +107,13 @@ function Login({
         <FullScreenLogoSequence onComplete={() => onLoginSuccess(user)} />
       )}
 
-      {/* OTP Verification Screen */}
-      {showOtp ? (
+      {/* Forgot Password Screen */}
+      {showForgotPassword ? (
+        <ForgotPassword
+          onBack={() => { setShowForgotPassword(false); setSuccessMessage(""); }}
+          onSuccess={(msg) => { setShowForgotPassword(false); setSuccessMessage(msg); }}
+        />
+      ) : showOtp ? (
         <OtpVerification
           email={pendingEmail}
           purpose="login"
@@ -129,6 +139,7 @@ function Login({
             <h2>Welcome Back!</h2>
 
             {error && <div className="error">{error}</div>}
+            {successMessage && <div className="success" style={{ color: "var(--success, #22c55e)", background: "rgba(34,197,94,0.1)", border: "1px solid rgba(34,197,94,0.3)", borderRadius: "8px", padding: "10px 14px", marginBottom: "12px", fontSize: "14px" }}>{successMessage}</div>}
 
             <form onSubmit={handleLogin}>
               <div className="form-group">
@@ -157,6 +168,12 @@ function Login({
                 {loading ? "Logging in..." : "Login"}
               </button>
             </form>
+
+            <p className="auth-switch" style={{ marginTop: "12px" }}>
+              <button onClick={() => setShowForgotPassword(true)} className="link-btn">
+                Forgot Password?
+              </button>
+            </p>
 
             <p className="auth-switch">
               Don't have an account?

@@ -1,18 +1,17 @@
-// Forgot Password — 2-step flow: enter email → OTP + new password
+// Forgot Password — 3-step flow: email → OTP → new password
 import React, { useState } from "react";
 import { forgotPassword, resetPassword, resendOtp } from "../api";
 import OtpVerification from "./OtpVerification";
 
 function ForgotPassword({ onBack, onSuccess }) {
-  const [step, setStep] = useState("email"); // "email" | "otp"
+  const [step, setStep] = useState("email"); // "email" | "otp" | "password"
   const [email, setEmail] = useState("");
+  const [verifiedOtp, setVerifiedOtp] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
 
-  // New password fields (shown inside OTP step)
   const [newPassword, setNewPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
-  const [passwordError, setPasswordError] = useState("");
 
   const handleSendOtp = async (e) => {
     e.preventDefault();
@@ -28,43 +27,85 @@ function ForgotPassword({ onBack, onSuccess }) {
     }
   };
 
+  // Called by OtpVerification with the entered OTP string
   const handleOtpVerified = async (otp) => {
-    setPasswordError("");
-    if (!newPassword || newPassword.length < 6) {
-      throw new Error("Password must be at least 6 characters.");
-    }
-    if (newPassword !== confirmPassword) {
-      throw new Error("Passwords do not match.");
-    }
-    const response = await resetPassword({
-      email: email.toLowerCase().trim(),
-      otp,
-      newPassword,
-    });
-    if (response.success) {
-      onSuccess("Password reset successfully! Please log in with your new password.");
-    } else {
-      throw new Error(response.message || "Reset failed. Please try again.");
-    }
+    // Just store the OTP and move to password step — don't call backend yet
+    setVerifiedOtp(otp);
+    setStep("password");
   };
 
   const handleResendOtp = async () => {
     await resendOtp({ email: email.toLowerCase().trim(), purpose: "reset" });
   };
 
+  const handleResetPassword = async (e) => {
+    e.preventDefault();
+    setError("");
+    if (newPassword.length < 6) {
+      setError("Password must be at least 6 characters.");
+      return;
+    }
+    if (newPassword !== confirmPassword) {
+      setError("Passwords do not match.");
+      return;
+    }
+    setLoading(true);
+    try {
+      const response = await resetPassword({
+        email: email.toLowerCase().trim(),
+        otp: verifiedOtp,
+        newPassword,
+      });
+      if (response.success) {
+        onSuccess("Password reset successfully! Please log in with your new password.");
+      } else {
+        throw new Error(response.message || "Reset failed.");
+      }
+    } catch (err) {
+      const msg = err.response?.data?.message || err.message;
+      // If OTP expired after moving to password step, go back to OTP
+      if (msg.toLowerCase().includes("expired") || msg.toLowerCase().includes("not found")) {
+        setError("OTP expired. Please request a new one.");
+        setStep("otp");
+      } else {
+        setError(msg);
+      }
+    } finally {
+      setLoading(false);
+    }
+  };
+
   if (step === "otp") {
     return (
-      <div>
-        {/* New password fields above OTP box */}
-        <div className="auth-container">
-          <div className="auth-box" style={{ marginBottom: 0, borderBottomLeftRadius: 0, borderBottomRightRadius: 0 }}>
-            <h3 style={{ margin: "0 0 12px", fontSize: "16px", color: "var(--text-primary)" }}>Set New Password</h3>
+      <OtpVerification
+        email={email.toLowerCase().trim()}
+        purpose="reset"
+        onVerified={handleOtpVerified}
+        onResend={handleResendOtp}
+        onBack={() => setStep("email")}
+      />
+    );
+  }
+
+  if (step === "password") {
+    return (
+      <div className="auth-container">
+        <div className="auth-box">
+          <h2>Set New Password</h2>
+          <p style={{ color: "var(--text-secondary)", marginBottom: "20px", fontSize: "14px" }}>
+            OTP verified! Enter your new password below.
+          </p>
+
+          {error && <div className="error">{error}</div>}
+
+          <form onSubmit={handleResetPassword}>
             <div className="form-group">
               <label>New Password:</label>
               <input
                 type="password"
                 value={newPassword}
                 onChange={(e) => setNewPassword(e.target.value)}
+                required
                 placeholder="At least 6 characters"
                 minLength={6}
               />
@@ -75,19 +116,15 @@ function ForgotPassword({ onBack, onSuccess }) {
                 type="password"
                 value={confirmPassword}
                 onChange={(e) => setConfirmPassword(e.target.value)}
+                required
                 placeholder="Repeat new password"
               />
             </div>
-            {passwordError && <div className="error">{passwordError}</div>}
-          </div>
+            <button type="submit" disabled={loading} className="submit-btn">
+              {loading ? "Resetting..." : "Reset Password"}
+            </button>
+          </form>
         </div>
-        <OtpVerification
-          email={email.toLowerCase().trim()}
-          purpose="reset"
-          onVerified={handleOtpVerified}
-          onResend={handleResendOtp}
-          onBack={() => setStep("email")}
-        />
       </div>
     );
   }
